@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{8B5FA025-3789-F32F-936E-19B48308A10B}") = "Paratrooper game", "Assembly-CSharp-firstpass.csproj", "{78E2A11A-EDA7-A4A5-180A-B55455853771}"
+EndProject
+Project("{8B5FA025-3789-F32F-936E-19B48308A10B}") = "Paratrooper game", "Assembly-CSharp.csproj", "{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}"
+EndProject
+Project("{8B5FA025-3789-F32F-936E-19B48308A10B}") = "Paratrooper game", "Assembly-CSharp-Editor.csproj", "{3F04468C-08D7-B2D1-81C1-0989D5520C8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78E2A11A-EDA7-A4A5-180A-B55455853771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78E2A11A-EDA7-A4A5-180A-B55455853771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78E2A11A-EDA7-A4A5-180A-B55455853771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78E2A11A-EDA7-A4A5-180A-B55455853771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F04468C-08D7-B2D1-81C1-0989D5520C8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F04468C-08D7-B2D1-81C1-0989D5520C8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F04468C-08D7-B2D1-81C1-0989D5520C8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F04468C-08D7-B2D1-81C1-0989D5520C8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
