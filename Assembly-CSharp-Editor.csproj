@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{3F04468C-08D7-B2D1-81C1-0989D5520C8B}</ProjectGuid>
+    <ProjectGuid>{791776FD-BAE1-0EE8-7542-65B1B3DD2C8F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -46,77 +46,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\SeparableWeightedBlurDof34.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ShowAlphaChannel.shader" />
      <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\SunShaftsComposite.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ColorCorrectionCurves.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ScreenSpaceAmbientObscurance.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\NFAA.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\TiltShiftHdrLensBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\VignetteShader.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\MotionBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\MobileBloom.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\SSAA.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\RadialBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ContrastComposite.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\FXAAPreset3.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\FisheyeShader.shader" />
      <None Include="Assets\FX Mega Pack\Scripts\Simple Particle Scaler\Simple Particle Scaler - Readme.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\frag_ao.cginc" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\DepthOfField34.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\MobileBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\SSAOShader.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ConvertDepth.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ColorCorrectionCurvesSimple.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\NoiseEffectShaderYUV.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\CreaseApply.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ChromaticAberrationShader.shader" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\GlobalFog.shader" />
      <None Include="Assets\FX Mega Pack\FX Mega Pack - Readme.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ColorCorrectionSelective.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\Bokeh34.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\CameraMotionBlurDX11.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\MultiPassHollywoodFlares.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\BlurEffectConeTaps.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\CameraMotionBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\DLAA.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\NoiseAndGrainDX11.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\BrightPassFilter2.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_DepthOfField\SeparableBlur.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\MotionBlurClear.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ColorCorrectionEffect.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\GrayscaleEffect.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\SepiaToneEffect.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\TwirlEffect.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\VortexEffect.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\NoiseAndGrain.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\VignettingShader.shader" />
      <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\Tonemapper.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\BrightPassFilter.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\FXAA2.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\ColorCorrection3DLut.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\LensFlareCreate.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\EdgeDetectNormals.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\PrepareSunShaftsBlur.shader" />
      <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\Blend.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\BlendModesOverlay.shader" />
      <None Include="Assets\Standard Assets\Characters\RollerBall\RollerBallGuidelines.txt" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\SimpleClear.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\FXAA3Console.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_Antialiasing\FXAAPreset2.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
-     <None Include="Assets\RPG Character Animation Pack\Elements\ImageEffects\Shaders\_BloomAndFlares\BlendForBloom.shader" />
  <Reference Include="Assembly-UnityScript">
- <HintPath>C:/Users/Sussy/Documents/Paratrooper game/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
+ <HintPath>C:/Users/Sussy/Documents/SkullCrater/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
@@ -151,9 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{78E2A11A-EDA7-A4A5-180A-B55455853771}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+      <Project>{570EF060-1196-2F46-84A2-D8516C58B846}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{B87E24DB-9FD2-22DF-83EB-036C9B1F765C}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+      <Project>{C8FD4AAA-CC1F-ACC8-453E-3A40C2BA9CD6}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

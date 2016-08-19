@@ -13,12 +13,15 @@ public class Enemy : MonoBehaviour {
     NavMeshAgent agent;
     Animator animator;
 
+    GameObject triggerObject;
+
     // Use this for initialization
     void Start ()
     {
         aiScript = gameObject.GetComponent<s_WanderingAI>();
         agent = gameObject.GetComponent<NavMeshAgent>();
         animator = gameObject.GetComponent<Animator>();
+        triggerObject = transform.GetChild(10).gameObject;
     }
 	
 	// Update is called once per frame
@@ -34,6 +37,7 @@ public class Enemy : MonoBehaviour {
 
     public void KillThisEnemy()
     {
+        Destroy(triggerObject);
         if (enemyType == EnemyType.Skeleton)
         {
             gameObject.GetComponent<Rigidbody>().isKinematic = false;
@@ -46,8 +50,12 @@ public class Enemy : MonoBehaviour {
             int children = transform.childCount;
             for (int i = children - 1; i > 0; i--)
             {
-                transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
-                transform.GetChild(i).SetParent(null);
+                if (transform.GetChild(i).gameObject.tag != "Enemy")
+                {
+                    transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
+                    transform.GetChild(i).SetParent(null);
+                }
+
             }
         }
 
@@ -55,6 +63,21 @@ public class Enemy : MonoBehaviour {
         if (!hasStartedToAutoDestroySelf)
         {
             StartCoroutine(SelfDestruct());
+        }
+    }
+
+    public void RandomExplosionDismember()
+    {
+        int children = transform.childCount;
+        for (int i = children - 1; i > 0; i--)
+        {
+            // random between two options, 50/50 chance to dismember a limb or not
+            int rnd = Random.Range(0,2);
+            Debug.Log(rnd);
+            if (rnd == 0)
+            {
+                Destroy(transform.GetChild(i).GetComponent<HingeJoint>());
+            }
         }
     }
 
