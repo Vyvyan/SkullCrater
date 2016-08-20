@@ -17,6 +17,9 @@ public class Player : MonoBehaviour {
 
     public float health;
 
+    public Animator pistolAnim;
+    public WeaponEffects pistolEffects;
+    public Light pistolMuzzleLight;
 
 	// Use this for initialization
 	void Start ()
@@ -26,6 +29,9 @@ public class Player : MonoBehaviour {
         pistolAmmo = pistolAmmoMax;
         // start our health at 1, cause idk how much we need
         health = 1;
+
+        // get our pistol effects script from our anim, which is on the same object
+        pistolEffects = pistolAnim.gameObject.GetComponent<WeaponEffects>();
 	}
 	
 	// Update is called once per frame
@@ -40,6 +46,11 @@ public class Player : MonoBehaviour {
                 {
                     if (pistolAmmo > 0)
                     {
+                        pistolAnim.SetTrigger("FireGun");
+                        //muzzle flash
+                        pistolEffects.CreateMuzzleFlash();
+
+                        StartCoroutine(MuzzleFlash(pistolMuzzleLight));
                         GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                         temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
                         pistolAmmo--;
@@ -86,7 +97,9 @@ public class Player : MonoBehaviour {
     IEnumerator Reload()
     {
         isReloading = true;
+        pistolAnim.SetBool("ReloadGun", true);
         yield return new WaitForSeconds(reloadSpeed);
+        pistolAnim.SetBool("ReloadGun", false);
         pistolAmmo = pistolAmmoMax;
         isReloading = false;
     }
@@ -103,5 +116,12 @@ public class Player : MonoBehaviour {
         // we add a slight random rotation to the camera to give a good effect
         tempCam.GetComponent<Rigidbody>().AddTorque(new Vector3(Random.Range(10,30), Random.Range(10,30), Random.Range(10,30)));
         gameObject.SetActive(false);
+    }
+
+    IEnumerator MuzzleFlash(Light light)
+    {
+        light.intensity = 6;
+        yield return new WaitForSeconds(.1f);
+        light.intensity = 0;
     }
 }
