@@ -21,9 +21,16 @@ public class Player : MonoBehaviour {
     public WeaponEffects pistolEffects;
     public Light pistolMuzzleLight;
 
+    public enum WeaponType {pistol, shotgun, machinegun, rocket, none};
+    public WeaponType weapon1, weapon2;
+
 	// Use this for initialization
 	void Start ()
     {
+        // start with just a pistol
+        weapon1 = WeaponType.pistol;
+        weapon2 = WeaponType.none;
+
         mainCamera = Camera.main;
         //start with full clip
         pistolAmmo = pistolAmmoMax;
@@ -44,17 +51,7 @@ public class Player : MonoBehaviour {
             {
                 if (!isReloading)
                 {
-                    if (pistolAmmo > 0)
-                    {
-                        pistolAnim.SetTrigger("FireGun");
-                        //muzzle flash
-                        pistolEffects.CreateMuzzleFlash();
-
-                        StartCoroutine(MuzzleFlash(pistolMuzzleLight));
-                        GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
-                        temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
-                        pistolAmmo--;
-                    }
+                    FireWeapon();
                 }
             }
 
@@ -68,12 +65,9 @@ public class Player : MonoBehaviour {
             // reload
             if (Input.GetKeyDown(KeyCode.R))
             {
-                if (pistolAmmo < pistolAmmoMax)
+                if (!isReloading)
                 {
-                    if (!isReloading)
-                    {
-                        StartCoroutine(Reload());
-                    }
+                    ReloadWeapon();
                 }
             }
         }
@@ -96,12 +90,15 @@ public class Player : MonoBehaviour {
 
     IEnumerator Reload()
     {
-        isReloading = true;
-        pistolAnim.SetBool("ReloadGun", true);
-        yield return new WaitForSeconds(reloadSpeed);
-        pistolAnim.SetBool("ReloadGun", false);
-        pistolAmmo = pistolAmmoMax;
-        isReloading = false;
+        if (weapon1 == WeaponType.pistol)
+        {
+            isReloading = true;
+            pistolAnim.SetBool("ReloadGun", true);
+            yield return new WaitForSeconds(reloadSpeed);
+            pistolAnim.SetBool("ReloadGun", false);
+            pistolAmmo = pistolAmmoMax;
+            isReloading = false;
+        }
     }
 
     public void TakeDamage()
@@ -123,5 +120,51 @@ public class Player : MonoBehaviour {
         light.intensity = 6;
         yield return new WaitForSeconds(.1f);
         light.intensity = 0;
+    }
+
+    void FireWeapon()
+    {
+        if (weapon1 == WeaponType.pistol)
+        {
+            if (pistolAmmo > 0)
+            {
+                pistolAnim.SetTrigger("FireGun");
+                //muzzle flash
+                pistolEffects.CreateMuzzleFlash();
+
+                StartCoroutine(MuzzleFlash(pistolMuzzleLight));
+                GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+                temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                pistolAmmo--;
+            }
+        }
+    }
+
+    void SwitchWeapons()
+    {
+        // if we aren't reloading
+        if (!isReloading)
+        {
+            // if we have a weapon in our second slot
+            if (weapon2 != WeaponType.none)
+            {
+                // swap the weapons
+                WeaponType tempHolder = weapon2;
+                weapon2 = weapon1;
+                weapon1 = tempHolder;
+            }
+        }
+    }
+
+    void ReloadWeapon()
+    {
+        if (weapon1 == WeaponType.pistol)
+        {
+            if (pistolAmmo < pistolAmmoMax)
+            {
+                StartCoroutine(Reload());
+            }
+        }
+        
     }
 }
