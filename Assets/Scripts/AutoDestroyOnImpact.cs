@@ -29,6 +29,13 @@ public class AutoDestroyOnImpact : MonoBehaviour {
     IEnumerator TimedDestroy()
     {
         yield return new WaitForSeconds(2);
-        Destroy(gameObject);
+        if (transform.parent)
+        {
+            Destroy(transform.parent.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

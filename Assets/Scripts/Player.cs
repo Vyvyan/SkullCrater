@@ -4,41 +4,55 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     public Transform bulletSpawnPoint;
-    public GameObject bullet;
+    public GameObject bullet, shotgunPellet;
     public GameObject grenadeObject;
     public float gunPower;
     Camera mainCamera;
     public GameObject deadCam;
 
-    public int pistolAmmoMax;
-    public int pistolAmmo;
+    public int pistolAmmoMax, shotgunAmmoMax, machinegunAmmoMax;
+    public int pistolAmmo, shotgunAmmo, machinegunAmmo;
     public bool isReloading;
-    public float reloadSpeed;
+    public float reloadSpeed_Pistol, reloadSpeed_Shotgun, reloadSpeed_Machinegun;
 
     public float health;
 
-    public Animator pistolAnim;
-    public WeaponEffects pistolEffects;
-    public Light pistolMuzzleLight;
+    public Animator pistolAnim, shotgunAnim, machinegunAnim;
+    public WeaponEffects pistolEffects, shotgunEffects, machinegunEffects;
+    public Light pistolMuzzleLight, shotgunMuzzleLight, machinegunMuzzleLight;
+
+    public GameObject pistolModel, shotgunModel, machinegunModel;
 
     public enum WeaponType {pistol, shotgun, machinegun, rocket, none};
     public WeaponType weapon1, weapon2;
+
+    public float machinegunFireRate, mgFireRateCurrent;
+    // bool for machine gun shooting
+    bool mgCanShoot;
 
 	// Use this for initialization
 	void Start ()
     {
         // start with just a pistol
-        weapon1 = WeaponType.pistol;
-        weapon2 = WeaponType.none;
+        //weapon1 = WeaponType.pistol;
+        //weapon2 = WeaponType.none;
 
         mainCamera = Camera.main;
         //start with full clip
         pistolAmmo = pistolAmmoMax;
+        shotgunAmmo = shotgunAmmoMax;
+        machinegunAmmo = machinegunAmmoMax;
+
         // start our health at 1, cause idk how much we need
         health = 1;
 
         // get our pistol effects script from our anim, which is on the same object
         pistolEffects = pistolAnim.gameObject.GetComponent<WeaponEffects>();
+        shotgunEffects = shotgunAnim.gameObject.GetComponent<WeaponEffects>();
+        machinegunEffects = machinegunAnim.gameObject.GetComponent<WeaponEffects>();
+
+        // swap our weapon model out for whatever we are holding
+        ChangeWeaponModel();
 	}
 	
 	// Update is called once per frame
@@ -47,11 +61,26 @@ public class Player : MonoBehaviour {
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
             // fire a shot
-            if (Input.GetButtonDown("Fire1"))
+            // IF WE DO NOT HAVE THE MACHINE GUN OUT
+            if (weapon1 != WeaponType.machinegun)
             {
-                if (!isReloading)
+                if (Input.GetButtonDown("Fire1"))
                 {
-                    FireWeapon();
+                    if (!isReloading)
+                    {
+                        FireWeapon();
+                    }
+                }
+            }
+            else
+            {
+                if (mgCanShoot)
+                {
+                    // machine gun stuff
+                    if (Input.GetButton("Fire1"))
+                    {
+                        FireWeapon();
+                    }
                 }
             }
 
@@ -70,6 +99,12 @@ public class Player : MonoBehaviour {
                     ReloadWeapon();
                 }
             }
+
+            // change weapons
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                SwitchWeapons();
+            }
         }
 
         // if we die
@@ -77,6 +112,19 @@ public class Player : MonoBehaviour {
         {
             GameManager.gameState = GameManager.GameState.Dead;
             KillPlayer();
+        }
+
+        // machine gun stuff
+        if (!mgCanShoot)
+        {
+            if(mgFireRateCurrent >= 0)
+            {
+                mgFireRateCurrent -= Time.deltaTime;
+            }
+            else
+            {
+                mgCanShoot = true;
+            }
         }
 	}
 
@@ -94,9 +142,27 @@ public class Player : MonoBehaviour {
         {
             isReloading = true;
             pistolAnim.SetBool("ReloadGun", true);
-            yield return new WaitForSeconds(reloadSpeed);
+            yield return new WaitForSeconds(reloadSpeed_Pistol);
             pistolAnim.SetBool("ReloadGun", false);
             pistolAmmo = pistolAmmoMax;
+            isReloading = false;
+        }
+        if (weapon1 == WeaponType.shotgun)
+        {
+            isReloading = true;
+            shotgunAnim.SetBool("ReloadGun", true);
+            yield return new WaitForSeconds(reloadSpeed_Shotgun);
+            shotgunAnim.SetBool("ReloadGun", false);
+            shotgunAmmo = shotgunAmmoMax;
+            isReloading = false;
+        }
+        if (weapon1 == WeaponType.machinegun)
+        {
+            isReloading = true;
+            machinegunAnim.SetBool("ReloadGun", true);
+            yield return new WaitForSeconds(reloadSpeed_Machinegun);
+            machinegunAnim.SetBool("ReloadGun", false);
+            machinegunAmmo = machinegunAmmoMax;
             isReloading = false;
         }
     }
@@ -124,6 +190,7 @@ public class Player : MonoBehaviour {
 
     void FireWeapon()
     {
+        // pistol
         if (weapon1 == WeaponType.pistol)
         {
             if (pistolAmmo > 0)
@@ -136,6 +203,55 @@ public class Player : MonoBehaviour {
                 GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                 temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
                 pistolAmmo--;
+            }
+        }
+        // shotgun
+        if (weapon1 == WeaponType.shotgun)
+        {
+            if (shotgunAmmo > 0)
+            {
+                // if we aren't current in the shooting animation
+                if (!shotgunAnim.GetCurrentAnimatorStateInfo(0).IsName("Shotgun_Fire"))
+                {
+                    shotgunAnim.SetTrigger("FireGun");
+                    //muzzle flash
+                    shotgunEffects.CreateMuzzleFlash();
+
+                    StartCoroutine(MuzzleFlash(shotgunMuzzleLight));
+                    GameObject temp = Instantiate(shotgunPellet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+
+                    // gets all the rigid bodies of the pellets, then fires them
+                    Rigidbody[] pellets = temp.GetComponentsInChildren<Rigidbody>();
+                    foreach (Rigidbody rb in pellets)
+                    {
+                        rb.AddForce(rb.transform.forward * (gunPower * 1), ForceMode.Impulse);
+                    }
+
+                    shotgunAmmo--;
+                }
+            }
+        }
+        // MACHINE GUN
+        if (weapon1 == WeaponType.machinegun)
+        {
+            if (machinegunAmmo > 0)
+            {
+                if (mgCanShoot)
+                {
+                    machinegunAnim.SetTrigger("FireGun");
+                    //muzzle flash
+                    machinegunEffects.CreateMuzzleFlash();
+
+                    StartCoroutine(MuzzleFlash(machinegunMuzzleLight));
+                    GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+                    temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+
+                    machinegunAmmo--;
+                    mgCanShoot = false;
+                    // reset our timer
+                    mgFireRateCurrent = machinegunFireRate;
+                }
+                
             }
         }
     }
@@ -152,6 +268,9 @@ public class Player : MonoBehaviour {
                 WeaponType tempHolder = weapon2;
                 weapon2 = weapon1;
                 weapon1 = tempHolder;
+
+                // change the model too
+                ChangeWeaponModel();
             }
         }
     }
@@ -165,6 +284,42 @@ public class Player : MonoBehaviour {
                 StartCoroutine(Reload());
             }
         }
-        
+        if (weapon1 == WeaponType.shotgun)
+        {
+            if (shotgunAmmo < shotgunAmmoMax)
+            {
+                StartCoroutine(Reload());
+            }
+        }
+        if (weapon1 == WeaponType.machinegun)
+        {
+            if (machinegunAmmo < machinegunAmmoMax)
+            {
+                StartCoroutine(Reload());
+            }
+        }
+
+    }
+
+    void ChangeWeaponModel()
+    {
+        if (weapon1 == WeaponType.pistol)
+        {
+            pistolModel.SetActive(true);
+            shotgunModel.SetActive(false);
+            machinegunModel.SetActive(false);
+        }
+        if (weapon1 == WeaponType.shotgun)
+        {
+            pistolModel.SetActive(false);
+            shotgunModel.SetActive(true);
+            machinegunModel.SetActive(false);
+        }
+        if (weapon1 == WeaponType.machinegun)
+        {
+            pistolModel.SetActive(false);
+            shotgunModel.SetActive(false);
+            machinegunModel.SetActive(true);
+        }
     }
 }

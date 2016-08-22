@@ -10,6 +10,9 @@ public class Grenade : MonoBehaviour {
     public float radius;
     public float power;
 
+    // this is cause we can use this code for the shotgun pellets, so they have more impact, but no explosion effect
+    public bool disableExplosion;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -38,12 +41,18 @@ public class Grenade : MonoBehaviour {
                 // destroy enemies if they are hit
                 if (hit.gameObject.GetComponent<Enemy>())
                 {
-                    hit.gameObject.SendMessage("RandomExplosionDismember");
+                    if (!disableExplosion)
+                    {
+                        hit.gameObject.SendMessage("RandomExplosionDismember");
+                    }
                     hit.gameObject.SendMessage("KillThisEnemy");
                 }
             }
 
-            Instantiate(explosionEffect, gameObject.transform.position, Quaternion.identity);
+            if (!disableExplosion)
+            {
+                Instantiate(explosionEffect, gameObject.transform.position, Quaternion.identity);
+            }
             hasExploded = true;
             Destroy(gameObject);
         }
