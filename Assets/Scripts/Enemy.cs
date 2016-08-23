@@ -64,6 +64,9 @@ public class Enemy : MonoBehaviour {
         {
             StartCoroutine(SelfDestruct());
         }
+
+        GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        GameManager.enemyCount--;
     }
 
     public void RandomExplosionDismember()

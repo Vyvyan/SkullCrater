@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\Grenade.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\RobotFriend.cs" />
      <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />
      <Compile Include="Assets\Scripts\Walker.cs" />
      <Compile Include="Assets\Scripts\WeaponEffects.cs" />

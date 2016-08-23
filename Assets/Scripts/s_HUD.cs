@@ -43,5 +43,10 @@ public class s_HUD : MonoBehaviour {
             }
         }
         else { GUI.Label(new Rect(Screen.width * .9f, Screen.height * .95f, 100, 100), "Reloading!", ammoGUIStyle); }
+
+        if (playerScript.hasGrenadeReady)
+        {
+            GUI.Label(new Rect(Screen.width * .9f, Screen.height * .85f, 100, 100), "Grenade Ready!", ammoGUIStyle);
+        }
 	}
 }

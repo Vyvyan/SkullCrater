@@ -17,6 +17,9 @@ public class Player : MonoBehaviour {
 
     public float health;
 
+    public float grenadeJuiceMax, GrenadeJuiceCurrent, grenadeJuicePerKill;
+    public bool hasGrenadeReady;
+
     public Animator pistolAnim, shotgunAnim, machinegunAnim;
     public WeaponEffects pistolEffects, shotgunEffects, machinegunEffects;
     public Light pistolMuzzleLight, shotgunMuzzleLight, machinegunMuzzleLight;
@@ -36,6 +39,10 @@ public class Player : MonoBehaviour {
         // start with just a pistol
         //weapon1 = WeaponType.pistol;
         //weapon2 = WeaponType.none;
+
+        // start with a grenade at the ready
+        hasGrenadeReady = true;
+        GrenadeJuiceCurrent = grenadeJuiceMax;
 
         mainCamera = Camera.main;
         //start with full clip
@@ -90,8 +97,13 @@ public class Player : MonoBehaviour {
             // grenade
             if (Input.GetButtonDown("Fire2"))
             {
-                GameObject temp = Instantiate(grenadeObject, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
-                temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                if (hasGrenadeReady)
+                {
+                    GameObject temp = Instantiate(grenadeObject, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+                    temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                    GrenadeJuiceCurrent = 0;
+                    hasGrenadeReady = false;
+                }
             }
 
             // reload
@@ -129,6 +141,12 @@ public class Player : MonoBehaviour {
                 mgCanShoot = true;
             }
         }
+
+        // gaining grenade stuff
+        if (GrenadeJuiceCurrent >= grenadeJuiceMax)
+        {
+            hasGrenadeReady = true;
+        }
 	}
 
     void OnTriggerEnter(Collider other)
@@ -136,6 +154,16 @@ public class Player : MonoBehaviour {
         if (other.gameObject.tag == "Enemy")
         {
             TakeDamage();
+        }
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Gold")
+        {
+            GameManager.heldGold += 25;
+            Debug.Log("Our Current Held Gold: " + GameManager.heldGold.ToString());
+            Destroy(other.gameObject);
         }
     }
 
@@ -182,6 +210,7 @@ public class Player : MonoBehaviour {
         // we add a slight random rotation to the camera to give a good effect
         tempCam.GetComponent<Rigidbody>().AddTorque(new Vector3(Random.Range(10,30), Random.Range(10,30), Random.Range(10,30)));
         gameObject.SetActive(false);
+        GameManager.gameState = GameManager.GameState.Dead;
     }
 
     IEnumerator MuzzleFlash(Light light)
@@ -323,6 +352,14 @@ public class Player : MonoBehaviour {
             pistolModel.SetActive(false);
             shotgunModel.SetActive(false);
             machinegunModel.SetActive(true);
+        }
+    }
+
+    public void AddGrenadeJuice()
+    {
+        if (GrenadeJuiceCurrent < grenadeJuiceMax)
+        {
+            GrenadeJuiceCurrent += grenadeJuicePerKill;
         }
     }
 }

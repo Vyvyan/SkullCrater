@@ -40,7 +40,7 @@ public class FlyingSkull : MonoBehaviour {
             if (isAlive)
             {
                 KillThisEnemy();
-                rb.AddExplosionForce(1500, other.contacts[0].point, 10);
+                rb.AddExplosionForce(2000, other.contacts[0].point, 10);
                 rb.AddTorque(new Vector3(Random.Range(15, 45), Random.Range(15, 45), Random.Range(15, 45)));
             }
         }
@@ -55,5 +55,8 @@ public class FlyingSkull : MonoBehaviour {
 
         AutoDestroy tempAutoDestroy = gameObject.AddComponent<AutoDestroy>();
         tempAutoDestroy.timeUntilDestroy = 10;
+
+        GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        GameManager.enemyCount--;
     }
 }
