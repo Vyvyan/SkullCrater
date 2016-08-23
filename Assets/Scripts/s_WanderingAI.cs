@@ -10,24 +10,40 @@ public class s_WanderingAI : MonoBehaviour
     private Transform target;
     private NavMeshAgent agent;
     private float timer;
+    public bool wander;
+
+    GameObject player;
 
     // Use this for initialization
     void OnEnable()
     {
         agent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player");
         timer = wanderTimer;
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
-
-        if (timer >= wanderTimer)
+        if (wander)
         {
-            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
-            agent.SetDestination(newPos);
-            timer = 0;
+            timer += Time.deltaTime;
+
+            if (timer >= wanderTimer)
+            {
+                Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+                agent.SetDestination(newPos);
+                timer = 0;
+            }
+
+            if (Vector3.Distance(gameObject.transform.position, player.transform.position) < 50)
+            {
+                wander = false;
+            }
+        }
+        else
+        {
+            agent.SetDestination(player.transform.position);
         }
     }
 

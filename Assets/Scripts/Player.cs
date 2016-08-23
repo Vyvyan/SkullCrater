@@ -79,7 +79,10 @@ public class Player : MonoBehaviour {
                     // machine gun stuff
                     if (Input.GetButton("Fire1"))
                     {
-                        FireWeapon();
+                        if (!isReloading)
+                        {
+                            FireWeapon();
+                        }
                     }
                 }
             }
@@ -128,7 +131,7 @@ public class Player : MonoBehaviour {
         }
 	}
 
-    void OnCollisionEnter(Collision other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Enemy")
         {

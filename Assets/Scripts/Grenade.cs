@@ -35,9 +35,6 @@ public class Grenade : MonoBehaviour {
             {
                 Rigidbody rb = hit.GetComponent<Rigidbody>();
 
-                if (rb != null)
-                    rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
-
                 // destroy enemies if they are hit
                 if (hit.gameObject.GetComponent<Enemy>())
                 {
@@ -47,6 +44,14 @@ public class Grenade : MonoBehaviour {
                     }
                     hit.gameObject.SendMessage("KillThisEnemy");
                 }
+                // destroy enemies if they are hit and a skull
+                if (hit.gameObject.GetComponent<FlyingSkull>())
+                {
+                    hit.gameObject.SendMessage("KillThisEnemy");
+                }
+
+                if (rb != null)
+                    rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
             }
 
             if (!disableExplosion)
