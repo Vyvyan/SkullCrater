@@ -4,7 +4,7 @@ using System.Collections;
 public class Enemy : MonoBehaviour {
 
     public int health;
-    public enum EnemyType { Skeleton, FlyingSkull };
+    public enum EnemyType { Skeleton, FlyingSkull, ToxicSkeleton };
     public EnemyType enemyType;
 
     bool hasStartedToAutoDestroySelf;
@@ -14,6 +14,9 @@ public class Enemy : MonoBehaviour {
     Animator animator;
 
     GameObject triggerObject;
+
+    public GameObject toxicGrenade;
+    bool hasSpawnedToxGrenade;
 
     // Use this for initialization
     void Start ()
@@ -58,6 +61,32 @@ public class Enemy : MonoBehaviour {
 
             }
         }
+        else if (enemyType == EnemyType.ToxicSkeleton)
+        {
+            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
+            Destroy(aiScript);
+            Destroy(agent);
+            Destroy(animator);
+
+            // gets all the parts and deparents them
+            int children = transform.childCount;
+            for (int i = children - 1; i > 0; i--)
+            {
+                if (transform.GetChild(i).gameObject.tag != "Enemy")
+                {
+                    transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
+                    transform.GetChild(i).SetParent(null);
+                }
+
+            }
+
+            if (!hasSpawnedToxGrenade)
+            {
+                StartCoroutine(delayedToxicExplosion());
+                hasSpawnedToxGrenade = true;
+            }
+        }
 
         // now we destroy ourselves after a bit
         if (!hasStartedToAutoDestroySelf)
@@ -65,7 +94,11 @@ public class Enemy : MonoBehaviour {
             StartCoroutine(SelfDestruct());
         }
 
-        GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        // put this if statement here because I got an error when killing an enemy post death
+        if (GameManager.gameState == GameManager.GameState.Playing)
+        {
+            GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        }
         GameManager.enemyCount--;
     }
 
@@ -89,5 +122,11 @@ public class Enemy : MonoBehaviour {
         hasStartedToAutoDestroySelf = true;
         yield return new WaitForSeconds(10);
         Destroy(gameObject);
+    }
+
+    IEnumerator delayedToxicExplosion()
+    {
+        yield return new WaitForSeconds(.5f);
+        Instantiate(toxicGrenade, gameObject.transform.position, Quaternion.identity);
     }
 }

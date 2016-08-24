@@ -155,10 +155,7 @@ public class Player : MonoBehaviour {
         {
             TakeDamage();
         }
-    }
 
-    void OnCollisionEnter(Collision other)
-    {
         if (other.gameObject.tag == "Gold")
         {
             GameManager.heldGold += 25;

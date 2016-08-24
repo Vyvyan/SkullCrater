@@ -49,13 +49,16 @@
      <Compile Include="Assets\Scripts\AutoDestroy.cs" />
      <Compile Include="Assets\Scripts\AutoDestroyOnImpact.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
+     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\FlyingSkull.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Grenade.cs" />
+     <Compile Include="Assets\Scripts\KeepLightAboveObject.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\RobotFriend.cs" />
      <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />
+     <Compile Include="Assets\Scripts\ToxicFlyingSkull.cs" />
      <Compile Include="Assets\Scripts\Walker.cs" />
      <Compile Include="Assets\Scripts\WeaponEffects.cs" />
      <Compile Include="Assets\Scripts\s_HUD.cs" />

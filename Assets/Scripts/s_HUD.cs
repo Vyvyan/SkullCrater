@@ -46,7 +46,9 @@ public class s_HUD : MonoBehaviour {
 
         if (playerScript.hasGrenadeReady)
         {
-            GUI.Label(new Rect(Screen.width * .9f, Screen.height * .85f, 100, 100), "Grenade Ready!", ammoGUIStyle);
+            GUI.Label(new Rect(Screen.width * .9f, Screen.height * .85f, 100, 100), "Grenade HYPE", ammoGUIStyle);
         }
-	}
+
+        GUI.Label(new Rect(Screen.width * .9f, Screen.height * .75f, 100, 100), "G: " + GameManager.heldGold.ToString(), ammoGUIStyle);
+    }
 }

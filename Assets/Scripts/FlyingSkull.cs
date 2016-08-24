@@ -6,8 +6,9 @@ public class FlyingSkull : MonoBehaviour {
     GameObject player;
     Rigidbody rb;
     public float speed;
-    bool isAlive;
+    public bool isAlive;
     GameObject triggerObject;
+    public bool isToxic;
 
 	// Use this for initialization
 	void Start ()
