@@ -9,6 +9,9 @@ public class Player : MonoBehaviour {
     public float gunPower;
     Camera mainCamera;
     public GameObject deadCam;
+    GameManager gameManager;
+
+    public Light playerLight;
 
     public int pistolAmmoMax, shotgunAmmoMax, machinegunAmmoMax;
     public int pistolAmmo, shotgunAmmo, machinegunAmmo;
@@ -37,8 +40,10 @@ public class Player : MonoBehaviour {
 	void Start ()
     {
         // start with just a pistol
-        //weapon1 = WeaponType.pistol;
-        //weapon2 = WeaponType.none;
+        weapon1 = WeaponType.pistol;
+        weapon2 = WeaponType.none;
+
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         // start with a grenade at the ready
         hasGrenadeReady = true;
@@ -114,7 +119,10 @@ public class Player : MonoBehaviour {
                     ReloadWeapon();
                 }
             }
+        }
 
+        if (GameManager.gameState != GameManager.GameState.Dead)
+        {
             // change weapons
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -122,8 +130,8 @@ public class Player : MonoBehaviour {
             }
         }
 
-        // if we die
-        if (health <= 0)
+            // if we die
+            if (health <= 0)
         {
             GameManager.gameState = GameManager.GameState.Dead;
             KillPlayer();
@@ -161,6 +169,17 @@ public class Player : MonoBehaviour {
             GameManager.heldGold += 25;
             Debug.Log("Our Current Held Gold: " + GameManager.heldGold.ToString());
             Destroy(other.gameObject);
+        }
+
+        // switch game modes when we hit the planet
+        if (GameManager.gameState == GameManager.GameState.PreGame)
+        {
+            if (other.gameObject.tag == "StartGameTrigger")
+            {
+                GameManager.gameState = GameManager.GameState.Playing;
+                // turn on player light
+                playerLight.intensity = 4;
+            }
         }
     }
 
@@ -357,6 +376,152 @@ public class Player : MonoBehaviour {
         if (GrenadeJuiceCurrent < grenadeJuiceMax)
         {
             GrenadeJuiceCurrent += grenadeJuicePerKill;
+        }
+    }
+
+    public void EquipWeapon(string weaponName)
+    {
+        // if we don't have a weapon 2
+        if (weapon2 == WeaponType.none)
+        {
+            // if we're trying to equip a pistol
+            if (weaponName == "Pistol")
+            {
+                // if we don't already have a pistol
+                if (weapon1 != WeaponType.pistol)
+                {
+                    // move our weapon 1 to weapon 2 and equip a pistol as weapon 1
+                    weapon2 = weapon1;
+                    weapon1 = WeaponType.pistol;
+
+                    ChangeWeaponModel();
+                }
+            }
+            // if we're trying to equip a Machine Gun
+            if (weaponName == "MachineGun")
+            {
+                // if the machine gun is unlocked
+                if (GameManager.machinegunUnlocked)
+                {
+                    // if we don't already have a machinegun
+                    if (weapon1 != WeaponType.machinegun)
+                    {
+                        // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
+                        weapon2 = weapon1;
+                        weapon1 = WeaponType.machinegun;
+
+                        ChangeWeaponModel();
+                    }
+                }
+                // else, buy the machine gun
+                else
+                {
+                    // do we have enough gold to buy the machine gun?
+                    if (GameManager.storedGold >= GameManager.machinegunWeaponValue)
+                    {
+                        // buy it
+                        GameManager.storedGold -= GameManager.machinegunWeaponValue;
+                        GameManager.machinegunUnlocked = true;
+                        gameManager.ChangeEquipButtonText();
+                    }
+                }
+                
+            }
+            // if we're trying to equip a pistol
+            if (weaponName == "Shotgun")
+            {
+                // if the machine gun is unlocked
+                if (GameManager.shotgunUnlocked)
+                {
+                    // if we don't already have a shotgun
+                    if (weapon1 != WeaponType.shotgun)
+                    {
+                        // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
+                        weapon2 = weapon1;
+                        weapon1 = WeaponType.shotgun;
+
+                        ChangeWeaponModel();
+                    }
+                }
+                // else, buy the shotgun gun
+                else
+                {
+                    // do we have enough gold to buy the machine gun?
+                    if (GameManager.storedGold >= GameManager.shotgunWeaponValue)
+                    {
+                        // buy it
+                        GameManager.storedGold -= GameManager.shotgunWeaponValue;
+                        GameManager.shotgunUnlocked = true;
+                        gameManager.ChangeEquipButtonText();
+                    }
+                }
+            }
+        }
+        // WE DO HAVE A SECOND WEAPON
+        else
+        {
+            if (weaponName == "Pistol")
+            {
+                // if neither of our guns is a pistol
+                if (weapon1 != WeaponType.pistol && weapon2 != WeaponType.pistol)
+                {
+                    // equip the pistol
+                    weapon1 = WeaponType.pistol;
+                    ChangeWeaponModel();
+                }
+            }
+            if (weaponName == "MachineGun")
+            {
+                // if neither of our guns is a machinegun
+                if (weapon1 != WeaponType.machinegun && weapon2 != WeaponType.machinegun)
+                {
+                    // if the machine gun is unlocked
+                    if (GameManager.machinegunUnlocked)
+                    {
+                        // equip the machine gun
+                        weapon1 = WeaponType.machinegun;
+                        ChangeWeaponModel();
+                    }
+                    // else, buy the machine gun
+                    else
+                    {
+                        // do we have enough gold to buy the machine gun?
+                        if (GameManager.storedGold >= GameManager.machinegunWeaponValue)
+                        {
+                            // buy it
+                            GameManager.storedGold -= GameManager.machinegunWeaponValue;
+                            GameManager.machinegunUnlocked = true;
+                            gameManager.ChangeEquipButtonText();
+                        }
+                    }
+                }
+            }
+            if (weaponName == "Shotgun")
+            {
+                // if neither of our guns is a shotgun
+                if (weapon1 != WeaponType.shotgun && weapon2 != WeaponType.shotgun)
+                {
+                    // if the machine gun is unlocked
+                    if (GameManager.shotgunUnlocked)
+                    {
+                        // equip the machine gun
+                        weapon1 = WeaponType.shotgun;
+                        ChangeWeaponModel();
+                    }
+                    // else, buy the machine gun
+                    else
+                    {
+                        // do we have enough gold to buy the machine gun?
+                        if (GameManager.storedGold >= GameManager.shotgunWeaponValue)
+                        {
+                            // buy it
+                            GameManager.storedGold -= GameManager.shotgunWeaponValue;
+                            GameManager.shotgunUnlocked = true;
+                            gameManager.ChangeEquipButtonText();
+                        }
+                    }
+                }
+            }
         }
     }
 }
