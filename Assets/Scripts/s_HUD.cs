@@ -11,7 +11,7 @@ public class s_HUD : MonoBehaviour {
     public GUIStyle ammoGUIStyle;
 
     public Text gameTimer, ammo, money, droppedMoney, killedBy, enemiesKilled, goldDepositted, endTime;
-
+    public Image grenadeImage;
     public GameObject playingGroup, deadGroup;
     bool hasSwitchedToDeadGroup;
 
@@ -36,6 +36,9 @@ public class s_HUD : MonoBehaviour {
 
             // displays the gold
             money.text = GameManager.heldGold.ToString();
+
+            // updates the grenade radial effect
+            grenadeImage.fillAmount = playerScript.GrenadeJuiceCurrent / 100;
         }
         if (GameManager.gameState != GameManager.GameState.Dead)
         {
