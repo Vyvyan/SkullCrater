@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class s_HUD : MonoBehaviour {
 
@@ -9,46 +10,93 @@ public class s_HUD : MonoBehaviour {
     Player playerScript;
     public GUIStyle ammoGUIStyle;
 
+    public Text gameTimer, ammo, money, droppedMoney, killedBy, enemiesKilled, goldDepositted, endTime;
+
+    public GameObject playingGroup, deadGroup;
+    bool hasSwitchedToDeadGroup;
+
 	// Use this for initialization
 	void Start () 
 	{
-        playerScript = gameObject.GetComponent<Player>();
+        // resets the text on screen when the game starts
+        gameTimer.text = ammo.text = money.text = "";
+        // makes sure the dead hud is disabled when we start
+        deadGroup.SetActive(false);
+        playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        hasSwitchedToDeadGroup = false;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		 
-	}
+        if (GameManager.gameState == GameManager.GameState.Playing)
+        {
+            // display the game timer
+            gameTimer.text = "Expedition Time: " + GameManager.gameTimer.ToString("F2");
+
+            // displays the gold
+            money.text = GameManager.heldGold.ToString();
+        }
+        if (GameManager.gameState != GameManager.GameState.Dead)
+        {
+            // display the ammo
+            if (!playerScript.isReloading)
+            {
+                if (playerScript.weapon1 == Player.WeaponType.pistol)
+                {
+                    ammo.text = playerScript.pistolAmmo.ToString();
+                }
+                if (playerScript.weapon1 == Player.WeaponType.shotgun)
+                {
+                    ammo.text = playerScript.shotgunAmmo.ToString();
+                }
+                if (playerScript.weapon1 == Player.WeaponType.machinegun)
+                {
+                    ammo.text = playerScript.machinegunAmmo.ToString();
+                }
+            }
+            else
+            {
+                ammo.text = "Reloading!";
+            }
+        }
+
+        // switch to dead hud if we die
+        if (GameManager.gameState == GameManager.GameState.Dead)
+        {
+            if (!hasSwitchedToDeadGroup)
+            {
+                SwitchToDeadHUD();
+                hasSwitchedToDeadGroup = true;
+            }
+        }
+    }
 
 	// GUI
 	void OnGUI()
 	{
-		GUI.DrawTexture(new Rect((Screen.width / 2) - (crosshairSize / 2), (Screen.height / 2) - (crosshairSize / 2), 
-		                         crosshairSize,crosshairSize), texture_Crosshair);
-
-        if (!playerScript.isReloading)
+        // cross hair cause it works and I'm lazy
+        if (GameManager.gameState != GameManager.GameState.Dead)
         {
-            if (playerScript.weapon1 == Player.WeaponType.pistol)
-            {
-                GUI.Label(new Rect(Screen.width * .9f, Screen.height * .95f, 100, 100), playerScript.pistolAmmo.ToString(), ammoGUIStyle);
-            }
-            if (playerScript.weapon1 == Player.WeaponType.shotgun)
-            {
-                GUI.Label(new Rect(Screen.width * .9f, Screen.height * .95f, 100, 100), playerScript.shotgunAmmo.ToString(), ammoGUIStyle);
-            }
-            if (playerScript.weapon1 == Player.WeaponType.machinegun)
-            {
-                GUI.Label(new Rect(Screen.width * .9f, Screen.height * .95f, 100, 100), playerScript.machinegunAmmo.ToString(), ammoGUIStyle);
-            }
+            GUI.DrawTexture(new Rect((Screen.width / 2) - (crosshairSize / 2), (Screen.height / 2) - (crosshairSize / 2),
+                                     crosshairSize, crosshairSize), texture_Crosshair);
         }
-        else { GUI.Label(new Rect(Screen.width * .9f, Screen.height * .95f, 100, 100), "Reloading!", ammoGUIStyle); }
+    }
 
-        if (playerScript.hasGrenadeReady)
-        {
-            GUI.Label(new Rect(Screen.width * .9f, Screen.height * .85f, 100, 100), "Grenade HYPE", ammoGUIStyle);
-        }
+    void SwitchToDeadHUD()
+    {
+        droppedMoney.text = "You dropped " + money.text + " G!";
+        killedBy.text = GameManager.enemyThatKilledPlayer;
+        goldDepositted.text = GameManager.thisSessionGoldGained.ToString();
+        enemiesKilled.text = GameManager.enemiesKilledThisSession.ToString();
+        endTime.text = GameManager.gameTimer.ToString();
+        playingGroup.SetActive(false);
+        deadGroup.SetActive(true);
+    }
 
-        GUI.Label(new Rect(Screen.width * .9f, Screen.height * .75f, 100, 100), "G: " + GameManager.heldGold.ToString(), ammoGUIStyle);
+    void DisplayPlayingHud()
+    {
+        playingGroup.SetActive(true);
+        deadGroup.SetActive(false);
     }
 }

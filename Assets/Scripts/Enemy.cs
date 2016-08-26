@@ -100,6 +100,7 @@ public class Enemy : MonoBehaviour {
             GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
         }
         GameManager.enemyCount--;
+        GameManager.enemiesKilledThisSession++;
     }
 
     public void RandomExplosionDismember()

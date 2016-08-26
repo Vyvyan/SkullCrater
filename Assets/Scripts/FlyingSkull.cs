@@ -62,5 +62,6 @@ public class FlyingSkull : MonoBehaviour {
             GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
         }
         GameManager.enemyCount--;
+        GameManager.enemiesKilledThisSession++;
     }
 }

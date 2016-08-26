@@ -21,12 +21,9 @@ public class Skeleton_Body_Part : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.relativeVelocity.magnitude > 1)
+        if (other.gameObject.tag == "Bullet")
         {
-            if (other.gameObject.tag == "Bullet")
-            {
-                TakeDamage();
-            }
+            TakeDamage();
         }
     }
 

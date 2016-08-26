@@ -163,13 +163,12 @@ public class Player : MonoBehaviour {
     {
         if (other.gameObject.tag == "Enemy")
         {
-            TakeDamage();
+            TakeDamage(other.gameObject.name);
         }
 
         if (other.gameObject.tag == "Gold")
         {
             GameManager.heldGold += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
-            GameManager.thisSessionGoldGained += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
             gameManager.goldBonusLevel++;
             Destroy(other.gameObject);
         }
@@ -190,6 +189,7 @@ public class Player : MonoBehaviour {
         {
             if (GameManager.heldGold > 0)
             {
+                GameManager.thisSessionGoldGained += GameManager.heldGold;
                 GameManager.storedGold += GameManager.heldGold;
                 PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 GameManager.heldGold = 0;
@@ -229,9 +229,12 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void TakeDamage()
+    public void TakeDamage(string thingThatHitUs)
     {
         health--;
+        // send the name of the enemy that hit us to the game manager for easy access
+        GameManager.enemyThatKilledPlayer = thingThatHitUs;
+        Debug.Log(thingThatHitUs);
     }
 
     public void KillPlayer()

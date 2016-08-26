@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 
     public static int enemyCount;
     public int enemyCountMax;
+    public static int enemiesKilledThisSession;
 
     public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying;
 
@@ -27,9 +28,13 @@ public class GameManager : MonoBehaviour {
     public static int thisSessionGoldGained;
     public int goldValue, goldBonusAmount, goldBonusLevel;
 
-    float gameTimer;
+    public static string enemyThatKilledPlayer;
 
-    public static int shotgunWeaponValue = 400, machinegunWeaponValue = 400;
+    public static float gameTimer;
+    // we use this variable so we only have to round it to an int once, and not check it a bunch
+    int comparisonTimer;
+
+    public static int shotgunWeaponValue = 200, machinegunWeaponValue = 200;
 
     public static bool shotgunUnlocked, machinegunUnlocked;
     public Text shotgunEquipButtonText, machinegunEquipButtonText, storedGoldText;
@@ -41,6 +46,7 @@ public class GameManager : MonoBehaviour {
         LoadPlayerPrefs();
 
         thisSessionGoldGained = 0;
+        enemiesKilledThisSession = 0;
         gameTimer = 0;
 
         gameState = GameState.PreGame;
@@ -61,6 +67,35 @@ public class GameManager : MonoBehaviour {
 
         if (gameState == GameState.Playing)
         {
+            // GAME TIMER STUFF
+            gameTimer += Time.deltaTime;
+            comparisonTimer = Mathf.RoundToInt(gameTimer);
+
+   
+            // increase difficulty
+            if (comparisonTimer == 60)
+            {
+                chanceToSpawnSpecialFlying = 3;
+                chanceToSpawnSpecialSkeleton = 3;
+                spawnTimer = 1f;
+                flyingSpawnTimer = 10f;
+            }
+            else if(comparisonTimer == 140)
+            {
+                chanceToSpawnSpecialFlying = 10;
+                chanceToSpawnSpecialSkeleton = 10;
+                spawnTimer = .9f;
+                flyingSpawnTimer = 4f;
+            }
+            else if (comparisonTimer == 200)
+            {
+                chanceToSpawnSpecialFlying = 25;
+                chanceToSpawnSpecialSkeleton = 25;
+                spawnTimer = .7f;
+                flyingSpawnTimer = 2f;
+            }
+
+
             if (enemyCount < enemyCountMax)
             {
                 // spawning skeletons
@@ -163,18 +198,15 @@ public class GameManager : MonoBehaviour {
 
         if (gameState == GameState.Dead)
         {
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                Application.LoadLevel(Application.loadedLevel);
+            }
             if (!hasKilledAllEnemiesAfterPlayerDeath)
             {
                 StartCoroutine(KillAllEnemies());
                 hasKilledAllEnemiesAfterPlayerDeath = true;
             }
-        }
-
-        // TEST STUFF
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            storedGold += 1;
-            PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
         }
 	}
 
