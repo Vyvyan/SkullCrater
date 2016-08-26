@@ -181,6 +181,17 @@ public class Player : MonoBehaviour {
                 playerLight.intensity = 4;
             }
         }
+
+        // stores gold when touching the beam
+        if (other.gameObject.tag == "Beam")
+        {
+            if (GameManager.heldGold > 0)
+            {
+                GameManager.storedGold += GameManager.heldGold;
+                PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                GameManager.heldGold = 0;
+            }
+        }
     }
 
     IEnumerator Reload()
@@ -422,6 +433,9 @@ public class Player : MonoBehaviour {
                         // buy it
                         GameManager.storedGold -= GameManager.machinegunWeaponValue;
                         GameManager.machinegunUnlocked = true;
+                        // save it that we unlocked the machinegun
+                        PlayerPrefs.SetInt("machinegunUnlocked", 1);
+                        PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                         gameManager.ChangeEquipButtonText();
                     }
                 }
@@ -452,6 +466,9 @@ public class Player : MonoBehaviour {
                         // buy it
                         GameManager.storedGold -= GameManager.shotgunWeaponValue;
                         GameManager.shotgunUnlocked = true;
+                        // save it that we unlocked the shotgun
+                        PlayerPrefs.SetInt("shotgunUnlocked", 1);
+                        PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                         gameManager.ChangeEquipButtonText();
                     }
                 }
@@ -491,6 +508,9 @@ public class Player : MonoBehaviour {
                             // buy it
                             GameManager.storedGold -= GameManager.machinegunWeaponValue;
                             GameManager.machinegunUnlocked = true;
+                            // save it that we unlocked the machine gun
+                            PlayerPrefs.SetInt("machinegunUnlocked", 1);
+                            PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                             gameManager.ChangeEquipButtonText();
                         }
                     }
@@ -517,6 +537,9 @@ public class Player : MonoBehaviour {
                             // buy it
                             GameManager.storedGold -= GameManager.shotgunWeaponValue;
                             GameManager.shotgunUnlocked = true;
+                            // save it that we unlocked the shotgun
+                            PlayerPrefs.SetInt("shotgunUnlocked", 1);
+                            PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                             gameManager.ChangeEquipButtonText();
                         }
                     }

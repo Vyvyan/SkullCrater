@@ -20,16 +20,19 @@ public class GameManager : MonoBehaviour {
     float spawnTimerCurrent;
 
     public static int heldGold;
-    public static int storedGold = 400;
+    public static int storedGold;
 
     public static int shotgunWeaponValue = 400, machinegunWeaponValue = 400;
 
     public static bool shotgunUnlocked, machinegunUnlocked;
-    public Text shotgunEquipButtonText, machinegunEquipButtonText;
+    public Text shotgunEquipButtonText, machinegunEquipButtonText, storedGoldText;
 
 	// Use this for initialization
 	void Start ()
     {
+        // LOAD OUR SAVED STUFF
+        LoadPlayerPrefs();
+
         gameState = GameState.PreGame;
         editorLight.SetActive(false);
 
@@ -40,6 +43,9 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        // updates gold on weapon screen
+        storedGoldText.text = "Balance: " + storedGold.ToString() + " G";
+
         if (gameState == GameState.Playing)
         {
             if (enemyCount < enemyCountMax)
@@ -85,6 +91,13 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+
+        // TEST STUFF
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            storedGold += 1;
+            PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+        }
 	}
 
     public void ChangeEquipButtonText()
@@ -105,6 +118,23 @@ public class GameManager : MonoBehaviour {
         else
         {
             machinegunEquipButtonText.text = machinegunWeaponValue.ToString() + " g";
+        }
+    }
+
+    public void LoadPlayerPrefs()
+    {
+        // load our gold
+        storedGold = PlayerPrefs.GetInt("storedGold", 0);
+
+        // unlocked shotgun
+        if (PlayerPrefs.GetInt("shotgunUnlocked", 0) == 1)
+        {
+            shotgunUnlocked = true;
+        }
+        // unlocked MachineGun
+        if (PlayerPrefs.GetInt("machinegunUnlocked", 0) == 1)
+        {
+            machinegunUnlocked = true;
         }
     }
 }

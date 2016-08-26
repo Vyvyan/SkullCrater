@@ -28,34 +28,37 @@ public class RobotFriend : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (robotState == RobotState.gettingNewTarget)
+        if (GameManager.gameState == GameManager.GameState.Playing)
         {
-            int rnd = Random.Range(0, goldTargets.Length - 1);
-            target = goldTargets[rnd];
-            agent.SetDestination(target.position);
-            robotState = RobotState.moving;
-        }
-        else if (robotState == RobotState.moving)
-        {
-            float dist = agent.remainingDistance;
-            if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+            if (robotState == RobotState.gettingNewTarget)
             {
-                miningTimerCurrent = 0;
-                robotState = RobotState.mining;
-                anim.SetBool("isDigging", true);
+                int rnd = Random.Range(0, goldTargets.Length - 1);
+                target = goldTargets[rnd];
+                agent.SetDestination(target.position);
+                robotState = RobotState.moving;
             }
-        }
-        else if (robotState == RobotState.mining)
-        {
-            if (miningTimerCurrent <= miningTimer)
+            else if (robotState == RobotState.moving)
             {
-                miningTimerCurrent += Time.deltaTime;
+                float dist = agent.remainingDistance;
+                if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+                {
+                    miningTimerCurrent = 0;
+                    robotState = RobotState.mining;
+                    anim.SetBool("isDigging", true);
+                }
             }
-            else
+            else if (robotState == RobotState.mining)
             {
-                SpawnGold();
-                robotState = RobotState.gettingNewTarget;
-                anim.SetBool("isDigging", false);
+                if (miningTimerCurrent <= miningTimer)
+                {
+                    miningTimerCurrent += Time.deltaTime;
+                }
+                else
+                {
+                    SpawnGold();
+                    robotState = RobotState.gettingNewTarget;
+                    anim.SetBool("isDigging", false);
+                }
             }
         }
     }
