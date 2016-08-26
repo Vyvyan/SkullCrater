@@ -22,6 +22,7 @@ public class Player : MonoBehaviour {
 
     public float grenadeJuiceMax, GrenadeJuiceCurrent, grenadeJuicePerKill;
     public bool hasGrenadeReady;
+    bool canGainGrenadeJuice;
 
     public Animator pistolAnim, shotgunAnim, machinegunAnim;
     public WeaponEffects pistolEffects, shotgunEffects, machinegunEffects;
@@ -108,6 +109,7 @@ public class Player : MonoBehaviour {
                     temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
                     GrenadeJuiceCurrent = 0;
                     hasGrenadeReady = false;
+                    StartCoroutine(GrenadeJuiceCoolDown());
                 }
             }
 
@@ -166,8 +168,9 @@ public class Player : MonoBehaviour {
 
         if (other.gameObject.tag == "Gold")
         {
-            GameManager.heldGold += 25;
-            Debug.Log("Our Current Held Gold: " + GameManager.heldGold.ToString());
+            GameManager.heldGold += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
+            GameManager.thisSessionGoldGained += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
+            gameManager.goldBonusLevel++;
             Destroy(other.gameObject);
         }
 
@@ -190,6 +193,7 @@ public class Player : MonoBehaviour {
                 GameManager.storedGold += GameManager.heldGold;
                 PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 GameManager.heldGold = 0;
+                gameManager.goldBonusLevel = 0;
             }
         }
     }
@@ -384,9 +388,12 @@ public class Player : MonoBehaviour {
 
     public void AddGrenadeJuice()
     {
-        if (GrenadeJuiceCurrent < grenadeJuiceMax)
+        if (canGainGrenadeJuice)
         {
-            GrenadeJuiceCurrent += grenadeJuicePerKill;
+            if (GrenadeJuiceCurrent < grenadeJuiceMax)
+            {
+                GrenadeJuiceCurrent += grenadeJuicePerKill;
+            }
         }
     }
 
@@ -546,5 +553,12 @@ public class Player : MonoBehaviour {
                 }
             }
         }
+    }
+
+    IEnumerator GrenadeJuiceCoolDown()
+    {
+        canGainGrenadeJuice = false;
+        yield return new WaitForSeconds(3);
+        canGainGrenadeJuice = true;
     }
 }

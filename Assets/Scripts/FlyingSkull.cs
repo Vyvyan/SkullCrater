@@ -57,7 +57,10 @@ public class FlyingSkull : MonoBehaviour {
         AutoDestroy tempAutoDestroy = gameObject.AddComponent<AutoDestroy>();
         tempAutoDestroy.timeUntilDestroy = 10;
 
-        GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        if (GameManager.gameState == GameManager.GameState.Playing)
+        {
+            GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+        }
         GameManager.enemyCount--;
     }
 }

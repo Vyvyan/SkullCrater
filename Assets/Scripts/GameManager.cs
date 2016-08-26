@@ -6,21 +6,28 @@ public class GameManager : MonoBehaviour {
 
     public enum GameState { Playing, Dead, PreGame};
     static public GameState gameState;
+    bool hasKilledAllEnemiesAfterPlayerDeath;
 
     public GameObject editorLight;
 
-    public GameObject skeletonEnemy, flyingskullEnemy;
+    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull;
     public GameObject[] enemySpawns;
     public GameObject[] flyingenemySpawns;
 
     public static int enemyCount;
     public int enemyCountMax;
 
-    public float spawnTimer;
-    float spawnTimerCurrent;
+    public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying;
+
+    public float spawnTimer, flyingSpawnTimer;
+    float spawnTimerCurrent, flyingSpawnTimerCurrent;
 
     public static int heldGold;
     public static int storedGold;
+    public static int thisSessionGoldGained;
+    public int goldValue, goldBonusAmount, goldBonusLevel;
+
+    float gameTimer;
 
     public static int shotgunWeaponValue = 400, machinegunWeaponValue = 400;
 
@@ -33,6 +40,9 @@ public class GameManager : MonoBehaviour {
         // LOAD OUR SAVED STUFF
         LoadPlayerPrefs();
 
+        thisSessionGoldGained = 0;
+        gameTimer = 0;
+
         gameState = GameState.PreGame;
         editorLight.SetActive(false);
 
@@ -44,24 +54,22 @@ public class GameManager : MonoBehaviour {
 	void Update ()
     {
         // updates gold on weapon screen
-        storedGoldText.text = "Balance: " + storedGold.ToString() + " G";
+        if (gameState == GameState.PreGame)
+        {
+            storedGoldText.text = "Balance: " + storedGold.ToString() + " G";
+        }
 
         if (gameState == GameState.Playing)
         {
             if (enemyCount < enemyCountMax)
             {
+                // spawning skeletons
                 if (spawnTimerCurrent <= spawnTimer)
                 {
                     spawnTimerCurrent += Time.deltaTime;
                 }
                 else
                 {
-                    /*
-                    int rndLocation = Random.Range(0, enemySpawns.Length - 1);
-                    Instantiate(skeletonEnemy, enemySpawns[rndLocation].transform.position, Quaternion.identity);
-                    enemyCount++;
-                    */
-
                     // SPAWN A SKELETON
                     foreach(GameObject spawner in enemySpawns)
                     {
@@ -77,18 +85,88 @@ public class GameManager : MonoBehaviour {
 
                     GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Skeleton_Spawn");
                     int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
-                    Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                    enemyCount++;
 
-                    // SPAWN A SKULL
-                    /*
-                    int rndLocationFlying = Random.Range(0, enemySpawns.Length - 1);
-                    Instantiate(flyingskullEnemy, flyingenemySpawns[rndLocationFlying].transform.position, Quaternion.identity);
+                    // SHOULD WE SPAWN A SPECIAL SKELETON
+                    int rndToSeeIfWeShouldSpawnSpecialSkele = Random.Range(1, 101);
+                    if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialSkeleton)
+                    {
+                        int rando = Random.Range(1, 4);
+                        // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
+                        if (rando == 3)
+                        {
+                            Instantiate(toxicSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
+                        else
+                        {
+                            Instantiate(redSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
+                    }
+                    else
+                    {
+                        Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                    }
+
                     enemyCount++;
-                    */
 
                     spawnTimerCurrent = 0;
                 }
+
+                // spawning flying skulls
+                if (flyingSpawnTimerCurrent <= flyingSpawnTimer)
+                {
+                    flyingSpawnTimerCurrent += Time.deltaTime;
+                }
+                else
+                {
+                    // SPAWN A SKELETON
+                    foreach (GameObject spawner in flyingenemySpawns)
+                    {
+                        if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                        {
+                            spawner.tag = "Flying_Spawn";
+                        }
+                        else
+                        {
+                            spawner.tag = "Untagged";
+                        }
+                    }
+
+                    GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Flying_Spawn");
+                    int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
+
+                    // SHOULD WE SPAWN A SPECIAL SKELETON
+                    int rndToSeeIfWeShouldSpawnSpecialSkele = Random.Range(1, 101);
+                    if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialFlying)
+                    {
+                        int rando = Random.Range(1, 4);
+                        // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
+                        if (rando == 3)
+                        {
+                            Instantiate(toxicFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
+                        else
+                        {
+                            Instantiate(redFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
+                    }
+                    else
+                    {
+                        Instantiate(flyingskullEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                    }
+
+                    enemyCount++;
+
+                    flyingSpawnTimerCurrent = 0;
+                }
+            }
+        }
+
+        if (gameState == GameState.Dead)
+        {
+            if (!hasKilledAllEnemiesAfterPlayerDeath)
+            {
+                StartCoroutine(KillAllEnemies());
+                hasKilledAllEnemiesAfterPlayerDeath = true;
             }
         }
 
@@ -135,6 +213,16 @@ public class GameManager : MonoBehaviour {
         if (PlayerPrefs.GetInt("machinegunUnlocked", 0) == 1)
         {
             machinegunUnlocked = true;
+        }
+    }
+
+    IEnumerator KillAllEnemies()
+    {
+        yield return new WaitForSeconds(3);
+        GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject skelton in allEnemies)
+        {
+            skelton.transform.parent.SendMessage("KillThisEnemy");
         }
     }
 }
