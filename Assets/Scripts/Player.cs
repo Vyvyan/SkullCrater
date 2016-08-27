@@ -4,7 +4,7 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     public Transform bulletSpawnPoint;
-    public GameObject bullet, shotgunPellet;
+    public GameObject bullet, shotgunPellet, rocketProjectile;
     public GameObject grenadeObject;
     public float gunPower;
     Camera mainCamera;
@@ -12,11 +12,12 @@ public class Player : MonoBehaviour {
     GameManager gameManager;
 
     public Light playerLight;
+    Animator playerLightAnim;
 
-    public int pistolAmmoMax, shotgunAmmoMax, machinegunAmmoMax;
-    public int pistolAmmo, shotgunAmmo, machinegunAmmo;
+    public int pistolAmmoMax, shotgunAmmoMax, machinegunAmmoMax, rocketAmmoMax;
+    public int pistolAmmo, shotgunAmmo, machinegunAmmo, rocketAmmo;
     public bool isReloading;
-    public float reloadSpeed_Pistol, reloadSpeed_Shotgun, reloadSpeed_Machinegun;
+    public float reloadSpeed_Pistol, reloadSpeed_Shotgun, reloadSpeed_Machinegun, reloadSpeed_Rocket;
 
     public float health;
 
@@ -24,11 +25,11 @@ public class Player : MonoBehaviour {
     public bool hasGrenadeReady;
     bool canGainGrenadeJuice;
 
-    public Animator pistolAnim, shotgunAnim, machinegunAnim;
+    public Animator pistolAnim, shotgunAnim, machinegunAnim, rocketAnim;
     public WeaponEffects pistolEffects, shotgunEffects, machinegunEffects;
     public Light pistolMuzzleLight, shotgunMuzzleLight, machinegunMuzzleLight;
 
-    public GameObject pistolModel, shotgunModel, machinegunModel;
+    public GameObject pistolModel, shotgunModel, machinegunModel, rocketModel;
 
     public enum WeaponType {pistol, shotgun, machinegun, rocket, none};
     public WeaponType weapon1, weapon2;
@@ -46,6 +47,8 @@ public class Player : MonoBehaviour {
 
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
+        playerLightAnim = playerLight.GetComponent<Animator>();
+
         // start with a grenade at the ready
         hasGrenadeReady = true;
         GrenadeJuiceCurrent = grenadeJuiceMax;
@@ -55,6 +58,7 @@ public class Player : MonoBehaviour {
         pistolAmmo = pistolAmmoMax;
         shotgunAmmo = shotgunAmmoMax;
         machinegunAmmo = machinegunAmmoMax;
+        rocketAmmo = rocketAmmoMax;
 
         // start our health at 1, cause idk how much we need
         health = 1;
@@ -63,6 +67,9 @@ public class Player : MonoBehaviour {
         pistolEffects = pistolAnim.gameObject.GetComponent<WeaponEffects>();
         shotgunEffects = shotgunAnim.gameObject.GetComponent<WeaponEffects>();
         machinegunEffects = machinegunAnim.gameObject.GetComponent<WeaponEffects>();
+
+        // load our weapons from last session
+        loadOurWeaponLoadout();
 
         // swap our weapon model out for whatever we are holding
         ChangeWeaponModel();
@@ -180,7 +187,7 @@ public class Player : MonoBehaviour {
             {
                 GameManager.gameState = GameManager.GameState.Playing;
                 // turn on player light
-                playerLight.intensity = 4;
+                playerLightAnim.SetTrigger("LightFadeUp");
             }
         }
 
@@ -227,6 +234,15 @@ public class Player : MonoBehaviour {
             machinegunAmmo = machinegunAmmoMax;
             isReloading = false;
         }
+        if (weapon1 == WeaponType.rocket)
+        {
+            isReloading = true;
+            rocketAnim.SetBool("ReloadGun", true);
+            yield return new WaitForSeconds(reloadSpeed_Rocket);
+            rocketAnim.SetBool("ReloadGun", false);
+            rocketAmmo = rocketAmmoMax;
+            isReloading = false;
+        }
     }
 
     public void TakeDamage(string thingThatHitUs)
@@ -235,6 +251,8 @@ public class Player : MonoBehaviour {
         // send the name of the enemy that hit us to the game manager for easy access
         GameManager.enemyThatKilledPlayer = thingThatHitUs;
         Debug.Log(thingThatHitUs);
+
+        saveOurWeaponLoadout();
     }
 
     public void KillPlayer()
@@ -249,7 +267,7 @@ public class Player : MonoBehaviour {
 
     IEnumerator MuzzleFlash(Light light)
     {
-        light.intensity = 6;
+        light.intensity = 4;
         yield return new WaitForSeconds(.1f);
         light.intensity = 0;
     }
@@ -320,6 +338,19 @@ public class Player : MonoBehaviour {
                 
             }
         }
+        // ROCKET
+        if (weapon1 == WeaponType.rocket)
+        {
+            if (rocketAmmo > 0)
+            {
+                rocketAnim.SetTrigger("FireGun");
+
+                GameObject temp = Instantiate(rocketProjectile, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+                // no need to add force to the rocket, since we'll have a script that moves it on the rocket itself
+                //temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                rocketAmmo--;
+            }
+        }
     }
 
     void SwitchWeapons()
@@ -364,6 +395,13 @@ public class Player : MonoBehaviour {
                 StartCoroutine(Reload());
             }
         }
+        if (weapon1 == WeaponType.rocket)
+        {
+            if (rocketAmmo < rocketAmmoMax)
+            {
+                StartCoroutine(Reload());
+            }
+        }
 
     }
 
@@ -374,18 +412,28 @@ public class Player : MonoBehaviour {
             pistolModel.SetActive(true);
             shotgunModel.SetActive(false);
             machinegunModel.SetActive(false);
+            rocketModel.SetActive(false);
         }
         if (weapon1 == WeaponType.shotgun)
         {
             pistolModel.SetActive(false);
             shotgunModel.SetActive(true);
             machinegunModel.SetActive(false);
+            rocketModel.SetActive(false);
         }
         if (weapon1 == WeaponType.machinegun)
         {
             pistolModel.SetActive(false);
             shotgunModel.SetActive(false);
             machinegunModel.SetActive(true);
+            rocketModel.SetActive(false);
+        }
+        if (weapon1 == WeaponType.rocket)
+        {
+            pistolModel.SetActive(false);
+            shotgunModel.SetActive(false);
+            machinegunModel.SetActive(false);
+            rocketModel.SetActive(true);
         }
     }
 
@@ -483,6 +531,39 @@ public class Player : MonoBehaviour {
                     }
                 }
             }
+            // if we're trying to equip a rocket
+            if (weaponName == "Rocket")
+            {
+                // if the machine gun is unlocked
+                if (GameManager.rocketUnlocked)
+                {
+                    // if we don't already have a machinegun
+                    if (weapon1 != WeaponType.rocket)
+                    {
+                        // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
+                        weapon2 = weapon1;
+                        weapon1 = WeaponType.rocket;
+
+                        ChangeWeaponModel();
+                    }
+                }
+                // else, buy the rocket
+                else
+                {
+                    // do we have enough gold to buy the machine gun?
+                    if (GameManager.storedGold >= GameManager.rocketWeaponValue)
+                    {
+                        // buy it
+                        GameManager.storedGold -= GameManager.rocketWeaponValue;
+                        GameManager.rocketUnlocked = true;
+                        // save it that we unlocked the machinegun
+                        PlayerPrefs.SetInt("rocketUnlocked", 1);
+                        PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                        gameManager.ChangeEquipButtonText();
+                    }
+                }
+
+            }
         }
         // WE DO HAVE A SECOND WEAPON
         else
@@ -555,6 +636,36 @@ public class Player : MonoBehaviour {
                     }
                 }
             }
+            // rocket
+            if (weaponName == "Rocket")
+            {
+                // if neither of our guns is a machinegun
+                if (weapon1 != WeaponType.rocket && weapon2 != WeaponType.rocket)
+                {
+                    // if the rocket is unlocked
+                    if (GameManager.rocketUnlocked)
+                    {
+                        // equip the rocket gun
+                        weapon1 = WeaponType.rocket;
+                        ChangeWeaponModel();
+                    }
+                    // else, buy the rocket
+                    else
+                    {
+                        // do we have enough gold to buy the machine gun?
+                        if (GameManager.storedGold >= GameManager.rocketWeaponValue)
+                        {
+                            // buy it
+                            GameManager.storedGold -= GameManager.rocketWeaponValue;
+                            GameManager.rocketUnlocked = true;
+                            // save it that we unlocked the rocket
+                            PlayerPrefs.SetInt("rocketUnlocked", 1);
+                            PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                            gameManager.ChangeEquipButtonText();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -564,4 +675,87 @@ public class Player : MonoBehaviour {
         yield return new WaitForSeconds(3);
         canGainGrenadeJuice = true;
     }
+
+    void saveOurWeaponLoadout()
+    {
+        if (weapon1 == WeaponType.pistol)
+        {
+            PlayerPrefs.SetString("Weapon1", "Pistol");
+        }
+        else if (weapon1 == WeaponType.machinegun)
+        {
+            PlayerPrefs.SetString("Weapon1", "MachineGun");
+        }
+        else if (weapon1 == WeaponType.shotgun)
+        {
+            PlayerPrefs.SetString("Weapon1", "Shotgun");
+        }
+        else if (weapon1 == WeaponType.rocket)
+        {
+            PlayerPrefs.SetString("Weapon1", "Rocket");
+        }
+
+        if (weapon2 == WeaponType.pistol)
+        {
+            PlayerPrefs.SetString("Weapon2", "Pistol");
+        }
+        else if (weapon2 == WeaponType.machinegun)
+        {
+            PlayerPrefs.SetString("Weapon2", "MachineGun");
+        }
+        else if (weapon2 == WeaponType.shotgun)
+        {
+            PlayerPrefs.SetString("Weapon2", "Shotgun");
+        }
+        else if (weapon2 == WeaponType.rocket)
+        {
+            PlayerPrefs.SetString("Weapon2", "Rocket");
+        }
+        else if (weapon2 == WeaponType.none)
+        {
+            PlayerPrefs.SetString("Weapon2", "None");
+        }
+    }
+
+    void loadOurWeaponLoadout()
+    {
+        if (PlayerPrefs.GetString("Weapon1", "Pistol") == "Pistol")
+        {
+            weapon1 = WeaponType.pistol;
+        }
+        else if (PlayerPrefs.GetString("Weapon1", "Pistol") == "MachineGun")
+        {
+            weapon1 = WeaponType.machinegun;
+        }
+        else if (PlayerPrefs.GetString("Weapon1", "Pistol") == "Shotgun")
+        {
+            weapon1 = WeaponType.shotgun;
+        }
+        else if (PlayerPrefs.GetString("Weapon1", "Pistol") == "Rocket")
+        {
+            weapon1 = WeaponType.rocket;
+        }
+
+        if (PlayerPrefs.GetString("Weapon2", "Pistol") == "Pistol")
+        {
+            weapon2 = WeaponType.pistol;
+        }
+        else if (PlayerPrefs.GetString("Weapon2", "Pistol") == "MachineGun")
+        {
+            weapon2 = WeaponType.machinegun;
+        }
+        else if (PlayerPrefs.GetString("Weapon2", "Pistol") == "Shotgun")
+        {
+            weapon2 = WeaponType.shotgun;
+        }
+        else if (PlayerPrefs.GetString("Weapon2", "Pistol") == "Rocket")
+        {
+            weapon2 = WeaponType.rocket;
+        }
+        else if (PlayerPrefs.GetString("Weapon2", "Pistol") == "None")
+        {
+            weapon2 = WeaponType.none;
+        }
+    }
 }
+

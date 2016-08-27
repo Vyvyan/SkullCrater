@@ -34,10 +34,10 @@ public class GameManager : MonoBehaviour {
     // we use this variable so we only have to round it to an int once, and not check it a bunch
     int comparisonTimer;
 
-    public static int shotgunWeaponValue = 200, machinegunWeaponValue = 200;
+    public static int shotgunWeaponValue = 200, machinegunWeaponValue = 200, rocketWeaponValue = 350;
 
-    public static bool shotgunUnlocked, machinegunUnlocked;
-    public Text shotgunEquipButtonText, machinegunEquipButtonText, storedGoldText;
+    public static bool shotgunUnlocked, machinegunUnlocked, rocketUnlocked;
+    public Text shotgunEquipButtonText, machinegunEquipButtonText, storedGoldText, rocketEquipButtonText;
 
 	// Use this for initialization
 	void Start ()
@@ -59,6 +59,14 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            storedGold += 50;
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            PlayerPrefs.DeleteAll();
+        }
         // updates gold on weapon screen
         if (gameState == GameState.PreGame)
         {
@@ -229,6 +237,15 @@ public class GameManager : MonoBehaviour {
         {
             machinegunEquipButtonText.text = machinegunWeaponValue.ToString() + " g";
         }
+
+        if (rocketUnlocked)
+        {
+            rocketEquipButtonText.text = "Equip";
+        }
+        else
+        {
+            rocketEquipButtonText.text = rocketWeaponValue.ToString() + " g";
+        }
     }
 
     public void LoadPlayerPrefs()
@@ -245,6 +262,11 @@ public class GameManager : MonoBehaviour {
         if (PlayerPrefs.GetInt("machinegunUnlocked", 0) == 1)
         {
             machinegunUnlocked = true;
+        }
+        // unlocked MachineGun
+        if (PlayerPrefs.GetInt("rocketUnlocked", 0) == 1)
+        {
+            rocketUnlocked = true;
         }
     }
 

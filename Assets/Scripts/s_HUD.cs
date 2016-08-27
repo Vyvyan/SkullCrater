@@ -57,6 +57,10 @@ public class s_HUD : MonoBehaviour {
                 {
                     ammo.text = playerScript.machinegunAmmo.ToString();
                 }
+                if (playerScript.weapon1 == Player.WeaponType.rocket)
+                {
+                    ammo.text = playerScript.rocketAmmo.ToString();
+                }
             }
             else
             {
