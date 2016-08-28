@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour {
     public int health;
     public enum EnemyType { Skeleton, FlyingSkull, ToxicSkeleton };
     public EnemyType enemyType;
+    bool isDead;
 
     bool hasStartedToAutoDestroySelf;
 
@@ -38,69 +39,76 @@ public class Enemy : MonoBehaviour {
         
     }
 
-    public void KillThisEnemy()
+    public void KillThisEnemy(bool killedWithBullet)
     {
-        Destroy(triggerObject);
-        if (enemyType == EnemyType.Skeleton)
+        if (!isDead)
         {
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-            Destroy(aiScript);
-            Destroy(agent);
-            Destroy(animator);
-
-            // gets all the parts and deparents them
-            int children = transform.childCount;
-            for (int i = children - 1; i > 0; i--)
+            Destroy(triggerObject);
+            if (enemyType == EnemyType.Skeleton)
             {
-                if (transform.GetChild(i).gameObject.tag != "Enemy")
+                gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                gameObject.GetComponent<Rigidbody>().useGravity = true;
+                Destroy(aiScript);
+                Destroy(agent);
+                Destroy(animator);
+
+                // gets all the parts and deparents them
+                int children = transform.childCount;
+                for (int i = children - 1; i > 0; i--)
                 {
-                    transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
-                    transform.GetChild(i).SetParent(null);
+                    if (transform.GetChild(i).gameObject.tag != "Enemy")
+                    {
+                        transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
+                        transform.GetChild(i).SetParent(null);
+                    }
+
+                }
+            }
+            else if (enemyType == EnemyType.ToxicSkeleton)
+            {
+                gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                gameObject.GetComponent<Rigidbody>().useGravity = true;
+                Destroy(aiScript);
+                Destroy(agent);
+                Destroy(animator);
+
+                // gets all the parts and deparents them
+                int children = transform.childCount;
+                for (int i = children - 1; i > 0; i--)
+                {
+                    if (transform.GetChild(i).gameObject.tag != "Enemy")
+                    {
+                        transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
+                        transform.GetChild(i).SetParent(null);
+                    }
+
                 }
 
-            }
-        }
-        else if (enemyType == EnemyType.ToxicSkeleton)
-        {
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-            Destroy(aiScript);
-            Destroy(agent);
-            Destroy(animator);
-
-            // gets all the parts and deparents them
-            int children = transform.childCount;
-            for (int i = children - 1; i > 0; i--)
-            {
-                if (transform.GetChild(i).gameObject.tag != "Enemy")
+                if (!hasSpawnedToxGrenade)
                 {
-                    transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
-                    transform.GetChild(i).SetParent(null);
+                    StartCoroutine(delayedToxicExplosion());
+                    hasSpawnedToxGrenade = true;
                 }
-
             }
 
-            if (!hasSpawnedToxGrenade)
+            // now we destroy ourselves after a bit
+            if (!hasStartedToAutoDestroySelf)
             {
-                StartCoroutine(delayedToxicExplosion());
-                hasSpawnedToxGrenade = true;
+                StartCoroutine(SelfDestruct());
             }
-        }
 
-        // now we destroy ourselves after a bit
-        if (!hasStartedToAutoDestroySelf)
-        {
-            StartCoroutine(SelfDestruct());
+            // put this if statement here because I got an error when killing an enemy post death
+            if (GameManager.gameState == GameManager.GameState.Playing)
+            {
+                if (killedWithBullet)
+                {
+                    GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+                }
+            }
+            GameManager.enemyCount--;
+            GameManager.enemiesKilledThisSession++;
+            isDead = true;
         }
-
-        // put this if statement here because I got an error when killing an enemy post death
-        if (GameManager.gameState == GameManager.GameState.Playing)
-        {
-            GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
-        }
-        GameManager.enemyCount--;
-        GameManager.enemiesKilledThisSession++;
     }
 
     public void RandomExplosionDismember()

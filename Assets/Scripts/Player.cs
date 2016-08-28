@@ -23,7 +23,6 @@ public class Player : MonoBehaviour {
 
     public float grenadeJuiceMax, GrenadeJuiceCurrent, grenadeJuicePerKill;
     public bool hasGrenadeReady;
-    bool canGainGrenadeJuice;
 
     public Animator pistolAnim, shotgunAnim, machinegunAnim, rocketAnim;
     public WeaponEffects pistolEffects, shotgunEffects, machinegunEffects;
@@ -116,7 +115,6 @@ public class Player : MonoBehaviour {
                     temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
                     GrenadeJuiceCurrent = 0;
                     hasGrenadeReady = false;
-                    StartCoroutine(GrenadeJuiceCoolDown());
                 }
             }
 
@@ -439,12 +437,9 @@ public class Player : MonoBehaviour {
 
     public void AddGrenadeJuice()
     {
-        if (canGainGrenadeJuice)
+        if (GrenadeJuiceCurrent < grenadeJuiceMax)
         {
-            if (GrenadeJuiceCurrent < grenadeJuiceMax)
-            {
-                GrenadeJuiceCurrent += grenadeJuicePerKill;
-            }
+            GrenadeJuiceCurrent += grenadeJuicePerKill;
         }
     }
 
@@ -667,13 +662,6 @@ public class Player : MonoBehaviour {
                 }
             }
         }
-    }
-
-    IEnumerator GrenadeJuiceCoolDown()
-    {
-        canGainGrenadeJuice = false;
-        yield return new WaitForSeconds(3);
-        canGainGrenadeJuice = true;
     }
 
     void saveOurWeaponLoadout()

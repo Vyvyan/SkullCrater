@@ -35,7 +35,7 @@ public class s_HUD : MonoBehaviour {
             gameTimer.text = "Expedition Time: " + GameManager.gameTimer.ToString("F2");
 
             // displays the gold
-            money.text = GameManager.heldGold.ToString();
+            money.text = GameManager.heldGold.ToString() + "g";
 
             // updates the grenade radial effect
             grenadeImage.fillAmount = playerScript.GrenadeJuiceCurrent / 100;
@@ -92,9 +92,9 @@ public class s_HUD : MonoBehaviour {
 
     void SwitchToDeadHUD()
     {
-        droppedMoney.text = "You dropped " + money.text + " G!";
+        droppedMoney.text = money.text;
         killedBy.text = GameManager.enemyThatKilledPlayer;
-        goldDepositted.text = GameManager.thisSessionGoldGained.ToString();
+        goldDepositted.text = GameManager.thisSessionGoldGained.ToString() + "g";
         enemiesKilled.text = GameManager.enemiesKilledThisSession.ToString();
         endTime.text = GameManager.gameTimer.ToString();
         playingGroup.SetActive(false);

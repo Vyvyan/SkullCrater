@@ -42,16 +42,18 @@ public class Grenade : MonoBehaviour {
                     {
                         hit.gameObject.SendMessage("RandomExplosionDismember");
                     }
-                    hit.gameObject.SendMessage("KillThisEnemy");
+                    hit.gameObject.SendMessage("KillThisEnemy", false);
                 }
                 // destroy enemies if they are hit and a skull
                 if (hit.gameObject.GetComponent<FlyingSkull>())
                 {
-                    hit.gameObject.SendMessage("KillThisEnemy");
+                    hit.gameObject.SendMessage("KillThisEnemy", false);
                 }
 
                 if (rb != null)
+                {
                     rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
+                }
             }
 
             if (!disableExplosion)

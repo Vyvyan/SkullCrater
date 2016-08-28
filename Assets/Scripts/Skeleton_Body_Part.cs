@@ -21,7 +21,7 @@ public class Skeleton_Body_Part : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag == "Bullet")
+        if (other.collider.tag == "Bullet")
         {
             TakeDamage();
         }
@@ -35,7 +35,7 @@ public class Skeleton_Body_Part : MonoBehaviour {
             {
                 if (transform.parent)
                 {
-                    transform.parent.gameObject.SendMessage("KillThisEnemy");
+                    transform.parent.gameObject.SendMessage("KillThisEnemy", true);
                 }
             }
             Destroy(joint);

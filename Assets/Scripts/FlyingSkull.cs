@@ -40,14 +40,14 @@ public class FlyingSkull : MonoBehaviour {
         {
             if (isAlive)
             {
-                KillThisEnemy();
+                KillThisEnemy(true);
                 rb.AddExplosionForce(2000, other.contacts[0].point, 10);
                 rb.AddTorque(new Vector3(Random.Range(15, 45), Random.Range(15, 45), Random.Range(15, 45)));
             }
         }
     }
 
-    void KillThisEnemy()
+    void KillThisEnemy(bool killedWithBullet)
     {
         isAlive = false;
         rb.isKinematic = false;
@@ -59,7 +59,10 @@ public class FlyingSkull : MonoBehaviour {
 
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
-            GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+            if (killedWithBullet)
+            {
+                GameObject.FindGameObjectWithTag("Player").SendMessage("AddGrenadeJuice");
+            }
         }
         GameManager.enemyCount--;
         GameManager.enemiesKilledThisSession++;

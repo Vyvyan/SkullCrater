@@ -10,9 +10,10 @@ public class GameManager : MonoBehaviour {
 
     public GameObject editorLight;
 
-    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull;
+    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull, boneBallEnemy;
     public GameObject[] enemySpawns;
     public GameObject[] flyingenemySpawns;
+    public GameObject[] ballenemySpawns;
 
     public static int enemyCount;
     public int enemyCountMax;
@@ -20,8 +21,8 @@ public class GameManager : MonoBehaviour {
 
     public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying;
 
-    public float spawnTimer, flyingSpawnTimer;
-    float spawnTimerCurrent, flyingSpawnTimerCurrent;
+    public float spawnTimer, flyingSpawnTimer, ballSpawnTimer;
+    float spawnTimerCurrent, flyingSpawnTimerCurrent, ballSpawnCurrent;
 
     public static int heldGold;
     public static int storedGold;
@@ -201,6 +202,36 @@ public class GameManager : MonoBehaviour {
 
                     flyingSpawnTimerCurrent = 0;
                 }
+
+                // spawning bone balls
+                if (ballSpawnCurrent <= ballSpawnTimer)
+                {
+                    ballSpawnCurrent += Time.deltaTime;
+                }
+                else
+                {
+                    // SPAWN A SKELETON
+                    foreach (GameObject spawner in ballenemySpawns)
+                    {
+                        if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                        {
+                            spawner.tag = "Ball_Spawn";
+                        }
+                        else
+                        {
+                            spawner.tag = "Untagged";
+                        }
+                    }
+
+                    GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Ball_Spawn");
+                    int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
+
+                    Instantiate(boneBallEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+
+                    enemyCount++;
+
+                    ballSpawnCurrent = 0;
+                }
             }
         }
 
@@ -276,7 +307,7 @@ public class GameManager : MonoBehaviour {
         GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject skelton in allEnemies)
         {
-            skelton.transform.parent.SendMessage("KillThisEnemy");
+            skelton.transform.parent.SendMessage("KillThisEnemy", true);
         }
     }
 }
