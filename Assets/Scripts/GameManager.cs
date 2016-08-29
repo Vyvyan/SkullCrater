@@ -40,6 +40,15 @@ public class GameManager : MonoBehaviour {
     public static bool shotgunUnlocked, machinegunUnlocked, rocketUnlocked;
     public Text shotgunEquipButtonText, machinegunEquipButtonText, storedGoldText, rocketEquipButtonText;
 
+    // settings elements
+    public UnityStandardAssets.Characters.FirstPerson.RigidbodyFirstPersonController playerController;
+    public Slider slider_MouseSens;
+    public Text text_MouseSens;
+    public Slider slider_MusicVolume;
+    public Slider slider_SFXVolume;
+
+    public static float MusicVolume, SFXVolume;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -55,19 +64,16 @@ public class GameManager : MonoBehaviour {
 
         // checks to see if our guns are unlocked, then changes the UI buttons accordingly
         ChangeEquipButtonText();
-	}
+
+        // adds a listener to the slider
+        slider_MouseSens.onValueChanged.AddListener(delegate { ValueChangeCheckOnMouseSensitivity(); });
+        slider_MusicVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnMusicVolume(); });
+        slider_SFXVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnSFXVolume(); });
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            storedGold += 50;
-        }
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            PlayerPrefs.DeleteAll();
-        }
         // updates gold on weapon screen
         if (gameState == GameState.PreGame)
         {
@@ -299,6 +305,18 @@ public class GameManager : MonoBehaviour {
         {
             rocketUnlocked = true;
         }
+
+        // saved sensitivity settings
+        slider_MouseSens.value = PlayerPrefs.GetFloat("SavedSensitivity", 2);
+        playerController.mouseLook.XSensitivity = slider_MouseSens.value;
+        playerController.mouseLook.YSensitivity = slider_MouseSens.value;
+        text_MouseSens.text = "Look Sensitivity: " + playerController.mouseLook.XSensitivity.ToString("F1");
+
+
+        MusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 100);
+        SFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume", 100);
+        slider_MusicVolume.value = MusicVolume;
+        slider_SFXVolume.value = SFXVolume;
     }
 
     IEnumerator KillAllEnemies()
@@ -309,5 +327,45 @@ public class GameManager : MonoBehaviour {
         {
             skelton.transform.parent.SendMessage("KillThisEnemy", true);
         }
+    }
+
+    public void ValueChangeCheckOnMouseSensitivity()
+    {
+        playerController.mouseLook.XSensitivity = slider_MouseSens.value;
+        playerController.mouseLook.YSensitivity = slider_MouseSens.value;
+        text_MouseSens.text = "Look Sensitivity: " + slider_MouseSens.value.ToString("F1");
+        PlayerPrefs.SetFloat("SavedSensitivity", slider_MouseSens.value);
+    }
+
+    public void ValueChangeCheckOnMusicVolume()
+    {
+        PlayerPrefs.SetFloat("SavedMusicVolume", slider_MusicVolume.value);
+        MusicVolume = slider_MusicVolume.value;
+    }
+
+    public void ValueChangeCheckOnSFXVolume()
+    {
+        PlayerPrefs.SetFloat("SavedSFXVolume", slider_SFXVolume.value);
+        SFXVolume = slider_SFXVolume.value;
+    }
+
+    public void IncreaseSensitivity()
+    {
+        slider_MouseSens.value += 0.1f;
+        playerController.mouseLook.XSensitivity = slider_MouseSens.value;
+        playerController.mouseLook.YSensitivity = slider_MouseSens.value;
+    }
+
+    public void DecreaseSensitivity()
+    {
+        slider_MouseSens.value -= 0.1f;
+        playerController.mouseLook.XSensitivity = slider_MouseSens.value;
+        playerController.mouseLook.YSensitivity = slider_MouseSens.value;
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+        Debug.Log("we quit the game");
     }
 }
