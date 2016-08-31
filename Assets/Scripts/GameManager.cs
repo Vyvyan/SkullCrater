@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
     public enum GameState { Playing, Dead, PreGame};
     static public GameState gameState;
     bool hasKilledAllEnemiesAfterPlayerDeath;
+    public Player playerScript;
 
     public GameObject editorLight;
 
@@ -49,9 +50,20 @@ public class GameManager : MonoBehaviour {
 
     public static float MusicVolume, SFXVolume;
 
+    // upgrading variables
+    int Pistol_Upgrades_AmmoLevelMax = 10, Pistol_Upgrades_AmmoLevelCurrent = 0, Pistol_Upgrades_ReloadSpeedLevelMax = 3, Pistol_Upgrades_ReloadSpeedLevelCurrent = 0,
+        Shotgun_Upgrades_AmmoLevelMax = 8, Shotgun_Upgrades_AmmoLevelCurrent = 0, Shotgun_Upgrades_ReloadSpeedLevelMax = 8, Shotgun_Upgrades_ReloadSpeedLevelCurrent = 0;
+
+    int Pistol_StartingAmmo = 10, Shotgun_StartingAmmo = 4;
+    float Pistol_StartingReloadSpeed = 1.6f, Shotgun_StartingReloadSpeed = 3;
+    public Text Pistol_Upgrades_AmmoText, Pistol_Upgrades_ReloadSpeedText, Shotgun_Upgrades_AmmoText, Shotgun_Upgrades_ReloadSpeedText;
+
+    public Toggle[] Pistol_Upgrades_Ammo_Toggles, Pistol_Upgrades_ReloadSpeed_Toggles, Shotgun_Upgrades_Ammo_Toggles, Shotgun_Upgrades_ReloadSpeed_Toggles;
+
 	// Use this for initialization
 	void Start ()
     {
+        playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         // LOAD OUR SAVED STUFF
         LoadPlayerPrefs();
 
@@ -78,6 +90,20 @@ public class GameManager : MonoBehaviour {
         if (gameState == GameState.PreGame)
         {
             storedGoldText.text = "Balance: " + storedGold.ToString() + " G";
+
+            Pistol_Upgrades_AmmoText.text = (Pistol_StartingAmmo + (2 * Pistol_Upgrades_AmmoLevelCurrent)).ToString("f0");
+            Pistol_Upgrades_ReloadSpeedText.text = (Pistol_StartingReloadSpeed - (.2f * Pistol_Upgrades_ReloadSpeedLevelCurrent)).ToString("f1") + " Seconds";
+            Shotgun_Upgrades_AmmoText.text = (Shotgun_StartingAmmo + (2 * Shotgun_Upgrades_AmmoLevelCurrent)).ToString("f0");
+            Shotgun_Upgrades_ReloadSpeedText.text = (Shotgun_StartingReloadSpeed - (.2f * Shotgun_Upgrades_ReloadSpeedLevelCurrent)).ToString("f1") + " Seconds";
+        }
+
+        // DEBUG ONLY TAKE OUT
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            PlayerPrefs.DeleteKey("Pistol_Ammo_Level");
+            PlayerPrefs.DeleteKey("Pistol_ReloadSpeed_Level");
+            PlayerPrefs.DeleteKey("Shotgun_Ammo_Level");
+            PlayerPrefs.DeleteKey("Shotgun_ReloadSpeed_Level");
         }
 
         if (gameState == GameState.Playing)
@@ -312,11 +338,21 @@ public class GameManager : MonoBehaviour {
         playerController.mouseLook.YSensitivity = slider_MouseSens.value;
         text_MouseSens.text = "Look Sensitivity: " + playerController.mouseLook.XSensitivity.ToString("F1");
 
-
+        // volume settings
         MusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 100);
         SFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume", 100);
         slider_MusicVolume.value = MusicVolume;
         slider_SFXVolume.value = SFXVolume;
+
+        // load weapon upgrades
+        Pistol_Upgrades_AmmoLevelCurrent = PlayerPrefs.GetInt("Pistol_Ammo_Level", 0);
+        Pistol_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("Pistol_ReloadSpeed_Level", 0);
+        Shotgun_Upgrades_AmmoLevelCurrent = PlayerPrefs.GetInt("Shotgun_Ammo_Level", 0);
+        Shotgun_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("Shotgun_ReloadSpeed_Level", 0);
+
+        // update the UI elements and the weapon values based on the unlocked levels
+        UpdateWeaponValues();
+        UpdateUIWeaponUpgradeToggles("all");
     }
 
     IEnumerator KillAllEnemies()
@@ -367,5 +403,115 @@ public class GameManager : MonoBehaviour {
     {
         Application.Quit();
         Debug.Log("we quit the game");
+    }
+
+    public void UpgradeWeapon(string weaponToUpgrade)
+    {
+        if (storedGold >= 125)
+        {
+            if (weaponToUpgrade == "Pistol_Ammo")
+            {
+                if (Pistol_Upgrades_AmmoLevelCurrent < Pistol_Upgrades_AmmoLevelMax)
+                {
+                    Pistol_Upgrades_AmmoLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Pistol_Ammo_Level", Pistol_Upgrades_AmmoLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Pistol_ReloadSpeed")
+            {
+                if (Pistol_Upgrades_ReloadSpeedLevelCurrent < Pistol_Upgrades_ReloadSpeedLevelMax)
+                {
+                    Pistol_Upgrades_ReloadSpeedLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Pistol_ReloadSpeed_Level", Pistol_Upgrades_ReloadSpeedLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Shotgun_Ammo")
+            {
+                if (Shotgun_Upgrades_AmmoLevelCurrent < Shotgun_Upgrades_AmmoLevelMax)
+                {
+                    Shotgun_Upgrades_AmmoLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Shotgun_Ammo_Level", Shotgun_Upgrades_AmmoLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
+            {
+                if (Shotgun_Upgrades_ReloadSpeedLevelCurrent < Shotgun_Upgrades_ReloadSpeedLevelMax)
+                {
+                    Shotgun_Upgrades_ReloadSpeedLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Shotgun_ReloadSpeed_Level", Shotgun_Upgrades_ReloadSpeedLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+        }
+    }
+
+    public void UpdateWeaponValues()
+    {
+        playerScript.pistolAmmoMax = Pistol_StartingAmmo + (2 * Pistol_Upgrades_AmmoLevelCurrent);
+        playerScript.pistolAmmo = playerScript.pistolAmmoMax;
+        playerScript.reloadSpeed_Pistol = (Pistol_StartingReloadSpeed - (.2f * Pistol_Upgrades_ReloadSpeedLevelCurrent));
+        playerScript.shotgunAmmoMax =Shotgun_StartingAmmo + (2 * Shotgun_Upgrades_AmmoLevelCurrent);
+        playerScript.shotgunAmmo = playerScript.shotgunAmmoMax;
+        playerScript.reloadSpeed_Shotgun = (Shotgun_StartingReloadSpeed - (.2f * Shotgun_Upgrades_ReloadSpeedLevelCurrent));
+
+    }
+
+    public void UpdateUIWeaponUpgradeToggles(string weaponToUpgrade)
+    {
+        if (weaponToUpgrade == "Pistol_Ammo")
+        {
+            int i = Pistol_Upgrades_AmmoLevelCurrent;
+            while(i > 0)
+            {
+                Pistol_Upgrades_Ammo_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Pistol_ReloadSpeed")
+        {
+            int i = Pistol_Upgrades_ReloadSpeedLevelCurrent;
+            while (i > 0)
+            {
+                Pistol_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Shotgun_Ammo")
+        {
+            int i = Shotgun_Upgrades_AmmoLevelCurrent;
+            while (i > 0)
+            {
+                Shotgun_Upgrades_Ammo_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
+        {
+            int i = Shotgun_Upgrades_ReloadSpeedLevelCurrent;
+            while (i > 0)
+            {
+                Shotgun_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+
+        if (weaponToUpgrade == "all")
+        {
+            UpdateUIWeaponUpgradeToggles("Pistol_Ammo");
+            UpdateUIWeaponUpgradeToggles("Pistol_ReloadSpeed");
+            UpdateUIWeaponUpgradeToggles("Shotgun_Ammo");
+            UpdateUIWeaponUpgradeToggles("Shotgun_ReloadSpeed");
+        }
     }
 }
