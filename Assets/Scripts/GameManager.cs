@@ -16,9 +16,13 @@ public class GameManager : MonoBehaviour {
     public GameObject[] flyingenemySpawns;
     public GameObject[] ballenemySpawns;
 
+    public GameObject group_MainMenu, group_Pistol, group_Shotgun, group_MachineGun, group_Rocket, group_Grenade;
+
     public static int enemyCount;
     public int enemyCountMax;
     public static int enemiesKilledThisSession;
+
+    public static float grenadeExplosionRadius = 8, rocketExplosionRadius = 8;
 
     public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying;
 
@@ -52,13 +56,19 @@ public class GameManager : MonoBehaviour {
 
     // upgrading variables
     int Pistol_Upgrades_AmmoLevelMax = 10, Pistol_Upgrades_AmmoLevelCurrent = 0, Pistol_Upgrades_ReloadSpeedLevelMax = 3, Pistol_Upgrades_ReloadSpeedLevelCurrent = 0,
-        Shotgun_Upgrades_AmmoLevelMax = 8, Shotgun_Upgrades_AmmoLevelCurrent = 0, Shotgun_Upgrades_ReloadSpeedLevelMax = 8, Shotgun_Upgrades_ReloadSpeedLevelCurrent = 0;
+        Shotgun_Upgrades_AmmoLevelMax = 8, Shotgun_Upgrades_AmmoLevelCurrent = 0, Shotgun_Upgrades_ReloadSpeedLevelMax = 8, Shotgun_Upgrades_ReloadSpeedLevelCurrent = 0,
+        MachineGun_Upgrades_AmmoLevelMax = 8, MachineGun_Upgrades_AmmoLevelCurrent = 0, MachineGun_Upgrades_ReloadSpeedLevelMax = 6, MachineGun_Upgrades_ReloadSpeedLevelCurrent = 0,
+        MachineGun_Upgrades_ROFLevelMax = 5, MachineGun_Upgrades_ROFLevelCurrent = 0, Rocket_Upgrades_AmmoLevelMax = 1, Rocket_Upgrades_AmmoLevelCurrent = 0, Rocket_Upgrades_ReloadSpeedLevelMax = 6, 
+        Rocket_Upgrades_ReloadSpeedLevelCurrent = 0, Rocket_Upgrades_RadiusMax = 3, Rocket_Upgrades_RadiusCurrent = 0, Grenade_Upgrades_RadiusMax = 3, Grenade_Upgrades_RadiusCurrent = 0, Grenade_Upgrades_RechargeRateMax = 5,
+        Grenade_Upgrades_RechargeRateCurrent = 0;
 
-    int Pistol_StartingAmmo = 10, Shotgun_StartingAmmo = 4;
-    float Pistol_StartingReloadSpeed = 1.6f, Shotgun_StartingReloadSpeed = 3;
-    public Text Pistol_Upgrades_AmmoText, Pistol_Upgrades_ReloadSpeedText, Shotgun_Upgrades_AmmoText, Shotgun_Upgrades_ReloadSpeedText;
+    int Pistol_StartingAmmo = 10, Shotgun_StartingAmmo = 4, MachineGun_StartingAmmo = 20, Rocket_StartingAmmo = 1, Grenade_StartingRechargeRate = 5;
+    float Pistol_StartingReloadSpeed = 1.6f, Shotgun_StartingReloadSpeed = 3, MachineGun_StartingReloadSpeed = 3, MachineGun_StartingROF = .2f, Rocket_StartingReloadSpeed = 4, Rocket_StartingRadius = 8, Grenade_StartingRadius = 8;
+    public Text Pistol_Upgrades_AmmoText, Pistol_Upgrades_ReloadSpeedText, Shotgun_Upgrades_AmmoText, Shotgun_Upgrades_ReloadSpeedText, MachineGun_Upgrades_AmmoText, MachineGun_Upgrades_ReloadSpeedText,
+        MachineGun_Upgrades_ROFText, Rocket_Upgrades_AmmoText, Rocket_Upgrades_ReloadSpeedText, Rocket_Upgrades_RadiusText, Grenade_Upgrades_RadiusText, Grenade_Upgrades_RechargeRateText;
 
-    public Toggle[] Pistol_Upgrades_Ammo_Toggles, Pistol_Upgrades_ReloadSpeed_Toggles, Shotgun_Upgrades_Ammo_Toggles, Shotgun_Upgrades_ReloadSpeed_Toggles;
+    public Toggle[] Pistol_Upgrades_Ammo_Toggles, Pistol_Upgrades_ReloadSpeed_Toggles, Shotgun_Upgrades_Ammo_Toggles, Shotgun_Upgrades_ReloadSpeed_Toggles, MachineGun_Upgrades_Ammo_Toggles, MachineGun_Upgrades_ReloadSpeed_Toggles,
+        MachineGun_Upgrades_ROF_Toggles, Rocket_Upgrades_Ammo_Toggles, Rocket_Upgrades_ReloadSpeed_Toggles, Rocket_Upgrades_Radius_Toggles, Grenade_Upgrades_Radius_Toggles, Grenade_Upgrades_RechargeRate_Toggles;
 
 	// Use this for initialization
 	void Start ()
@@ -95,6 +105,14 @@ public class GameManager : MonoBehaviour {
             Pistol_Upgrades_ReloadSpeedText.text = (Pistol_StartingReloadSpeed - (.2f * Pistol_Upgrades_ReloadSpeedLevelCurrent)).ToString("f1") + " Seconds";
             Shotgun_Upgrades_AmmoText.text = (Shotgun_StartingAmmo + (2 * Shotgun_Upgrades_AmmoLevelCurrent)).ToString("f0");
             Shotgun_Upgrades_ReloadSpeedText.text = (Shotgun_StartingReloadSpeed - (.2f * Shotgun_Upgrades_ReloadSpeedLevelCurrent)).ToString("f1") + " Seconds";
+            MachineGun_Upgrades_AmmoText.text = (MachineGun_StartingAmmo + (2 * MachineGun_Upgrades_AmmoLevelCurrent)).ToString();
+            MachineGun_Upgrades_ReloadSpeedText.text = (MachineGun_StartingReloadSpeed - (.2f * MachineGun_Upgrades_ReloadSpeedLevelCurrent)).ToString() + " Seconds";
+            MachineGun_Upgrades_ROFText.text = (MachineGun_StartingROF - (.025f * MachineGun_Upgrades_ROFLevelCurrent)).ToString() + " Seconds";
+            Rocket_Upgrades_AmmoText.text = (Rocket_StartingAmmo + (1 * Rocket_Upgrades_AmmoLevelCurrent)).ToString();
+            Rocket_Upgrades_ReloadSpeedText.text = (Rocket_StartingReloadSpeed - (.2f * Rocket_Upgrades_ReloadSpeedLevelCurrent)).ToString();
+            Rocket_Upgrades_RadiusText.text = (Rocket_StartingRadius + (2 * Rocket_Upgrades_RadiusCurrent)).ToString();
+            Grenade_Upgrades_RadiusText.text = (Grenade_StartingRadius + (2 * Grenade_Upgrades_RadiusCurrent)).ToString();
+            Grenade_Upgrades_RechargeRateText.text = (Grenade_StartingRechargeRate + (2 * Grenade_Upgrades_RechargeRateCurrent)).ToString();
         }
 
         // DEBUG ONLY TAKE OUT
@@ -104,6 +122,9 @@ public class GameManager : MonoBehaviour {
             PlayerPrefs.DeleteKey("Pistol_ReloadSpeed_Level");
             PlayerPrefs.DeleteKey("Shotgun_Ammo_Level");
             PlayerPrefs.DeleteKey("Shotgun_ReloadSpeed_Level");
+            PlayerPrefs.DeleteKey("MachineGun_Ammo_Level");
+            PlayerPrefs.DeleteKey("MachineGun_ReloadSpeed_Level");
+            PlayerPrefs.DeleteKey("MachineGun_ROF_Level");
         }
 
         if (gameState == GameState.Playing)
@@ -349,6 +370,14 @@ public class GameManager : MonoBehaviour {
         Pistol_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("Pistol_ReloadSpeed_Level", 0);
         Shotgun_Upgrades_AmmoLevelCurrent = PlayerPrefs.GetInt("Shotgun_Ammo_Level", 0);
         Shotgun_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("Shotgun_ReloadSpeed_Level", 0);
+        MachineGun_Upgrades_AmmoLevelCurrent = PlayerPrefs.GetInt("MachineGun_Ammo_Level", 0);
+        MachineGun_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("MachineGun_ReloadSpeed_Level", 0);
+        MachineGun_Upgrades_ROFLevelCurrent = PlayerPrefs.GetInt("MachineGun_ROF_Level", 0);
+        Rocket_Upgrades_AmmoLevelCurrent = PlayerPrefs.GetInt("Rocket_Ammo_Level", 0);
+        Rocket_Upgrades_ReloadSpeedLevelCurrent = PlayerPrefs.GetInt("Rocket_ReloadSpeed_Level", 0);
+        Rocket_Upgrades_RadiusCurrent = PlayerPrefs.GetInt("Rocket_Radius_Level", 0);
+        Grenade_Upgrades_RadiusCurrent = PlayerPrefs.GetInt("Grenade_Radius_Level", 0);
+        Grenade_Upgrades_RechargeRateCurrent = PlayerPrefs.GetInt("Grenade_RechargeRate_Level", 0);
 
         // update the UI elements and the weapon values based on the unlocked levels
         UpdateWeaponValues();
@@ -453,18 +482,120 @@ public class GameManager : MonoBehaviour {
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                 }
             }
+            else if (weaponToUpgrade == "MachineGun_Ammo")
+            {
+                if (MachineGun_Upgrades_AmmoLevelCurrent < MachineGun_Upgrades_AmmoLevelMax)
+                {
+                    MachineGun_Upgrades_AmmoLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("MachineGun_Ammo_Level", MachineGun_Upgrades_AmmoLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
+            {
+                if (MachineGun_Upgrades_ReloadSpeedLevelCurrent < MachineGun_Upgrades_ReloadSpeedLevelMax)
+                {
+                    MachineGun_Upgrades_ReloadSpeedLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("MachineGun_ReloadSpeed_Level", MachineGun_Upgrades_ReloadSpeedLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "MachineGun_ROF")
+            {
+                if (MachineGun_Upgrades_ROFLevelCurrent < MachineGun_Upgrades_ROFLevelMax)
+                {
+                    MachineGun_Upgrades_ROFLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("MachineGun_ROF_Level", MachineGun_Upgrades_ROFLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Rocket_Ammo")
+            {
+                if (Rocket_Upgrades_AmmoLevelCurrent < Rocket_Upgrades_AmmoLevelMax)
+                {
+                    Rocket_Upgrades_AmmoLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Rocket_Ammo_Level", Rocket_Upgrades_AmmoLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Rocket_ReloadSpeed")
+            {
+                if (Rocket_Upgrades_ReloadSpeedLevelCurrent < Rocket_Upgrades_ReloadSpeedLevelMax)
+                {
+                    Rocket_Upgrades_ReloadSpeedLevelCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Rocket_ReloadSpeed_Level", Rocket_Upgrades_ReloadSpeedLevelCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Rocket_Radius")
+            {
+                if (Rocket_Upgrades_RadiusCurrent < Rocket_Upgrades_RadiusMax)
+                {
+                    Rocket_Upgrades_RadiusCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Rocket_Radius_Level", Rocket_Upgrades_RadiusCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Grenade_Radius")
+            {
+                if (Grenade_Upgrades_RadiusCurrent < Grenade_Upgrades_RadiusMax)
+                {
+                    Grenade_Upgrades_RadiusCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Grenade_Radius_Level", Grenade_Upgrades_RadiusCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
+            else if (weaponToUpgrade == "Grenade_RechargeRate")
+            {
+                if (Grenade_Upgrades_RechargeRateCurrent < Grenade_Upgrades_RechargeRateMax)
+                {
+                    Grenade_Upgrades_RechargeRateCurrent++;
+                    storedGold -= 125;
+                    PlayerPrefs.SetInt("Grenade_RechargeRate_Level", Grenade_Upgrades_RechargeRateCurrent);
+                    UpdateWeaponValues();
+                    UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                }
+            }
         }
     }
 
     public void UpdateWeaponValues()
     {
+        // pistol
         playerScript.pistolAmmoMax = Pistol_StartingAmmo + (2 * Pistol_Upgrades_AmmoLevelCurrent);
         playerScript.pistolAmmo = playerScript.pistolAmmoMax;
         playerScript.reloadSpeed_Pistol = (Pistol_StartingReloadSpeed - (.2f * Pistol_Upgrades_ReloadSpeedLevelCurrent));
+        // shotgun
         playerScript.shotgunAmmoMax =Shotgun_StartingAmmo + (2 * Shotgun_Upgrades_AmmoLevelCurrent);
         playerScript.shotgunAmmo = playerScript.shotgunAmmoMax;
         playerScript.reloadSpeed_Shotgun = (Shotgun_StartingReloadSpeed - (.2f * Shotgun_Upgrades_ReloadSpeedLevelCurrent));
-
+        // machine gun
+        playerScript.machinegunAmmoMax = MachineGun_StartingAmmo + (2 * MachineGun_Upgrades_AmmoLevelCurrent);
+        playerScript.machinegunAmmo = playerScript.machinegunAmmoMax;
+        playerScript.reloadSpeed_Machinegun = (MachineGun_StartingReloadSpeed - (.2f * MachineGun_Upgrades_ReloadSpeedLevelCurrent));
+        playerScript.machinegunFireRate = (MachineGun_StartingROF - (.025f * MachineGun_Upgrades_ROFLevelCurrent));
+        // Rocket
+        playerScript.rocketAmmoMax = Rocket_StartingAmmo + (1 * Rocket_Upgrades_AmmoLevelCurrent);
+        playerScript.rocketAmmo = playerScript.rocketAmmoMax;
+        playerScript.reloadSpeed_Rocket = (Rocket_StartingReloadSpeed - (.2f * Rocket_Upgrades_ReloadSpeedLevelCurrent));
+        rocketExplosionRadius = (Rocket_StartingRadius + (2 * Rocket_Upgrades_RadiusCurrent));
+        // Grenade
+        grenadeExplosionRadius = (Grenade_StartingRadius + (2 * Grenade_Upgrades_RadiusCurrent));
+        playerScript.grenadeJuicePerKill = (Grenade_StartingRechargeRate + (2 * Grenade_Upgrades_RechargeRateCurrent));
     }
 
     public void UpdateUIWeaponUpgradeToggles(string weaponToUpgrade)
@@ -505,6 +636,78 @@ public class GameManager : MonoBehaviour {
                 i--;
             }
         }
+        else if (weaponToUpgrade == "MachineGun_Ammo")
+        {
+            int i = MachineGun_Upgrades_AmmoLevelCurrent;
+            while (i > 0)
+            {
+                MachineGun_Upgrades_Ammo_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
+        {
+            int i = MachineGun_Upgrades_ReloadSpeedLevelCurrent;
+            while (i > 0)
+            {
+                MachineGun_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "MachineGun_ROF")
+        {
+            int i = MachineGun_Upgrades_ROFLevelCurrent;
+            while (i > 0)
+            {
+                MachineGun_Upgrades_ROF_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Rocket_Ammo")
+        {
+            int i = Rocket_Upgrades_AmmoLevelCurrent;
+            while (i > 0)
+            {
+                Rocket_Upgrades_Ammo_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Rocket_ReloadSpeed")
+        {
+            int i = Rocket_Upgrades_ReloadSpeedLevelCurrent;
+            while (i > 0)
+            {
+                Rocket_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Rocket_Radius")
+        {
+            int i = Rocket_Upgrades_RadiusCurrent;
+            while (i > 0)
+            {
+                Rocket_Upgrades_Radius_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Grenade_Radius")
+        {
+            int i = Grenade_Upgrades_RadiusCurrent;
+            while (i > 0)
+            {
+                Grenade_Upgrades_Radius_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
+        else if (weaponToUpgrade == "Grenade_RechargeRate")
+        {
+            int i = Grenade_Upgrades_RechargeRateCurrent;
+            while (i > 0)
+            {
+                Grenade_Upgrades_RechargeRate_Toggles[i - 1].isOn = true;
+                i--;
+            }
+        }
 
         if (weaponToUpgrade == "all")
         {
@@ -512,6 +715,81 @@ public class GameManager : MonoBehaviour {
             UpdateUIWeaponUpgradeToggles("Pistol_ReloadSpeed");
             UpdateUIWeaponUpgradeToggles("Shotgun_Ammo");
             UpdateUIWeaponUpgradeToggles("Shotgun_ReloadSpeed");
+            UpdateUIWeaponUpgradeToggles("MachineGun_ReloadSpeed");
+            UpdateUIWeaponUpgradeToggles("MachineGun_Ammo");
+            UpdateUIWeaponUpgradeToggles("MachineGun_ROF");
+            UpdateUIWeaponUpgradeToggles("Rocket_ReloadSpeed");
+            UpdateUIWeaponUpgradeToggles("Rocket_Ammo");
+            UpdateUIWeaponUpgradeToggles("Rocket_Radius");
+            UpdateUIWeaponUpgradeToggles("Grenade_Radius");
+            UpdateUIWeaponUpgradeToggles("Grenade_RechargeRate");
+        }
+    }
+
+    public void ChangeMenus(string menuName)
+    {
+        if (menuName == "Main")
+        {
+            group_MainMenu.SetActive(true);
+            group_Pistol.SetActive(false);
+            group_Shotgun.SetActive(false);
+            group_MachineGun.SetActive(false);
+            group_Rocket.SetActive(false);
+            group_Grenade.SetActive(false);
+        }
+        if (menuName == "Pistol")
+        {
+            group_MainMenu.SetActive(false);
+            group_Pistol.SetActive(true);
+            group_Shotgun.SetActive(false);
+            group_MachineGun.SetActive(false);
+            group_Rocket.SetActive(false);
+            group_Grenade.SetActive(false);
+        }
+        if (menuName == "Shotgun")
+        {
+            if (shotgunUnlocked)
+            {
+                group_MainMenu.SetActive(false);
+                group_Pistol.SetActive(false);
+                group_Shotgun.SetActive(true);
+                group_MachineGun.SetActive(false);
+                group_Rocket.SetActive(false);
+                group_Grenade.SetActive(false);
+            }
+        }
+        if (menuName == "MachineGun")
+        {
+            if (machinegunUnlocked)
+            {
+                group_MainMenu.SetActive(false);
+                group_Pistol.SetActive(false);
+                group_Shotgun.SetActive(false);
+                group_MachineGun.SetActive(true);
+                group_Rocket.SetActive(false);
+                group_Grenade.SetActive(false);
+            }
+        }
+        if (menuName == "Rocket")
+        {
+            if (rocketUnlocked)
+            {
+                group_MainMenu.SetActive(false);
+                group_Pistol.SetActive(false);
+                group_Shotgun.SetActive(false);
+                group_MachineGun.SetActive(false);
+                group_Rocket.SetActive(true);
+                group_Grenade.SetActive(false);
+            }
+        }
+        if (menuName == "Grenade")
+        {
+            group_MainMenu.SetActive(false);
+            group_Pistol.SetActive(false);
+            group_Shotgun.SetActive(false);
+            group_MachineGun.SetActive(false);
+            group_Rocket.SetActive(false);
+            group_Grenade.SetActive(true);
         }
     }
 }

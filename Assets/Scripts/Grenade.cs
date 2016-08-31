@@ -13,10 +13,19 @@ public class Grenade : MonoBehaviour {
     // this is cause we can use this code for the shotgun pellets, so they have more impact, but no explosion effect
     public bool disableExplosion;
 
+    public bool isRocket;
+
 	// Use this for initialization
 	void Start ()
     {
-	    
+	    if (isRocket)
+        {
+            radius = GameManager.rocketExplosionRadius;
+        }
+        else
+        {
+            radius = GameManager.grenadeExplosionRadius;
+        }
 	}
 	
 	// Update is called once per frame
