@@ -792,4 +792,10 @@ public class GameManager : MonoBehaviour {
             group_Grenade.SetActive(true);
         }
     }
+
+    public void ResetSavedData()
+    {
+        PlayerPrefs.DeleteAll();
+        Application.LoadLevel(Application.loadedLevel);
+    }
 }
