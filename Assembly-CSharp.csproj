@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\AutoDestroy.cs" />
      <Compile Include="Assets\Scripts\AutoDestroyOnImpact.cs" />
      <Compile Include="Assets\Scripts\BoneBall.cs" />
+     <Compile Include="Assets\Scripts\CoroutineUtil.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\FlyingSkull.cs" />

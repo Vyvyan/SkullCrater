@@ -70,9 +70,16 @@ public class GameManager : MonoBehaviour {
     public Toggle[] Pistol_Upgrades_Ammo_Toggles, Pistol_Upgrades_ReloadSpeed_Toggles, Shotgun_Upgrades_Ammo_Toggles, Shotgun_Upgrades_ReloadSpeed_Toggles, MachineGun_Upgrades_Ammo_Toggles, MachineGun_Upgrades_ReloadSpeed_Toggles,
         MachineGun_Upgrades_ROF_Toggles, Rocket_Upgrades_Ammo_Toggles, Rocket_Upgrades_ReloadSpeed_Toggles, Rocket_Upgrades_Radius_Toggles, Grenade_Upgrades_Radius_Toggles, Grenade_Upgrades_RechargeRate_Toggles;
 
+    public bool slowMotion;
+    float slowMoTimer;
+
 	// Use this for initialization
 	void Start ()
     {
+        // make sure our slow mo is off
+        Time.timeScale = 1;
+        Time.fixedDeltaTime = .02f;
+
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         // LOAD OUR SAVED STUFF
         LoadPlayerPrefs();
@@ -96,6 +103,18 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        // if we are slow motion
+        if (slowMotion)
+        {
+            // if the unscaled time is greater than our timer + the time we want to be slow mo, stop slo mo
+            if (Time.unscaledTime > slowMoTimer + 2f)
+            {
+                Time.timeScale = 1;
+                Time.fixedDeltaTime = .02f;
+                slowMotion = false;
+            }
+        }
+
         // updates gold on weapon screen
         if (gameState == GameState.PreGame)
         {
@@ -113,18 +132,6 @@ public class GameManager : MonoBehaviour {
             Rocket_Upgrades_RadiusText.text = (Rocket_StartingRadius + (2 * Rocket_Upgrades_RadiusCurrent)).ToString();
             Grenade_Upgrades_RadiusText.text = (Grenade_StartingRadius + (2 * Grenade_Upgrades_RadiusCurrent)).ToString();
             Grenade_Upgrades_RechargeRateText.text = (Grenade_StartingRechargeRate + (2 * Grenade_Upgrades_RechargeRateCurrent)).ToString();
-        }
-
-        // DEBUG ONLY TAKE OUT
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            PlayerPrefs.DeleteKey("Pistol_Ammo_Level");
-            PlayerPrefs.DeleteKey("Pistol_ReloadSpeed_Level");
-            PlayerPrefs.DeleteKey("Shotgun_Ammo_Level");
-            PlayerPrefs.DeleteKey("Shotgun_ReloadSpeed_Level");
-            PlayerPrefs.DeleteKey("MachineGun_Ammo_Level");
-            PlayerPrefs.DeleteKey("MachineGun_ReloadSpeed_Level");
-            PlayerPrefs.DeleteKey("MachineGun_ROF_Level");
         }
 
         if (gameState == GameState.Playing)
@@ -797,5 +804,13 @@ public class GameManager : MonoBehaviour {
     {
         PlayerPrefs.DeleteAll();
         Application.LoadLevel(Application.loadedLevel);
+    }
+
+    public void SlowMo()
+    {
+        slowMoTimer = Time.unscaledTime;
+        Time.timeScale = .25f;
+        Time.fixedDeltaTime = .005f;
+        slowMotion = true;
     }
 }

@@ -15,6 +15,8 @@ public class Grenade : MonoBehaviour {
 
     public bool isRocket;
 
+    GameManager gameManager;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -26,6 +28,8 @@ public class Grenade : MonoBehaviour {
         {
             radius = GameManager.grenadeExplosionRadius;
         }
+
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 	}
 	
 	// Update is called once per frame
@@ -40,6 +44,11 @@ public class Grenade : MonoBehaviour {
         {
             Vector3 explosionPos = transform.position;
             Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
+            // if we hit a bunch of things, then slow mo us. each skeleton has 11 colliders
+            if (colliders.Length > 60)
+            {
+                gameManager.SlowMo();
+            }
             foreach (Collider hit in colliders)
             {
                 Rigidbody rb = hit.GetComponent<Rigidbody>();
