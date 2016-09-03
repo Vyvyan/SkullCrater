@@ -76,7 +76,7 @@ public class Grenade : MonoBehaviour {
 
             if (!disableExplosion)
             {
-                Instantiate(explosionEffect, gameObject.transform.position, Quaternion.identity);
+                Instantiate(explosionEffect, gameObject.transform.position, Quaternion.EulerAngles(Vector3.zero));
             }
             hasExploded = true;
             Destroy(gameObject);

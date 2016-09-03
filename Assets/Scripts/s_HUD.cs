@@ -96,7 +96,7 @@ public class s_HUD : MonoBehaviour {
         killedBy.text = GameManager.enemyThatKilledPlayer;
         goldDepositted.text = GameManager.thisSessionGoldGained.ToString() + "g";
         enemiesKilled.text = GameManager.enemiesKilledThisSession.ToString();
-        endTime.text = GameManager.gameTimer.ToString();
+        endTime.text = GameManager.gameTimer.ToString("F2");
         playingGroup.SetActive(false);
         deadGroup.SetActive(true);
     }

@@ -14,6 +14,7 @@ public class RobotFriend : MonoBehaviour {
 
     public GameObject gold;
     public Transform goldSpawnLocation;
+    public ParticleSystem dustParticles;
 
     Animator anim;
 
@@ -23,6 +24,7 @@ public class RobotFriend : MonoBehaviour {
         agent = gameObject.GetComponent<NavMeshAgent>();
         anim = gameObject.GetComponent<Animator>();
         robotState = RobotState.gettingNewTarget;
+        dustParticles.loop = false;
     }
 	
 	// Update is called once per frame
@@ -44,6 +46,8 @@ public class RobotFriend : MonoBehaviour {
                 {
                     miningTimerCurrent = 0;
                     robotState = RobotState.mining;
+                    dustParticles.loop = true;
+                    dustParticles.Play();
                     anim.SetBool("isDigging", true);
                 }
             }
@@ -57,6 +61,7 @@ public class RobotFriend : MonoBehaviour {
                 {
                     SpawnGold();
                     robotState = RobotState.gettingNewTarget;
+                    dustParticles.loop = false;
                     anim.SetBool("isDigging", false);
                 }
             }
