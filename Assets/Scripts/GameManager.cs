@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 
     public GameObject editorLight;
 
-    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull, boneBallEnemy;
+    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull, boneBallEnemy, goldSkeletonEnemy;
     public GameObject[] enemySpawns;
     public GameObject[] flyingenemySpawns;
     public GameObject[] ballenemySpawns;
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
 
     public static float grenadeExplosionRadius = 8, rocketExplosionRadius = 8;
 
-    public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying;
+    public int chanceToSpawnSpecialSkeleton, chanceToSpawnSpecialFlying, chanceToSpawnGoldSkeleton;
 
     public float spawnTimer, flyingSpawnTimer, ballSpawnTimer;
     float spawnTimerCurrent, flyingSpawnTimerCurrent, ballSpawnCurrent;
@@ -207,7 +207,17 @@ public class GameManager : MonoBehaviour {
                     }
                     else
                     {
-                        Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        // we are spawning a normal skeleton, but random one last time to see if it's a special gold one
+                        int randoNumberForGoldSkeleton = Random.Range(1, 101);
+                        // if we are less than or equal to our chance to spawn golden skeleton, do so, otherwise, normal skeleton
+                        if (randoNumberForGoldSkeleton <= chanceToSpawnGoldSkeleton)
+                        {
+                            Instantiate(goldSkeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
+                        else
+                        {
+                            Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        }
                     }
 
                     enemyCount++;

@@ -4,7 +4,7 @@ using System.Collections;
 public class Enemy : MonoBehaviour {
 
     public int health;
-    public enum EnemyType { Skeleton, FlyingSkull, ToxicSkeleton };
+    public enum EnemyType { Skeleton, FlyingSkull, ToxicSkeleton};
     public EnemyType enemyType;
     bool isDead;
 
@@ -16,8 +16,10 @@ public class Enemy : MonoBehaviour {
 
     GameObject triggerObject;
 
-    public GameObject toxicGrenade;
+    public GameObject toxicGrenade, gold;
     bool hasSpawnedToxGrenade;
+
+    public bool goldSkeleton;
 
     // Use this for initialization
     void Start ()
@@ -61,7 +63,11 @@ public class Enemy : MonoBehaviour {
                         transform.GetChild(i).gameObject.SendMessage("StartSelfDestruct");
                         transform.GetChild(i).SetParent(null);
                     }
+                }
 
+                if (goldSkeleton)
+                {
+                    Instantiate(gold, gameObject.transform.position, Quaternion.identity);
                 }
             }
             else if (enemyType == EnemyType.ToxicSkeleton)

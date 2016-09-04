@@ -15,6 +15,9 @@ public class s_HUD : MonoBehaviour {
     public GameObject playingGroup, deadGroup;
     bool hasSwitchedToDeadGroup;
 
+    public Sprite hud_shotgun, hud_pistol, hud_machinegun, hud_rocket, hud_none;
+    public Image secondaryWeaponImage;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -65,6 +68,27 @@ public class s_HUD : MonoBehaviour {
             else
             {
                 ammo.text = "Reloading!";
+            }
+
+            if (playerScript.weapon2 == Player.WeaponType.pistol)
+            {
+                secondaryWeaponImage.sprite = hud_pistol;
+            }
+            else if (playerScript.weapon2 == Player.WeaponType.shotgun)
+            {
+                secondaryWeaponImage.sprite = hud_shotgun;
+            }
+            else if (playerScript.weapon2 == Player.WeaponType.machinegun)
+            {
+                secondaryWeaponImage.sprite = hud_machinegun;
+            }
+            else if (playerScript.weapon2 == Player.WeaponType.rocket)
+            {
+                secondaryWeaponImage.sprite = hud_rocket;
+            }
+            else if (playerScript.weapon2 == Player.WeaponType.none)
+            {
+                secondaryWeaponImage.sprite = hud_none;
             }
         }
 
