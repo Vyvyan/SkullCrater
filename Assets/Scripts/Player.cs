@@ -197,6 +197,11 @@ public class Player : MonoBehaviour {
                 GameManager.thisSessionGoldGained += GameManager.heldGold;
                 GameManager.storedGold += GameManager.heldGold;
                 PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                // update stats
+                if (GameManager.heldGold > GameManager.stat_LargestSingleDeposit)
+                {
+                    GameManager.stat_LargestSingleDeposit = GameManager.heldGold;
+                }
                 GameManager.heldGold = 0;
                 gameManager.goldBonusLevel = 0;
             }
@@ -255,11 +260,29 @@ public class Player : MonoBehaviour {
 
     public void KillPlayer()
     {
+        // update stats
+        // dropping gold
+        if (GameManager.heldGold > GameManager.stat_MostGoldDropped)
+        {
+            GameManager.stat_MostGoldDropped = GameManager.heldGold;
+        }
+        // session gold best
+        if (GameManager.thisSessionGoldGained > GameManager.stat_MostGoldInARun)
+        {
+            GameManager.stat_MostGoldInARun = GameManager.thisSessionGoldGained;
+        }
+        // best time survived
+        if (GameManager.gameTimer > GameManager.stat_LongestTimeSurvived)
+        {
+            GameManager.stat_LongestTimeSurvived = GameManager.gameTimer;
+        }
         // we spawn a new camera that flops to the ground when we die
         GameObject tempCam = Instantiate(deadCam, mainCamera.transform.position, mainCamera.transform.rotation) as GameObject;
         // we add a slight random rotation to the camera to give a good effect
         tempCam.GetComponent<Rigidbody>().AddTorque(new Vector3(Random.Range(10,30), Random.Range(10,30), Random.Range(10,30)));
         gameObject.SetActive(false);
+        GameManager.stat_Deaths++;
+        gameManager.SaveStatistics();
         GameManager.gameState = GameManager.GameState.Dead;
     }
 

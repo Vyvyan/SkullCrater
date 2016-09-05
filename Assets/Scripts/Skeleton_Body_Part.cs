@@ -6,6 +6,8 @@ public class Skeleton_Body_Part : MonoBehaviour {
     HingeJoint joint;
     public bool isVital;
     bool hasStartedToAutoDestroySelf;
+    public bool isLeg;
+    public Skeleton_Body_Part otherLeg;
 
 	// Use this for initialization
 	void Start ()
@@ -37,6 +39,11 @@ public class Skeleton_Body_Part : MonoBehaviour {
                 {
                     transform.parent.gameObject.SendMessage("KillThisEnemy", true);
                 }
+            }
+            // if we lose a leg, make the other leg vital, so skeletons can't live without both legs
+            if (isLeg)
+            {
+                otherLeg.isVital = true;
             }
             Destroy(joint);
         }

@@ -94,6 +94,7 @@ public class BoneBall : MonoBehaviour {
             Destroy(triggerObject);
             GameManager.enemiesKilledThisSession++;
             GameManager.enemyCount--;
+            GameManager.stat_BoneBallsKilled++;
             isDead = true;
         }    
     }

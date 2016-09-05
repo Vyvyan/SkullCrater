@@ -8,7 +8,7 @@ public class FlyingSkull : MonoBehaviour {
     public float speed;
     public bool isAlive;
     GameObject triggerObject;
-    public bool isToxic;
+    public bool isToxic, isRed;
 
 	// Use this for initialization
 	void Start ()
@@ -66,5 +66,18 @@ public class FlyingSkull : MonoBehaviour {
         }
         GameManager.enemyCount--;
         GameManager.enemiesKilledThisSession++;
+
+        if (isToxic)
+        {
+            GameManager.stat_ToxicSkellsKilled++;
+        }
+        else if (isRed)
+        {
+            GameManager.stat_RedSkellsKilled++;
+        }
+        else
+        {
+            GameManager.stat_SkellsKilled++;
+        }
     }
 }

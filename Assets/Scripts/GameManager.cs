@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class GameManager : MonoBehaviour {
 
@@ -73,12 +74,22 @@ public class GameManager : MonoBehaviour {
     public bool slowMotion;
     float slowMoTimer;
 
+    public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
+        stat_MostGoldDropped, stat_MostGoldInARun;
+    public static float stat_LongestTimeSurvived;
+    public Text statsText;
+
 	// Use this for initialization
 	void Start ()
     {
         // make sure our slow mo is off
         Time.timeScale = 1;
         Time.fixedDeltaTime = .02f;
+
+        // resets the static variables (wouldn't update when you reset saved data)
+        shotgunUnlocked = false;
+        machinegunUnlocked = false;
+        rocketUnlocked = false;
 
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         // LOAD OUR SAVED STUFF
@@ -98,6 +109,8 @@ public class GameManager : MonoBehaviour {
         slider_MouseSens.onValueChanged.AddListener(delegate { ValueChangeCheckOnMouseSensitivity(); });
         slider_MusicVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnMusicVolume(); });
         slider_SFXVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnSFXVolume(); });
+
+        enemyCount = 0;
     }
 	
 	// Update is called once per frame
@@ -188,13 +201,13 @@ public class GameManager : MonoBehaviour {
                     }
 
                     GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Skeleton_Spawn");
-                    int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
+                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
 
                     // SHOULD WE SPAWN A SPECIAL SKELETON
-                    int rndToSeeIfWeShouldSpawnSpecialSkele = Random.Range(1, 101);
+                    int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
                     if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialSkeleton)
                     {
-                        int rando = Random.Range(1, 4);
+                        int rando = UnityEngine.Random.Range(1, 4);
                         // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
                         if (rando == 3)
                         {
@@ -208,7 +221,7 @@ public class GameManager : MonoBehaviour {
                     else
                     {
                         // we are spawning a normal skeleton, but random one last time to see if it's a special gold one
-                        int randoNumberForGoldSkeleton = Random.Range(1, 101);
+                        int randoNumberForGoldSkeleton = UnityEngine.Random.Range(1, 101);
                         // if we are less than or equal to our chance to spawn golden skeleton, do so, otherwise, normal skeleton
                         if (randoNumberForGoldSkeleton <= chanceToSpawnGoldSkeleton)
                         {
@@ -246,13 +259,13 @@ public class GameManager : MonoBehaviour {
                     }
 
                     GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Flying_Spawn");
-                    int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
+                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
 
                     // SHOULD WE SPAWN A SPECIAL SKELETON
-                    int rndToSeeIfWeShouldSpawnSpecialSkele = Random.Range(1, 101);
+                    int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
                     if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialFlying)
                     {
-                        int rando = Random.Range(1, 4);
+                        int rando = UnityEngine.Random.Range(1, 4);
                         // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
                         if (rando == 3)
                         {
@@ -294,7 +307,7 @@ public class GameManager : MonoBehaviour {
                     }
 
                     GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Ball_Spawn");
-                    int rndLocation = Random.Range(0, activeSkeletonSpawns.Length - 1);
+                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
 
                     Instantiate(boneBallEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
 
@@ -352,7 +365,7 @@ public class GameManager : MonoBehaviour {
     public void LoadPlayerPrefs()
     {
         // load our gold
-        storedGold = PlayerPrefs.GetInt("storedGold", 0);
+        storedGold = PlayerPrefs.GetInt("storedGold", 125);
 
         // unlocked shotgun
         if (PlayerPrefs.GetInt("shotgunUnlocked", 0) == 1)
@@ -399,6 +412,55 @@ public class GameManager : MonoBehaviour {
         // update the UI elements and the weapon values based on the unlocked levels
         UpdateWeaponValues();
         UpdateUIWeaponUpgradeToggles("all");
+
+        // load stats
+        stat_Deaths = PlayerPrefs.GetInt("stats_Deaths", 0);
+        stat_BoneBallsKilled = PlayerPrefs.GetInt("stats_BoneBallsKilled", 0);
+        stat_GoldSkeltinsKilled = PlayerPrefs.GetInt("stats_GoldSkeltinsKilled", 0);
+        stat_LargestSingleDeposit = PlayerPrefs.GetInt("stats_LargestSingleDeposit", 0);
+        stat_LongestTimeSurvived = PlayerPrefs.GetFloat("stats_LongestTimeSurvived", 0);
+        stat_MostGoldDropped = PlayerPrefs.GetInt("stats_MostGoldDropped", 0);
+        stat_MostGoldInARun = PlayerPrefs.GetInt("stats_MostGoldInARun", 0);
+        stat_RedSkellsKilled = PlayerPrefs.GetInt("stats_RedSkellsKilled", 0);
+        stat_RedSkeltinsKilled = PlayerPrefs.GetInt("stats_RedSkeltinsKilled", 0);
+        stat_SkellsKilled = PlayerPrefs.GetInt("stats_SkellsKilled", 0);
+        stat_SkeltinsKilled = PlayerPrefs.GetInt("stats_SkeltinsKilled", 0);
+        stat_ToxicSkellsKilled = PlayerPrefs.GetInt("stats_ToxicSkellsKilled", 0);
+        stat_ToxicSkeltinsKilled = PlayerPrefs.GetInt("stats_ToxicSkeltinsKilled", 0);
+
+        // updates the Statistics text that displays the stats
+        statsText.text = Environment.NewLine + Environment.NewLine +
+            "Deaths: " + stat_Deaths.ToString() + Environment.NewLine +
+            "Longest Time Survived: " + stat_LongestTimeSurvived.ToString("F2") + Environment.NewLine +
+            "Most Gold in a Run: " + stat_MostGoldInARun.ToString() + Environment.NewLine +
+            "Largest Single Gold Deposit: " + stat_LargestSingleDeposit.ToString() + Environment.NewLine +
+            "Most Gold Dropped: " + stat_MostGoldDropped.ToString() + Environment.NewLine + Environment.NewLine +
+            "Skeltins Killed: " + stat_SkeltinsKilled.ToString() + Environment.NewLine +
+            "Gold Skeltins Killed: " + stat_GoldSkeltinsKilled.ToString() + Environment.NewLine +
+            "Red Skeltins Killed: " + stat_RedSkeltinsKilled.ToString() + Environment.NewLine +
+            "Toxic Skeltins Killed: " + stat_ToxicSkeltinsKilled.ToString() + Environment.NewLine +
+            "Skells Killed: " + stat_SkellsKilled.ToString() + Environment.NewLine +
+            "Red Skells Killed: " + stat_RedSkellsKilled.ToString() + Environment.NewLine +
+            "Toxic Skells Killed: " + stat_ToxicSkellsKilled.ToString() + Environment.NewLine +
+            "Bone Balls Killed: " + stat_BoneBallsKilled.ToString() + Environment.NewLine;
+    }
+
+    public void SaveStatistics()
+    {
+        // save stats
+        PlayerPrefs.SetInt("stats_Deaths", stat_Deaths);
+        PlayerPrefs.SetInt("stats_BoneBallsKilled", stat_BoneBallsKilled);
+        PlayerPrefs.SetInt("stats_GoldSkeltinsKilled", stat_GoldSkeltinsKilled);
+        PlayerPrefs.SetInt("stats_LargestSingleDeposit", stat_LargestSingleDeposit);
+        PlayerPrefs.SetFloat("stats_LongestTimeSurvived", stat_LongestTimeSurvived);
+        PlayerPrefs.SetInt("stats_MostGoldDropped", stat_MostGoldDropped);
+        PlayerPrefs.SetInt("stats_MostGoldInARun", stat_MostGoldInARun);
+        PlayerPrefs.SetInt("stats_RedSkellsKilled", stat_RedSkellsKilled);
+        PlayerPrefs.SetInt("stats_RedSkeltinsKilled", stat_RedSkeltinsKilled);
+        PlayerPrefs.SetInt("stats_SkellsKilled", stat_SkellsKilled);
+        PlayerPrefs.SetInt("stats_SkeltinsKilled", stat_SkeltinsKilled);
+        PlayerPrefs.SetInt("stats_ToxicSkellsKilled", stat_ToxicSkellsKilled);
+        PlayerPrefs.SetInt("stats_ToxicSkeltinsKilled", stat_ToxicSkeltinsKilled);
     }
 
     IEnumerator KillAllEnemies()

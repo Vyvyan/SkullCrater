@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour {
     bool hasSpawnedToxGrenade;
 
     public bool goldSkeleton;
+    public bool redSkeleton;
 
     // Use this for initialization
     void Start ()
@@ -68,6 +69,15 @@ public class Enemy : MonoBehaviour {
                 if (goldSkeleton)
                 {
                     Instantiate(gold, gameObject.transform.position, Quaternion.identity);
+                    GameManager.stat_GoldSkeltinsKilled++;
+                }
+                else if (redSkeleton)
+                {
+                    GameManager.stat_RedSkeltinsKilled++;
+                }
+                else
+                {
+                    GameManager.stat_SkeltinsKilled++;
                 }
             }
             else if (enemyType == EnemyType.ToxicSkeleton)
@@ -95,6 +105,7 @@ public class Enemy : MonoBehaviour {
                     StartCoroutine(delayedToxicExplosion());
                     hasSpawnedToxGrenade = true;
                 }
+                GameManager.stat_ToxicSkeltinsKilled++;
             }
 
             // now we destroy ourselves after a bit
