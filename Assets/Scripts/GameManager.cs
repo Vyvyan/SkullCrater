@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour {
 
     public static string enemyThatKilledPlayer;
 
+    public bool disableSkeletonSpawning, disableFlyingSkullSpawning, disableBoneBallSpawning;
+
     public static float gameTimer;
     // we use this variable so we only have to round it to an int once, and not check it a bunch
     int comparisonTimer;
@@ -77,11 +79,20 @@ public class GameManager : MonoBehaviour {
     public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
         stat_MostGoldDropped, stat_MostGoldInARun;
     public static float stat_LongestTimeSurvived;
-    public Text statsText;
+    public Text statsText, eventTextObject;
+
+    // special events
+    public GameObject crystalSkull;
+    public int killsToSpawnCrystalSkull;
+    public enum GameMode {normal, GoldSkeletonMode, BoneBalleMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode, LowLightMode, UnlimitedGrenadeMode};
+    public GameMode gameMode;
 
 	// Use this for initialization
 	void Start ()
     {
+        // game mode
+        gameMode = GameMode.normal;
+
         // make sure our slow mo is off
         Time.timeScale = 1;
         Time.fixedDeltaTime = .02f;
@@ -90,6 +101,9 @@ public class GameManager : MonoBehaviour {
         shotgunUnlocked = false;
         machinegunUnlocked = false;
         rocketUnlocked = false;
+
+        //starts with all enemies able to be spawned
+        disableBoneBallSpawning = disableFlyingSkullSpawning = disableSkeletonSpawning = false;
 
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         // LOAD OUR SAVED STUFF
@@ -180,140 +194,149 @@ public class GameManager : MonoBehaviour {
 
             if (enemyCount < enemyCountMax)
             {
-                // spawning skeletons
-                if (spawnTimerCurrent <= spawnTimer)
+                if (!disableSkeletonSpawning)
                 {
-                    spawnTimerCurrent += Time.deltaTime;
-                }
-                else
-                {
-                    // SPAWN A SKELETON
-                    foreach(GameObject spawner in enemySpawns)
+                    // spawning skeletons
+                    if (spawnTimerCurrent <= spawnTimer)
                     {
-                        if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
-                        {
-                            spawner.tag = "Skeleton_Spawn";
-                        }
-                        else
-                        {
-                            spawner.tag = "Untagged";
-                        }
-                    }
-
-                    GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Skeleton_Spawn");
-                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
-
-                    // SHOULD WE SPAWN A SPECIAL SKELETON
-                    int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
-                    if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialSkeleton)
-                    {
-                        int rando = UnityEngine.Random.Range(1, 4);
-                        // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
-                        if (rando == 3)
-                        {
-                            Instantiate(toxicSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                        }
-                        else
-                        {
-                            Instantiate(redSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                        }
+                        spawnTimerCurrent += Time.deltaTime;
                     }
                     else
                     {
-                        // we are spawning a normal skeleton, but random one last time to see if it's a special gold one
-                        int randoNumberForGoldSkeleton = UnityEngine.Random.Range(1, 101);
-                        // if we are less than or equal to our chance to spawn golden skeleton, do so, otherwise, normal skeleton
-                        if (randoNumberForGoldSkeleton <= chanceToSpawnGoldSkeleton)
+                        // SPAWN A SKELETON
+                        foreach (GameObject spawner in enemySpawns)
                         {
-                            Instantiate(goldSkeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                            {
+                                spawner.tag = "Skeleton_Spawn";
+                            }
+                            else
+                            {
+                                spawner.tag = "Untagged";
+                            }
+                        }
+
+                        GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Skeleton_Spawn");
+                        int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
+
+                        // SHOULD WE SPAWN A SPECIAL SKELETON
+                        int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
+                        if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialSkeleton)
+                        {
+                            int rando = UnityEngine.Random.Range(1, 4);
+                            // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
+                            if (rando == 3)
+                            {
+                                Instantiate(toxicSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
+                            else
+                            {
+                                Instantiate(redSkeleton, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
                         }
                         else
                         {
-                            Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            // we are spawning a normal skeleton, but random one last time to see if it's a special gold one
+                            int randoNumberForGoldSkeleton = UnityEngine.Random.Range(1, 101);
+                            // if we are less than or equal to our chance to spawn golden skeleton, do so, otherwise, normal skeleton
+                            if (randoNumberForGoldSkeleton <= chanceToSpawnGoldSkeleton)
+                            {
+                                Instantiate(goldSkeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
+                            else
+                            {
+                                Instantiate(skeletonEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
                         }
+
+                        enemyCount++;
+
+                        spawnTimerCurrent = 0;
                     }
-
-                    enemyCount++;
-
-                    spawnTimerCurrent = 0;
                 }
 
-                // spawning flying skulls
-                if (flyingSpawnTimerCurrent <= flyingSpawnTimer)
+                if (!disableFlyingSkullSpawning)
                 {
-                    flyingSpawnTimerCurrent += Time.deltaTime;
-                }
-                else
-                {
-                    // SPAWN A SKELETON
-                    foreach (GameObject spawner in flyingenemySpawns)
+                    // spawning flying skulls
+                    if (flyingSpawnTimerCurrent <= flyingSpawnTimer)
                     {
-                        if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
-                        {
-                            spawner.tag = "Flying_Spawn";
-                        }
-                        else
-                        {
-                            spawner.tag = "Untagged";
-                        }
-                    }
-
-                    GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Flying_Spawn");
-                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
-
-                    // SHOULD WE SPAWN A SPECIAL SKELETON
-                    int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
-                    if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialFlying)
-                    {
-                        int rando = UnityEngine.Random.Range(1, 4);
-                        // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
-                        if (rando == 3)
-                        {
-                            Instantiate(toxicFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                        }
-                        else
-                        {
-                            Instantiate(redFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                        }
+                        flyingSpawnTimerCurrent += Time.deltaTime;
                     }
                     else
                     {
-                        Instantiate(flyingskullEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
-                    }
-
-                    enemyCount++;
-
-                    flyingSpawnTimerCurrent = 0;
-                }
-
-                // spawning bone balls
-                if (ballSpawnCurrent <= ballSpawnTimer)
-                {
-                    ballSpawnCurrent += Time.deltaTime;
-                }
-                else
-                {
-                    // SPAWN A SKELETON
-                    foreach (GameObject spawner in ballenemySpawns)
-                    {
-                        if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                        // SPAWN A SKELETON
+                        foreach (GameObject spawner in flyingenemySpawns)
                         {
-                            spawner.tag = "Ball_Spawn";
+                            if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                            {
+                                spawner.tag = "Flying_Spawn";
+                            }
+                            else
+                            {
+                                spawner.tag = "Untagged";
+                            }
+                        }
+
+                        GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Flying_Spawn");
+                        int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
+
+                        // SHOULD WE SPAWN A SPECIAL SKELETON
+                        int rndToSeeIfWeShouldSpawnSpecialSkele = UnityEngine.Random.Range(1, 101);
+                        if (rndToSeeIfWeShouldSpawnSpecialSkele < chanceToSpawnSpecialFlying)
+                        {
+                            int rando = UnityEngine.Random.Range(1, 4);
+                            // if we random a 3, make a toxic, otherwise, make a red. 2/3 for red, 1/3 for toxic
+                            if (rando == 3)
+                            {
+                                Instantiate(toxicFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
+                            else
+                            {
+                                Instantiate(redFlyingSkull, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                            }
                         }
                         else
                         {
-                            spawner.tag = "Untagged";
+                            Instantiate(flyingskullEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
                         }
+
+                        enemyCount++;
+
+                        flyingSpawnTimerCurrent = 0;
                     }
+                }
 
-                    GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Ball_Spawn");
-                    int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
+                if (!disableBoneBallSpawning)
+                {
+                    // spawning bone balls
+                    if (ballSpawnCurrent <= ballSpawnTimer)
+                    {
+                        ballSpawnCurrent += Time.deltaTime;
+                    }
+                    else
+                    {
+                        // SPAWN A SKELETON
+                        foreach (GameObject spawner in ballenemySpawns)
+                        {
+                            if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                            {
+                                spawner.tag = "Ball_Spawn";
+                            }
+                            else
+                            {
+                                spawner.tag = "Untagged";
+                            }
+                        }
 
-                    Instantiate(boneBallEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+                        GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Ball_Spawn");
+                        int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
 
-                    enemyCount++;
+                        Instantiate(boneBallEnemy, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
 
-                    ballSpawnCurrent = 0;
+                        enemyCount++;
+
+                        ballSpawnCurrent = 0;
+                    }
                 }
             }
         }
@@ -526,6 +549,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Pistol_Ammo_Level", Pistol_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Pistol Ammo Capacity Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Pistol_ReloadSpeed")
@@ -537,6 +561,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Pistol_ReloadSpeed_Level", Pistol_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Pistol Reload Speed Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Shotgun_Ammo")
@@ -548,6 +573,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Shotgun_Ammo_Level", Shotgun_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Shotgun Ammo Capacity Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
@@ -559,6 +585,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Shotgun_ReloadSpeed_Level", Shotgun_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Shotgun Reload Speed Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "MachineGun_Ammo")
@@ -570,6 +597,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("MachineGun_Ammo_Level", MachineGun_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Machine Gun Ammo Capacity Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
@@ -581,6 +609,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("MachineGun_ReloadSpeed_Level", MachineGun_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Machine Gun Reload Speed Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "MachineGun_ROF")
@@ -592,6 +621,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("MachineGun_ROF_Level", MachineGun_Upgrades_ROFLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Machine Gun Rate of Fire Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Rocket_Ammo")
@@ -603,6 +633,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Rocket_Ammo_Level", Rocket_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Rocket Ammo Capacity Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Rocket_ReloadSpeed")
@@ -614,6 +645,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Rocket_ReloadSpeed_Level", Rocket_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Rocket Reload Speed Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Rocket_Radius")
@@ -625,6 +657,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Rocket_Radius_Level", Rocket_Upgrades_RadiusCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Rocket Explosion Radius Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Grenade_Radius")
@@ -636,6 +669,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Grenade_Radius_Level", Grenade_Upgrades_RadiusCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Grenade Explosion Radius Upgraded!");
                 }
             }
             else if (weaponToUpgrade == "Grenade_RechargeRate")
@@ -647,6 +681,7 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("Grenade_RechargeRate_Level", Grenade_Upgrades_RechargeRateCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
+                    DisplayEventText("Grenade Recharge Rate Upgraded!");
                 }
             }
         }
@@ -884,5 +919,17 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = .25f;
         Time.fixedDeltaTime = .005f;
         slowMotion = true;
+    }
+
+    public void DisplayEventText(String eventText)
+    {
+        StartCoroutine(EventTextIEnum(eventText));
+    }
+
+    IEnumerator EventTextIEnum(String eventText)
+    {
+        eventTextObject.text = eventText;
+        yield return new WaitForSeconds(3);
+        eventTextObject.text = "";
     }
 }

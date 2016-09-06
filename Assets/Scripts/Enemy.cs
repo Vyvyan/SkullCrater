@@ -39,7 +39,10 @@ public class Enemy : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        
+        if (other.collider.tag == "Bullet")
+        {
+            KillThisEnemy(true);
+        }
     }
 
     public void KillThisEnemy(bool killedWithBullet)

@@ -197,6 +197,7 @@ public class Player : MonoBehaviour {
                 GameManager.thisSessionGoldGained += GameManager.heldGold;
                 GameManager.storedGold += GameManager.heldGold;
                 PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                gameManager.DisplayEventText("Deposited " + GameManager.heldGold + "g");
                 // update stats
                 if (GameManager.heldGold > GameManager.stat_LargestSingleDeposit)
                 {
