@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 
     public GameObject editorLight;
 
-    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull, boneBallEnemy, goldSkeletonEnemy;
+    public GameObject skeletonEnemy, flyingskullEnemy, redSkeleton, redFlyingSkull, toxicSkeleton, toxicFlyingSkull, boneBallEnemy, goldSkeletonEnemy, goldPrefab;
     public GameObject[] enemySpawns;
     public GameObject[] flyingenemySpawns;
     public GameObject[] ballenemySpawns;
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour {
     // special events
     public GameObject crystalSkull;
     public int killsToSpawnCrystalSkull;
-    public enum GameMode {normal, GoldSkeletonMode, BoneBalleMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode, LowLightMode, UnlimitedGrenadeMode};
+    public enum GameMode {normal, GoldSkeletonMode, BoneBallMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode};
     public GameMode gameMode;
 
 	// Use this for initialization
@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour {
         shotgunUnlocked = false;
         machinegunUnlocked = false;
         rocketUnlocked = false;
+        heldGold = 0;
 
         //starts with all enemies able to be spawned
         disableBoneBallSpawning = disableFlyingSkullSpawning = disableSkeletonSpawning = false;
@@ -167,30 +168,75 @@ public class GameManager : MonoBehaviour {
             gameTimer += Time.deltaTime;
             comparisonTimer = Mathf.RoundToInt(gameTimer);
 
-   
-            // increase difficulty
-            if (comparisonTimer == 60)
+            // NORMAL GAME MODE DIFFICULTY INCREASE
+            if (gameMode == GameMode.normal)
             {
-                chanceToSpawnSpecialFlying = 3;
-                chanceToSpawnSpecialSkeleton = 3;
-                spawnTimer = 1f;
-                flyingSpawnTimer = 10f;
+                // increase difficulty
+                if (comparisonTimer == 60)
+                {
+                    chanceToSpawnSpecialFlying = 3;
+                    chanceToSpawnSpecialSkeleton = 3;
+                    spawnTimer = 1f;
+                    flyingSpawnTimer = 10f;
+                }
+                else if (comparisonTimer == 140)
+                {
+                    chanceToSpawnSpecialFlying = 10;
+                    chanceToSpawnSpecialSkeleton = 10;
+                    spawnTimer = .9f;
+                    flyingSpawnTimer = 4f;
+                    ballSpawnTimer = 20;
+                }
+                else if (comparisonTimer == 200)
+                {
+                    chanceToSpawnSpecialFlying = 25;
+                    chanceToSpawnSpecialSkeleton = 25;
+                    spawnTimer = .7f;
+                    flyingSpawnTimer = 2f;
+                    ballSpawnTimer = 15;
+                }
             }
-            else if(comparisonTimer == 140)
+            else if (gameMode == GameMode.HordeSkeletonMode)
             {
-                chanceToSpawnSpecialFlying = 10;
-                chanceToSpawnSpecialSkeleton = 10;
-                spawnTimer = .9f;
+                disableBoneBallSpawning = true;
+                disableFlyingSkullSpawning = true;
+                spawnTimer = .2f;
+                chanceToSpawnGoldSkeleton = 0;
+            }
+            else if (gameMode == GameMode.GoldSkeletonMode)
+            {
+                chanceToSpawnGoldSkeleton = 5;
+            }
+            else if (gameMode == GameMode.FlyingSkeletonMode)
+            {
+                disableBoneBallSpawning = true;
+                disableSkeletonSpawning = true;
+                flyingSpawnTimer = .8f;
+            }
+            else if (gameMode == GameMode.SpeedySkeletonMode)
+            {
+                disableBoneBallSpawning = true;
+                chanceToSpawnSpecialFlying = 100;
+                chanceToSpawnSpecialSkeleton = 100;
                 flyingSpawnTimer = 4f;
-            }
-            else if (comparisonTimer == 200)
-            {
-                chanceToSpawnSpecialFlying = 25;
-                chanceToSpawnSpecialSkeleton = 25;
                 spawnTimer = .7f;
-                flyingSpawnTimer = 2f;
+            }
+            else if (gameMode == GameMode.BoneBallMode)
+            {
+                disableSkeletonSpawning = true;
+                disableFlyingSkullSpawning = true;
+                ballSpawnTimer = 2;
             }
 
+            // spawning crystal skulls
+            // if we've killed more than the number to spawn the crystal skull
+            if (enemiesKilledThisSession >= killsToSpawnCrystalSkull)
+            {
+                int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
+                Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
+                // once we spawn the skull, make the next skull spawn require more kills
+                killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
+            }
 
             if (enemyCount < enemyCountMax)
             {
@@ -931,5 +977,72 @@ public class GameManager : MonoBehaviour {
         eventTextObject.text = eventText;
         yield return new WaitForSeconds(3);
         eventTextObject.text = "";
+    }
+
+    public void StartSpecialGameMode(int modeIndex)
+    {
+        // relay this to the special game mode ienum
+        StartCoroutine(SpecialGameMode(modeIndex));
+    }
+
+    public IEnumerator SpecialGameMode(int modeIndex)
+    {
+        float timeLimitOnMode = 0;
+
+        // change the actual game mode
+        if (modeIndex == 1)
+        {
+            gameMode = GameMode.GoldSkeletonMode;
+            timeLimitOnMode = 30;
+            DisplayEventText("You suddenly feel very lucky...");
+        }
+        else if (modeIndex >= 2 && modeIndex <= 7)
+        {
+            gameMode = GameMode.BoneBallMode;
+            timeLimitOnMode = 90;
+            DisplayEventText("Night at the Carnival");
+        }
+        else if (modeIndex >= 8 && modeIndex <= 13)
+        {
+            gameMode = GameMode.FlyingSkeletonMode;
+            timeLimitOnMode = 120;
+            DisplayEventText("Flying Only");
+        }
+        else if (modeIndex >= 14 && modeIndex <= 19)
+        {
+            gameMode = GameMode.HordeSkeletonMode;
+            timeLimitOnMode = 120;
+            DisplayEventText("Horde");
+        }
+        else if (modeIndex >= 20 && modeIndex <= 25)
+        {
+            gameMode = GameMode.SpeedySkeletonMode;
+            timeLimitOnMode = 120;
+            DisplayEventText("Specials Everywhere");
+        }
+
+        yield return new WaitForSeconds(timeLimitOnMode);
+
+        // resets some variables that won't get reset otherwise when switching back to normal mode
+        disableBoneBallSpawning = disableFlyingSkullSpawning = disableSkeletonSpawning = false;
+        chanceToSpawnGoldSkeleton = 2;
+        // spawn winning gold
+        if (gameMode != GameMode.GoldSkeletonMode)
+        {
+            foreach(GameObject trans in ballenemySpawns)
+            {
+                Instantiate(goldPrefab, trans.transform.position, Quaternion.identity);
+            }
+        }
+        gameMode = GameMode.normal;
+    }
+
+    public void KillAll()
+    {
+        GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject skelton in allEnemies)
+        {
+            skelton.transform.parent.SendMessage("KillThisEnemy", true);
+        }
     }
 }

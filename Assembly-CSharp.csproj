@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\KeepLightAboveObject.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\RainbowMaterial.cs" />
      <Compile Include="Assets\Scripts\RobotFriend.cs" />
      <Compile Include="Assets\Scripts\RocketProjectile.cs" />
      <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />

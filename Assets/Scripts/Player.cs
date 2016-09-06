@@ -207,6 +207,21 @@ public class Player : MonoBehaviour {
                 gameManager.goldBonusLevel = 0;
             }
         }
+
+        // picking up a crystal skull
+        if (other.gameObject.tag == "Crystal Skull")
+        {
+            // only pick up crystal skulls if we are in the normal game mode
+            if (gameManager.gameMode == GameManager.GameMode.normal)
+            {
+                // KILL ALL ENEMIES FIRST
+                gameManager.KillAll();
+                // there are 5 modes, all modes except jackpot mode have 6/25 ~(24%) chance to spawn, jackpot has 1/25 ~(4%)
+                gameManager.StartSpecialGameMode(Random.Range(1, 26));
+                // destroy the skull
+                Destroy(other.transform.parent.gameObject);
+            }
+        }
     }
 
     IEnumerator Reload()
