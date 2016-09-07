@@ -187,6 +187,7 @@ public class GameManager : MonoBehaviour {
                     chanceToSpawnSpecialSkeleton = 3;
                     spawnTimer = 1f;
                     flyingSpawnTimer = 10f;
+                    ballSpawnTimer = 30;
                 }
                 else if (comparisonTimer == 140)
                 {
@@ -204,6 +205,18 @@ public class GameManager : MonoBehaviour {
                     flyingSpawnTimer = 2f;
                     ballSpawnTimer = 15;
                 }
+
+                // spawning crystal skulls
+                // if we've killed more than the number to spawn the crystal skull
+                if (enemiesKilledThisSession >= killsToSpawnCrystalSkull)
+                {
+                    int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
+                    Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
+                    // announce it to the player
+                    DisplayEventText("An Anomalous Skull has appeared?!");
+                    // once we spawn the skull, make the next skull spawn require more kills
+                    killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
+                }
             }
             // SPECIAL MODE DIFFICULTY
             else if (gameMode == GameMode.HordeSkeletonMode)
@@ -212,16 +225,22 @@ public class GameManager : MonoBehaviour {
                 disableFlyingSkullSpawning = true;
                 spawnTimer = .2f;
                 chanceToSpawnGoldSkeleton = 0;
+                enemyCountMax = 80;
             }
             else if (gameMode == GameMode.GoldSkeletonMode)
             {
-                chanceToSpawnGoldSkeleton = 10;
+                disableBoneBallSpawning = true;
+                disableFlyingSkullSpawning = true;
+                spawnTimer = .7f;
+                chanceToSpawnGoldSkeleton = 50;
+                enemyCountMax = 45;
             }
             else if (gameMode == GameMode.FlyingSkeletonMode)
             {
                 disableBoneBallSpawning = true;
                 disableSkeletonSpawning = true;
-                flyingSpawnTimer = 1.2f;
+                flyingSpawnTimer = .8f;
+                enemyCountMax = 50;
             }
             else if (gameMode == GameMode.SpeedySkeletonMode)
             {
@@ -229,25 +248,15 @@ public class GameManager : MonoBehaviour {
                 chanceToSpawnSpecialFlying = 100;
                 chanceToSpawnSpecialSkeleton = 100;
                 flyingSpawnTimer = 4f;
-                spawnTimer = 2f;
+                spawnTimer = 1.2f;
+                enemyCountMax = 25;
             }
             else if (gameMode == GameMode.BoneBallMode)
             {
                 disableSkeletonSpawning = true;
                 disableFlyingSkullSpawning = true;
-                ballSpawnTimer = 5;
-            }
-
-            // spawning crystal skulls
-            // if we've killed more than the number to spawn the crystal skull
-            if (enemiesKilledThisSession >= killsToSpawnCrystalSkull)
-            {
-                int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
-                Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
-                // announce it to the player
-                DisplayEventText("Anomalous Skull has appeared?!");
-                // once we spawn the skull, make the next skull spawn require more kills
-                killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
+                ballSpawnTimer = 2;
+                enemyCountMax = 12;
             }
 
             if (enemyCount < enemyCountMax)
@@ -1000,7 +1009,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator EventTextIEnum(String eventText)
     {
         eventTextObject.text = eventText;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(4.5f);
         eventTextObject.text = "";
     }
 
@@ -1019,31 +1028,32 @@ public class GameManager : MonoBehaviour {
         {
             gameMode = GameMode.GoldSkeletonMode;
             timeLimitOnMode = 30;
-            DisplayEventText("You suddenly feel very lucky...");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Lady Luck");
         }
         else if (modeIndex >= 2 && modeIndex <= 7)
         {
             gameMode = GameMode.BoneBallMode;
             timeLimitOnMode = 90;
-            DisplayEventText("Night at the Carnival");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "A rolling stone gathers no moss");
         }
         else if (modeIndex >= 8 && modeIndex <= 13)
         {
             gameMode = GameMode.FlyingSkeletonMode;
             timeLimitOnMode = 120;
-            DisplayEventText("Flying Only");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Death From Above");
         }
         else if (modeIndex >= 14 && modeIndex <= 19)
         {
             gameMode = GameMode.HordeSkeletonMode;
             timeLimitOnMode = 120;
-            DisplayEventText("Horde");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Hope you're not claustrophobic");
+
         }
         else if (modeIndex >= 20 && modeIndex <= 25)
         {
             gameMode = GameMode.SpeedySkeletonMode;
             timeLimitOnMode = 120;
-            DisplayEventText("Specials Everywhere");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Zoom, Boom, Doom and Gloom");
         }
         // show timer
         specialTimerText.gameObject.SetActive(true);
@@ -1056,6 +1066,9 @@ public class GameManager : MonoBehaviour {
         // resets some variables that won't get reset otherwise when switching back to normal mode
         disableBoneBallSpawning = disableFlyingSkullSpawning = disableSkeletonSpawning = false;
         chanceToSpawnGoldSkeleton = 2;
+        enemyCountMax = 60;
+
+
         // spawn winning gold
         if (gameMode != GameMode.GoldSkeletonMode)
         {

@@ -79,6 +79,16 @@ public class Player : MonoBehaviour {
     {
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
+            // player light for bonus modes
+            if (gameManager.gameMode == GameManager.GameMode.HordeSkeletonMode)
+            {
+                playerLight.range = 11;
+            }
+            else
+            {
+                playerLight.range = 22;
+            }
+
             // fire a shot
             // IF WE DO NOT HAVE THE MACHINE GUN OUT
             if (weapon1 != WeaponType.machinegun)
@@ -217,7 +227,9 @@ public class Player : MonoBehaviour {
                 // KILL ALL ENEMIES FIRST
                 gameManager.KillAll();
                 // there are 5 modes, all modes except jackpot mode have 6/25 ~(24%) chance to spawn, jackpot has 1/25 ~(4%)
-                gameManager.StartSpecialGameMode(Random.Range(1, 26));
+                int blahblahrandom = Random.Range(1, 26);
+                Debug.Log(blahblahrandom.ToString());
+                gameManager.StartSpecialGameMode(blahblahrandom);
                 // destroy the skull
                 Destroy(other.transform.parent.gameObject);
             }
