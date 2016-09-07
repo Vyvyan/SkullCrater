@@ -75,11 +75,12 @@ public class GameManager : MonoBehaviour {
 
     public bool slowMotion;
     float slowMoTimer;
+    float specialModeTimer;
 
     public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
         stat_MostGoldDropped, stat_MostGoldInARun;
     public static float stat_LongestTimeSurvived;
-    public Text statsText, eventTextObject;
+    public Text statsText, eventTextObject, specialTimerText;
 
     // special events
     public GameObject crystalSkull;
@@ -92,6 +93,8 @@ public class GameManager : MonoBehaviour {
     {
         // game mode
         gameMode = GameMode.normal;
+        // turns off our special mode timer at the start
+        specialTimerText.gameObject.SetActive(false);
 
         // make sure our slow mo is off
         Time.timeScale = 1;
@@ -167,6 +170,12 @@ public class GameManager : MonoBehaviour {
             // GAME TIMER STUFF
             gameTimer += Time.deltaTime;
             comparisonTimer = Mathf.RoundToInt(gameTimer);
+            // timer for special modes
+            if (gameMode != GameMode.normal)
+            {
+                specialModeTimer -= Time.deltaTime;
+                specialTimerText.text = "Anomaly Ends in: " + FormatSeconds(specialModeTimer);
+            }
 
             // NORMAL GAME MODE DIFFICULTY INCREASE
             if (gameMode == GameMode.normal)
@@ -196,6 +205,7 @@ public class GameManager : MonoBehaviour {
                     ballSpawnTimer = 15;
                 }
             }
+            // SPECIAL MODE DIFFICULTY
             else if (gameMode == GameMode.HordeSkeletonMode)
             {
                 disableBoneBallSpawning = true;
@@ -205,13 +215,13 @@ public class GameManager : MonoBehaviour {
             }
             else if (gameMode == GameMode.GoldSkeletonMode)
             {
-                chanceToSpawnGoldSkeleton = 5;
+                chanceToSpawnGoldSkeleton = 10;
             }
             else if (gameMode == GameMode.FlyingSkeletonMode)
             {
                 disableBoneBallSpawning = true;
                 disableSkeletonSpawning = true;
-                flyingSpawnTimer = .8f;
+                flyingSpawnTimer = 1.2f;
             }
             else if (gameMode == GameMode.SpeedySkeletonMode)
             {
@@ -219,13 +229,13 @@ public class GameManager : MonoBehaviour {
                 chanceToSpawnSpecialFlying = 100;
                 chanceToSpawnSpecialSkeleton = 100;
                 flyingSpawnTimer = 4f;
-                spawnTimer = .7f;
+                spawnTimer = 2f;
             }
             else if (gameMode == GameMode.BoneBallMode)
             {
                 disableSkeletonSpawning = true;
                 disableFlyingSkullSpawning = true;
-                ballSpawnTimer = 2;
+                ballSpawnTimer = 5;
             }
 
             // spawning crystal skulls
@@ -234,6 +244,8 @@ public class GameManager : MonoBehaviour {
             {
                 int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
                 Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
+                // announce it to the player
+                DisplayEventText("Anomalous Skull has appeared?!");
                 // once we spawn the skull, make the next skull spawn require more kills
                 killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
             }
@@ -499,8 +511,9 @@ public class GameManager : MonoBehaviour {
 
         // updates the Statistics text that displays the stats
         statsText.text = Environment.NewLine + Environment.NewLine +
-            "Deaths: " + stat_Deaths.ToString() + Environment.NewLine +
-            "Longest Time Survived: " + stat_LongestTimeSurvived.ToString("F2") + Environment.NewLine +
+            "Expeditions: " + stat_Deaths.ToString() + Environment.NewLine +
+            //"Longest Time Survived: " + stat_LongestTimeSurvived.ToString("F1") + Environment.NewLine +
+            "Longest Time Survived: " + FormatSeconds(stat_LongestTimeSurvived) + Environment.NewLine +
             "Most Gold in a Run: " + stat_MostGoldInARun.ToString() + Environment.NewLine +
             "Largest Single Gold Deposit: " + stat_LargestSingleDeposit.ToString() + Environment.NewLine +
             "Most Gold Dropped: " + stat_MostGoldDropped.ToString() + Environment.NewLine + Environment.NewLine +
@@ -596,6 +609,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Pistol Ammo Capacity Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Pistol_ReloadSpeed")
@@ -608,6 +622,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Pistol Reload Speed Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Shotgun_Ammo")
@@ -620,6 +635,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Shotgun Ammo Capacity Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
@@ -632,6 +648,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Shotgun Reload Speed Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "MachineGun_Ammo")
@@ -644,6 +661,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Machine Gun Ammo Capacity Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
@@ -656,6 +674,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Machine Gun Reload Speed Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "MachineGun_ROF")
@@ -668,6 +687,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Machine Gun Rate of Fire Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Rocket_Ammo")
@@ -680,6 +700,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Rocket Ammo Capacity Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Rocket_ReloadSpeed")
@@ -692,6 +713,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Rocket Reload Speed Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Rocket_Radius")
@@ -704,6 +726,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Rocket Explosion Radius Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Grenade_Radius")
@@ -716,6 +739,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Grenade Explosion Radius Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
             else if (weaponToUpgrade == "Grenade_RechargeRate")
@@ -728,6 +752,7 @@ public class GameManager : MonoBehaviour {
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Grenade Recharge Rate Upgraded!");
+                    PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
         }
@@ -1020,6 +1045,11 @@ public class GameManager : MonoBehaviour {
             timeLimitOnMode = 120;
             DisplayEventText("Specials Everywhere");
         }
+        // show timer
+        specialTimerText.gameObject.SetActive(true);
+        // set timer
+        specialModeTimer = timeLimitOnMode;
+
 
         yield return new WaitForSeconds(timeLimitOnMode);
 
@@ -1034,6 +1064,10 @@ public class GameManager : MonoBehaviour {
                 Instantiate(goldPrefab, trans.transform.position, Quaternion.identity);
             }
         }
+        DisplayEventText("Anomaly Survived!");
+        KillAll();
+        // turns off our timer
+        specialTimerText.gameObject.SetActive(false);
         gameMode = GameMode.normal;
     }
 
@@ -1043,6 +1077,24 @@ public class GameManager : MonoBehaviour {
         foreach (GameObject skelton in allEnemies)
         {
             skelton.transform.parent.SendMessage("KillThisEnemy", true);
+        }
+    }
+
+    string FormatSeconds(float elapsed)
+    {
+        int d = (int)(elapsed * 100.0f);
+        int minutes = d / (60 * 100);
+        int seconds = (d % (60 * 100)) / 100;
+
+        // WE ONLY WANT ONE DIGIT SO WE DIVIDE IT BY TEN, REMOVE THE TEN FOR 2 DIGITS
+        int hundredths = (d % 100) / 10;
+        if (minutes > 0)
+        {
+            return String.Format("{0:00}:{1:00}.{2:0}", minutes, seconds, hundredths);
+        }
+        else
+        {
+            return String.Format("{0:00}.{1:0}", seconds, hundredths);
         }
     }
 }

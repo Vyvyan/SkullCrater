@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class s_HUD : MonoBehaviour {
 
@@ -35,7 +36,8 @@ public class s_HUD : MonoBehaviour {
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
             // display the game timer
-            gameTimer.text = "Expedition Time: " + GameManager.gameTimer.ToString("F2");
+            //gameTimer.text = "Expedition Time: " + GameManager.gameTimer.ToString("F1");
+            gameTimer.text = "Expedition Time: " + FormatSeconds(GameManager.gameTimer);
 
             // displays the gold
             money.text = GameManager.heldGold.ToString() + "g";
@@ -120,7 +122,8 @@ public class s_HUD : MonoBehaviour {
         killedBy.text = GameManager.enemyThatKilledPlayer;
         goldDepositted.text = GameManager.thisSessionGoldGained.ToString() + "g";
         enemiesKilled.text = GameManager.enemiesKilledThisSession.ToString();
-        endTime.text = GameManager.gameTimer.ToString("F2");
+        //endTime.text = GameManager.gameTimer.ToString("F1");
+        endTime.text = FormatSeconds(GameManager.gameTimer);
         playingGroup.SetActive(false);
         deadGroup.SetActive(true);
     }
@@ -129,5 +132,23 @@ public class s_HUD : MonoBehaviour {
     {
         playingGroup.SetActive(true);
         deadGroup.SetActive(false);
+    }
+
+    string FormatSeconds(float elapsed)
+    {
+        int d = (int)(elapsed * 100.0f);
+        int minutes = d / (60 * 100);
+        int seconds = (d % (60 * 100)) / 100;
+
+        // WE ONLY WANT ONE DIGIT SO WE DIVIDE IT BY TEN, REMOVE THE TEN FOR 2 DIGITS
+        int hundredths = (d % 100) / 10;
+        if (minutes > 0)
+        {
+            return String.Format("{0:00}:{1:00}.{2:0}", minutes, seconds, hundredths);
+        }
+        else
+        {
+            return String.Format("{0:00}.{1:0}", seconds, hundredths);
+        }
     }
 }
