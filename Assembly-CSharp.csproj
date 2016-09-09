@@ -46,8 +46,15 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\FX Mega Pack\Scripts\SmoothCameraOrbit.cs" />
+     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusConstants.cs" />
+     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusMaterial.cs" />
+     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusMeshes.cs" />
+     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusObject.cs" />
+     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusType.cs" />
+     <Compile Include="Assets\Scripts\AudioManager.cs" />
      <Compile Include="Assets\Scripts\AutoDestroy.cs" />
      <Compile Include="Assets\Scripts\AutoDestroyOnImpact.cs" />
+     <Compile Include="Assets\Scripts\BackWarner.cs" />
      <Compile Include="Assets\Scripts\BoneBall.cs" />
      <Compile Include="Assets\Scripts\CoroutineUtil.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
@@ -100,6 +107,7 @@
      <None Include="Assets\Custom Shaders\Show Insides.shader" />
      <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasicOutline.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\DepthOfField34.shader" />
+     <None Include="Assets\PrimitivePlus\Documentation\ReadMe.txt" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\MobileBlur.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\SSAOShader.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\ConvertDepth.shader" />

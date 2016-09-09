@@ -1009,7 +1009,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator EventTextIEnum(String eventText)
     {
         eventTextObject.text = eventText;
-        yield return new WaitForSeconds(4.5f);
+        yield return new WaitForSeconds(5f);
         eventTextObject.text = "";
     }
 
@@ -1028,13 +1028,13 @@ public class GameManager : MonoBehaviour {
         {
             gameMode = GameMode.GoldSkeletonMode;
             timeLimitOnMode = 30;
-            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Lady Luck");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Lady Luck shines upon you");
         }
         else if (modeIndex >= 2 && modeIndex <= 7)
         {
             gameMode = GameMode.BoneBallMode;
             timeLimitOnMode = 90;
-            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "A rolling stone gathers no moss");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Roll The Bones");
         }
         else if (modeIndex >= 8 && modeIndex <= 13)
         {
@@ -1046,7 +1046,7 @@ public class GameManager : MonoBehaviour {
         {
             gameMode = GameMode.HordeSkeletonMode;
             timeLimitOnMode = 120;
-            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Hope you're not claustrophobic");
+            DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Overwhelming Darkness");
 
         }
         else if (modeIndex >= 20 && modeIndex <= 25)

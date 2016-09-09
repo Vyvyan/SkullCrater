@@ -28,6 +28,8 @@ public class s_HUD : MonoBehaviour {
         deadGroup.SetActive(false);
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         hasSwitchedToDeadGroup = false;
+
+        crosshairSize = Screen.width / 160;
 	}
 	
 	// Update is called once per frame
