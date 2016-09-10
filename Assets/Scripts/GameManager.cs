@@ -129,6 +129,9 @@ public class GameManager : MonoBehaviour {
         slider_SFXVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnSFXVolume(); });
 
         enemyCount = 0;
+
+        // randomizes our kills to spawn an anomolous skull
+        killsToSpawnCrystalSkull = UnityEngine.Random.Range(100, 201);
     }
 	
 	// Update is called once per frame
