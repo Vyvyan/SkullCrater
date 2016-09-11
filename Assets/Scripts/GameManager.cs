@@ -413,7 +413,7 @@ public class GameManager : MonoBehaviour {
 
         if (gameState == GameState.Dead)
         {
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 Application.LoadLevel(Application.loadedLevel);
             }

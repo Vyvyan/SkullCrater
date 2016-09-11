@@ -71,7 +71,7 @@ public class s_HUD : MonoBehaviour {
             }
             else
             {
-                ammo.text = "Reloading!";
+                ammo.text = "reloading";
             }
 
             if (playerScript.weapon2 == Player.WeaponType.pistol)
