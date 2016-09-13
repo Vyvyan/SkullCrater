@@ -85,8 +85,11 @@ public class GameManager : MonoBehaviour {
     // special events
     public GameObject crystalSkull;
     public int killsToSpawnCrystalSkull;
-    public enum GameMode {normal, GoldSkeletonMode, BoneBallMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode};
+    public enum GameMode {normal, GoldSkeletonMode, BoneBallMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode, Boss};
     public GameMode gameMode;
+
+    // boss mode
+    public float timeToSpawnBoss;
 
 	// Use this for initialization
 	void Start ()
@@ -219,6 +222,16 @@ public class GameManager : MonoBehaviour {
                     DisplayEventText("An Anomalous Skull has appeared?!");
                     // once we spawn the skull, make the next skull spawn require more kills
                     killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
+                }
+
+                // switching to boss mode after X amount of time, can only switch
+                if (comparisonTimer == timeToSpawnBoss)
+                {
+                    gameMode = GameMode.Boss;
+                    KillAll();
+                    disableBoneBallSpawning = true;
+                    disableFlyingSkullSpawning = true;
+                    disableSkeletonSpawning = true;
                 }
             }
             // SPECIAL MODE DIFFICULTY
