@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\BlackSkull.cs" />
      <Compile Include="Assets\Scripts\BoneBall.cs" />
      <Compile Include="Assets\Scripts\BossSkullMeteor.cs" />
+     <Compile Include="Assets\Scripts\BossWeakPoint.cs" />
      <Compile Include="Assets\Scripts\CoroutineUtil.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />

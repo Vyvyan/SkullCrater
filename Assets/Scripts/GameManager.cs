@@ -5,7 +5,7 @@ using System;
 
 public class GameManager : MonoBehaviour {
 
-    public enum GameState { Playing, Dead, PreGame};
+    public enum GameState { Playing, Dead, PreGame, EndGame};
     static public GameState gameState;
     bool hasKilledAllEnemiesAfterPlayerDeath;
     public Player playerScript;
@@ -90,6 +90,7 @@ public class GameManager : MonoBehaviour {
 
     // boss mode
     public float timeToSpawnBoss;
+    public static bool isBossDead;
 
 	// Use this for initialization
 	void Start ()
@@ -98,6 +99,8 @@ public class GameManager : MonoBehaviour {
         gameMode = GameMode.normal;
         // turns off our special mode timer at the start
         specialTimerText.gameObject.SetActive(false);
+
+        isBossDead = false;
 
         // make sure our slow mo is off
         Time.timeScale = 1;

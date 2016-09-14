@@ -18,11 +18,14 @@ public class RobotFriend : MonoBehaviour {
 
     Animator anim;
 
+    GameManager gameManager;
+
 	// Use this for initialization
 	void Start ()
     {
         agent = gameObject.GetComponent<NavMeshAgent>();
         anim = gameObject.GetComponent<Animator>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         robotState = RobotState.gettingNewTarget;
         dustParticles.loop = false;
     }
@@ -32,37 +35,40 @@ public class RobotFriend : MonoBehaviour {
     {
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
-            if (robotState == RobotState.gettingNewTarget)
+            if (gameManager.gameMode != GameManager.GameMode.Boss)
             {
-                int rnd = Random.Range(0, goldTargets.Length - 1);
-                target = goldTargets[rnd];
-                agent.SetDestination(target.position);
-                robotState = RobotState.moving;
-            }
-            else if (robotState == RobotState.moving)
-            {
-                float dist = agent.remainingDistance;
-                if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+                if (robotState == RobotState.gettingNewTarget)
                 {
-                    miningTimerCurrent = 0;
-                    robotState = RobotState.mining;
-                    dustParticles.loop = true;
-                    dustParticles.Play();
-                    anim.SetBool("isDigging", true);
+                    int rnd = Random.Range(0, goldTargets.Length - 1);
+                    target = goldTargets[rnd];
+                    agent.SetDestination(target.position);
+                    robotState = RobotState.moving;
                 }
-            }
-            else if (robotState == RobotState.mining)
-            {
-                if (miningTimerCurrent <= miningTimer)
+                else if (robotState == RobotState.moving)
                 {
-                    miningTimerCurrent += Time.deltaTime;
+                    float dist = agent.remainingDistance;
+                    if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+                    {
+                        miningTimerCurrent = 0;
+                        robotState = RobotState.mining;
+                        dustParticles.loop = true;
+                        dustParticles.Play();
+                        anim.SetBool("isDigging", true);
+                    }
                 }
-                else
+                else if (robotState == RobotState.mining)
                 {
-                    SpawnGold();
-                    robotState = RobotState.gettingNewTarget;
-                    dustParticles.loop = false;
-                    anim.SetBool("isDigging", false);
+                    if (miningTimerCurrent <= miningTimer)
+                    {
+                        miningTimerCurrent += Time.deltaTime;
+                    }
+                    else
+                    {
+                        SpawnGold();
+                        robotState = RobotState.gettingNewTarget;
+                        dustParticles.loop = false;
+                        anim.SetBool("isDigging", false);
+                    }
                 }
             }
         }
