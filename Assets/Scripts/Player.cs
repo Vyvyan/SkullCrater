@@ -216,6 +216,25 @@ public class Player : MonoBehaviour {
                 GameManager.heldGold = 0;
                 gameManager.goldBonusLevel = 0;
             }
+
+            if (GameManager.gameState == GameManager.GameState.EndGame)
+            {
+                // if we won the game, and touch the beam
+                // update stats
+                // session gold best
+                if (GameManager.thisSessionGoldGained > GameManager.stat_MostGoldInARun)
+                {
+                    GameManager.stat_MostGoldInARun = GameManager.thisSessionGoldGained;
+                }
+                // best time survived
+                if (GameManager.gameTimer > GameManager.stat_LongestTimeSurvived)
+                {
+                    GameManager.stat_LongestTimeSurvived = GameManager.gameTimer;
+                }
+                // we add a slight random rotation to the camera to give a good effect
+                gameManager.SaveStatistics();
+                Application.LoadLevel(Application.loadedLevel);
+            }
         }
 
         // picking up a crystal skull

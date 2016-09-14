@@ -11,10 +11,10 @@ public class s_HUD : MonoBehaviour {
     Player playerScript;
     public GUIStyle ammoGUIStyle;
 
-    public Text gameTimer, ammo, money, droppedMoney, killedBy, enemiesKilled, goldDepositted, endTime;
+    public Text gameTimer, ammo, money, droppedMoney, killedBy, enemiesKilled, goldDepositted, endTime, ENDGAME_enemiesKilled, ENDGAME_MissionTime, ENDGAME_golddeposited;
     public Image grenadeImage;
-    public GameObject playingGroup, deadGroup;
-    bool hasSwitchedToDeadGroup;
+    public GameObject playingGroup, deadGroup, endGameGroup;
+    bool hasSwitchedToDeadGroup, hasSwitchedToEndGameGroup;
 
     public Sprite hud_shotgun, hud_pistol, hud_machinegun, hud_rocket, hud_none;
     public Image secondaryWeaponImage;
@@ -28,6 +28,7 @@ public class s_HUD : MonoBehaviour {
         deadGroup.SetActive(false);
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         hasSwitchedToDeadGroup = false;
+        hasSwitchedToEndGameGroup = false;
 
         crosshairSize = Screen.width / 160;
 	}
@@ -35,7 +36,7 @@ public class s_HUD : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-        if (GameManager.gameState == GameManager.GameState.Playing)
+        if (GameManager.gameState == GameManager.GameState.Playing || GameManager.gameState == GameManager.GameState.EndGame)
         {
             // display the game timer
             //gameTimer.text = "Expedition Time: " + GameManager.gameTimer.ToString("F1");
@@ -105,6 +106,19 @@ public class s_HUD : MonoBehaviour {
                 hasSwitchedToDeadGroup = true;
             }
         }
+
+        // switch to end game hud if we die
+        if (GameManager.gameState == GameManager.GameState.EndGame)
+        {
+            if (!hasSwitchedToEndGameGroup)
+            {
+                SwitchToEndGameHUD();
+                hasSwitchedToEndGameGroup = true;
+            }
+
+            // update the endgame gold text 
+            ENDGAME_golddeposited.text = GameManager.thisSessionGoldGained.ToString() + "g" + " + " + GameManager.heldGold.ToString() + " Held G";
+        }
     }
 
 	// GUI
@@ -130,10 +144,22 @@ public class s_HUD : MonoBehaviour {
         deadGroup.SetActive(true);
     }
 
+    void SwitchToEndGameHUD()
+    {
+        ENDGAME_golddeposited.text = GameManager.thisSessionGoldGained.ToString() + "g" + " + " + GameManager.heldGold.ToString() + " Held Gold";
+        ENDGAME_enemiesKilled.text = GameManager.enemiesKilledThisSession.ToString();
+        //endTime.text = GameManager.gameTimer.ToString("F1");
+        ENDGAME_MissionTime.text = FormatSeconds(GameManager.gameTimer);
+        playingGroup.SetActive(true);
+        deadGroup.SetActive(false);
+        endGameGroup.SetActive(true);
+    }
+
     void DisplayPlayingHud()
     {
         playingGroup.SetActive(true);
         deadGroup.SetActive(false);
+        endGameGroup.SetActive(false);
     }
 
     string FormatSeconds(float elapsed)

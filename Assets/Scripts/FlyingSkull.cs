@@ -50,8 +50,11 @@ public class FlyingSkull : MonoBehaviour {
     void KillThisEnemy(bool killedWithBullet)
     {
         isAlive = false;
-        rb.isKinematic = false;
-        rb.useGravity = true;
+        if (rb)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
         Destroy(triggerObject);
 
         AutoDestroy tempAutoDestroy = gameObject.AddComponent<AutoDestroy>();

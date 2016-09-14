@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
 
     public enum GameState { Playing, Dead, PreGame, EndGame};
     static public GameState gameState;
+    public GameState stateForViewInEditor;
     bool hasKilledAllEnemiesAfterPlayerDeath;
     public Player playerScript;
 
@@ -78,7 +79,7 @@ public class GameManager : MonoBehaviour {
     float specialModeTimer;
 
     public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
-        stat_MostGoldDropped, stat_MostGoldInARun;
+        stat_MostGoldDropped, stat_MostGoldInARun, stat_SkellLordsKilled;
     public static float stat_LongestTimeSurvived;
     public Text statsText, eventTextObject, specialTimerText;
 
@@ -143,6 +144,8 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        // seeing gamestate in editor
+        stateForViewInEditor = gameState;
         // if we are slow motion
         if (slowMotion)
         {
@@ -177,8 +180,11 @@ public class GameManager : MonoBehaviour {
         if (gameState == GameState.Playing)
         {
             // GAME TIMER STUFF
-            gameTimer += Time.deltaTime;
-            comparisonTimer = Mathf.RoundToInt(gameTimer);
+            if (!isBossDead)
+            {
+                gameTimer += Time.deltaTime;
+                comparisonTimer = Mathf.RoundToInt(gameTimer);
+            }
             // timer for special modes
             if (gameMode != GameMode.normal)
             {
@@ -536,6 +542,7 @@ public class GameManager : MonoBehaviour {
         stat_SkeltinsKilled = PlayerPrefs.GetInt("stats_SkeltinsKilled", 0);
         stat_ToxicSkellsKilled = PlayerPrefs.GetInt("stats_ToxicSkellsKilled", 0);
         stat_ToxicSkeltinsKilled = PlayerPrefs.GetInt("stats_ToxicSkeltinsKilled", 0);
+        stat_SkellLordsKilled = PlayerPrefs.GetInt("stats_SkellLordsKilled", 0);
 
         // updates the Statistics text that displays the stats
         statsText.text = Environment.NewLine + Environment.NewLine +
@@ -552,7 +559,8 @@ public class GameManager : MonoBehaviour {
             "Skells Killed: " + stat_SkellsKilled.ToString() + Environment.NewLine +
             "Red Skells Killed: " + stat_RedSkellsKilled.ToString() + Environment.NewLine +
             "Toxic Skells Killed: " + stat_ToxicSkellsKilled.ToString() + Environment.NewLine +
-            "Bone Balls Killed: " + stat_BoneBallsKilled.ToString() + Environment.NewLine;
+            "Bone Balls Killed: " + stat_BoneBallsKilled.ToString() + Environment.NewLine +
+            "Skell Lords Killed: " + stat_SkellLordsKilled.ToString() + Environment.NewLine;
     }
 
     public void SaveStatistics()
@@ -571,6 +579,7 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetInt("stats_SkeltinsKilled", stat_SkeltinsKilled);
         PlayerPrefs.SetInt("stats_ToxicSkellsKilled", stat_ToxicSkellsKilled);
         PlayerPrefs.SetInt("stats_ToxicSkeltinsKilled", stat_ToxicSkeltinsKilled);
+        PlayerPrefs.SetInt("stats_SkellLordsKilled", stat_SkellLordsKilled);
     }
 
     IEnumerator KillAllEnemies()
@@ -1128,5 +1137,16 @@ public class GameManager : MonoBehaviour {
         {
             return String.Format("{0:00}.{1:0}", seconds, hundredths);
         }
+    }
+
+    public void startWaitThenSwitchToEndGame()
+    {
+        StartCoroutine(WaitThenSwitchToEndGame());
+    }
+
+    IEnumerator WaitThenSwitchToEndGame()
+    {
+        yield return new WaitForSeconds(5);
+        gameState = GameState.EndGame;
     }
 }

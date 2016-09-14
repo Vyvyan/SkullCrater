@@ -24,7 +24,7 @@ public class BlackSkull : MonoBehaviour {
 
     public float rotationSpeed;
 
-    public static float health = 1;
+    public static float health;
 
     GameManager gameManager;
 
@@ -46,6 +46,8 @@ public class BlackSkull : MonoBehaviour {
         bossState = BossState.idle;
         anim = GetComponent<Animator>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        // put the health here, so it resets each round
+        health = 1;
 	}
 	
 	// Update is called once per frame
@@ -181,8 +183,14 @@ public class BlackSkull : MonoBehaviour {
         isShaking = true;
         yield return new WaitForSeconds(8);
         isShaking = false;
+        // only end the game if the player is alive
+        if (GameManager.gameState == GameManager.GameState.Playing)
+        {
+            gameManager.startWaitThenSwitchToEndGame();
+        }
+        GameManager.isBossDead = true;
+        GameManager.stat_SkellLordsKilled++;
         deadBoss.SetActive(true);
         gameObject.SetActive(false);
-        GameManager.isBossDead = true;
     }
 }
