@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour {
     // boss mode
     public float timeToSpawnBoss;
     public static bool isBossDead;
+    public Animator bossAnimator;
 
 	// Use this for initialization
 	void Start ()
@@ -233,14 +234,15 @@ public class GameManager : MonoBehaviour {
                     killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
                 }
 
-                // switching to boss mode after X amount of time, can only switch
-                if (comparisonTimer == timeToSpawnBoss)
+                // switching to boss mode after X amount of time
+                if (comparisonTimer >= timeToSpawnBoss)
                 {
                     gameMode = GameMode.Boss;
                     KillAll();
                     disableBoneBallSpawning = true;
                     disableFlyingSkullSpawning = true;
                     disableSkeletonSpawning = true;
+                    bossAnimator.SetTrigger("Spawn");               
                 }
             }
             // SPECIAL MODE DIFFICULTY

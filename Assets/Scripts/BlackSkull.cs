@@ -30,10 +30,11 @@ public class BlackSkull : MonoBehaviour {
 
     bool isShaking;
 
-    Animator anim;
+    //Animator anim;
 
     public GameObject deadBoss;
     public Light bossLight;
+    public bool lightOn;
 
 	// Use this for initialization
 	void Start ()
@@ -43,11 +44,13 @@ public class BlackSkull : MonoBehaviour {
         ballFiringRateTimer = ballFiringRate;
         spinAttack_TimerCurrent = spinAttack_TimeInterval;
         idleToSpinAttackTimerCurrent = idleToSpinAttackTimer;
-        bossState = BossState.idle;
-        anim = GetComponent<Animator>();
+        bossState = BossState.spawning;
+        //anim = GetComponent<Animator>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         // put the health here, so it resets each round
-        health = 1;
+        health = 30;
+        // start our light off
+        bossLight.intensity = 0;
 	}
 	
 	// Update is called once per frame
@@ -165,7 +168,7 @@ public class BlackSkull : MonoBehaviour {
             {
                 StartCoroutine(MakeSureAllEnemiesDie());
                 StartCoroutine(ShakeSkullAfterDeath());
-                Destroy(anim);
+                //Destroy(anim);
                 bossState = BossState.dead;
             }
         }

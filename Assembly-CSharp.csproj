@@ -73,6 +73,7 @@
      <Compile Include="Assets\Scripts\RobotFriend.cs" />
      <Compile Include="Assets\Scripts\RocketProjectile.cs" />
      <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />
+     <Compile Include="Assets\Scripts\SkullBossParent.cs" />
      <Compile Include="Assets\Scripts\SpecialCrate.cs" />
      <Compile Include="Assets\Scripts\TextureMovingOffset.cs" />
      <Compile Include="Assets\Scripts\ToxicFlyingSkull.cs" />

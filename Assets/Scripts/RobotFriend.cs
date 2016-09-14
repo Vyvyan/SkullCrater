@@ -71,6 +71,12 @@ public class RobotFriend : MonoBehaviour {
                     }
                 }
             }
+            else
+            {
+                agent.Stop();
+                anim.SetBool("isDigging", false);
+                dustParticles.Stop();
+            }
         }
     }
 
