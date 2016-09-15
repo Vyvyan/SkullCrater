@@ -13,12 +13,16 @@ public class ToxicFlyingSkull : MonoBehaviour
 
     FlyingSkull flyingSkullScript;
 
+    GameManager gameManager;
+    public GameObject audioSourceObjectToSpawn, audioSourceSLOWMO;
+
     // this is cause we can use this code for the shotgun pellets, so they have more impact, but no explosion effect
     public bool disableExplosion;
 
     // Use this for initialization
     void Start()
     {
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         flyingSkullScript = gameObject.GetComponent<FlyingSkull>();
     }
 
@@ -38,6 +42,16 @@ public class ToxicFlyingSkull : MonoBehaviour
                 {
                     Vector3 explosionPos = transform.position;
                     Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
+                    // if we hit a bunch of things, then slow mo us. each skeleton has 11 colliders
+                    if (colliders.Length > 60)
+                    {
+                        Instantiate(audioSourceSLOWMO, transform.position, Quaternion.identity);
+                        gameManager.SlowMo();
+                    }
+                    else
+                    {
+                        Instantiate(audioSourceObjectToSpawn, transform.position, Quaternion.identity);
+                    }
                     foreach (Collider hit in colliders)
                     {
                         Rigidbody rb = hit.GetComponent<Rigidbody>();

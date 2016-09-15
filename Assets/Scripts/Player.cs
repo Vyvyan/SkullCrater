@@ -13,6 +13,8 @@ public class Player : MonoBehaviour {
 
     public Light playerLight;
     Animator playerLightAnim;
+    AudioSource audioSourcePlayer;
+    AudioManager audioManager;
 
     public int pistolAmmoMax, shotgunAmmoMax, machinegunAmmoMax, rocketAmmoMax;
     public int pistolAmmo, shotgunAmmo, machinegunAmmo, rocketAmmo;
@@ -45,6 +47,9 @@ public class Player : MonoBehaviour {
         weapon2 = WeaponType.none;
 
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+
+        audioSourcePlayer = GetComponent<AudioSource>();
 
         playerLightAnim = playerLight.GetComponent<Animator>();
 
@@ -186,6 +191,7 @@ public class Player : MonoBehaviour {
             GameManager.heldGold += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
             gameManager.goldBonusLevel++;
             Destroy(other.gameObject);
+            audioSourcePlayer.PlayOneShot(AudioManager.gold_Pickup, GameManager.SFXVolume / 100);
         }
 
         // switch game modes when we hit the planet
@@ -215,6 +221,7 @@ public class Player : MonoBehaviour {
                 }
                 GameManager.heldGold = 0;
                 gameManager.goldBonusLevel = 0;
+                audioSourcePlayer.PlayOneShot(AudioManager.gold_DropOff, GameManager.SFXVolume / 100);
             }
 
             if (GameManager.gameState == GameManager.GameState.EndGame)
@@ -301,12 +308,12 @@ public class Player : MonoBehaviour {
         // send the name of the enemy that hit us to the game manager for easy access
         GameManager.enemyThatKilledPlayer = thingThatHitUs;
         Debug.Log(thingThatHitUs);
-
         saveOurWeaponLoadout();
     }
 
     public void KillPlayer()
     {
+        audioManager.Play2DSound(AudioManager.playerDeath);
         // update stats
         // dropping gold
         if (GameManager.heldGold > GameManager.stat_MostGoldDropped)
@@ -350,7 +357,7 @@ public class Player : MonoBehaviour {
                 pistolAnim.SetTrigger("FireGun");
                 //muzzle flash
                 pistolEffects.CreateMuzzleFlash();
-
+                audioSourcePlayer.PlayOneShot(AudioManager.pistolFire, GameManager.SFXVolume / 180);
                 StartCoroutine(MuzzleFlash(pistolMuzzleLight));
                 GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                 temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
@@ -368,6 +375,7 @@ public class Player : MonoBehaviour {
                     shotgunAnim.SetTrigger("FireGun");
                     //muzzle flash
                     shotgunEffects.CreateMuzzleFlash();
+                    audioSourcePlayer.PlayOneShot(AudioManager.shotgunFire, GameManager.SFXVolume / 100);
 
                     StartCoroutine(MuzzleFlash(shotgunMuzzleLight));
                     GameObject temp = Instantiate(shotgunPellet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
@@ -393,6 +401,7 @@ public class Player : MonoBehaviour {
                     machinegunAnim.SetTrigger("FireGun");
                     //muzzle flash
                     machinegunEffects.CreateMuzzleFlash();
+                    audioSourcePlayer.PlayOneShot(AudioManager.machinegunFire, GameManager.SFXVolume / 100);
 
                     StartCoroutine(MuzzleFlash(machinegunMuzzleLight));
                     GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
@@ -412,7 +421,7 @@ public class Player : MonoBehaviour {
             if (rocketAmmo > 0)
             {
                 rocketAnim.SetTrigger("FireGun");
-
+                audioSourcePlayer.PlayOneShot(AudioManager.rocketFire, GameManager.SFXVolume / 180);
                 GameObject temp = Instantiate(rocketProjectile, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                 // no need to add force to the rocket, since we'll have a script that moves it on the rocket itself
                 //temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
@@ -529,6 +538,11 @@ public class Player : MonoBehaviour {
                     weapon1 = WeaponType.pistol;
 
                     ChangeWeaponModel();
+                    audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                 }
             }
             // if we're trying to equip a Machine Gun
@@ -543,7 +557,7 @@ public class Player : MonoBehaviour {
                         // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
                         weapon2 = weapon1;
                         weapon1 = WeaponType.machinegun;
-
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         ChangeWeaponModel();
                     }
                 }
@@ -560,6 +574,11 @@ public class Player : MonoBehaviour {
                         PlayerPrefs.SetInt("machinegunUnlocked", 1);
                         PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                         gameManager.ChangeEquipButtonText();
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
+                    }
+                    else
+                    {
+                        audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                     }
                 }
                 
@@ -576,7 +595,7 @@ public class Player : MonoBehaviour {
                         // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
                         weapon2 = weapon1;
                         weapon1 = WeaponType.shotgun;
-
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         ChangeWeaponModel();
                     }
                 }
@@ -592,7 +611,12 @@ public class Player : MonoBehaviour {
                         // save it that we unlocked the shotgun
                         PlayerPrefs.SetInt("shotgunUnlocked", 1);
                         PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         gameManager.ChangeEquipButtonText();
+                    }
+                    else
+                    {
+                        audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                     }
                 }
             }
@@ -608,7 +632,7 @@ public class Player : MonoBehaviour {
                         // move our weapon 1 to weapon 2 and equip a machine gun as weapon 1
                         weapon2 = weapon1;
                         weapon1 = WeaponType.rocket;
-
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         ChangeWeaponModel();
                     }
                 }
@@ -624,7 +648,12 @@ public class Player : MonoBehaviour {
                         // save it that we unlocked the machinegun
                         PlayerPrefs.SetInt("rocketUnlocked", 1);
                         PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         gameManager.ChangeEquipButtonText();
+                    }
+                    else
+                    {
+                        audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                     }
                 }
 
@@ -640,7 +669,12 @@ public class Player : MonoBehaviour {
                 {
                     // equip the pistol
                     weapon1 = WeaponType.pistol;
+                    audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                     ChangeWeaponModel();
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                 }
             }
             if (weaponName == "MachineGun")
@@ -654,6 +688,7 @@ public class Player : MonoBehaviour {
                         // equip the machine gun
                         weapon1 = WeaponType.machinegun;
                         ChangeWeaponModel();
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                     }
                     // else, buy the machine gun
                     else
@@ -667,9 +702,18 @@ public class Player : MonoBehaviour {
                             // save it that we unlocked the machine gun
                             PlayerPrefs.SetInt("machinegunUnlocked", 1);
                             PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                            audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                             gameManager.ChangeEquipButtonText();
                         }
+                        else
+                        {
+                            audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
+                        }
                     }
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                 }
             }
             if (weaponName == "Shotgun")
@@ -683,6 +727,7 @@ public class Player : MonoBehaviour {
                         // equip the machine gun
                         weapon1 = WeaponType.shotgun;
                         ChangeWeaponModel();
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                     }
                     // else, buy the machine gun
                     else
@@ -696,9 +741,18 @@ public class Player : MonoBehaviour {
                             // save it that we unlocked the shotgun
                             PlayerPrefs.SetInt("shotgunUnlocked", 1);
                             PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                            audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                             gameManager.ChangeEquipButtonText();
                         }
+                        else
+                        {
+                            audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
+                        }
                     }
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                 }
             }
             // rocket
@@ -712,6 +766,7 @@ public class Player : MonoBehaviour {
                     {
                         // equip the rocket gun
                         weapon1 = WeaponType.rocket;
+                        audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                         ChangeWeaponModel();
                     }
                     // else, buy the rocket
@@ -726,9 +781,18 @@ public class Player : MonoBehaviour {
                             // save it that we unlocked the rocket
                             PlayerPrefs.SetInt("rocketUnlocked", 1);
                             PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
+                            audioSourcePlayer.PlayOneShot(AudioManager.accept, GameManager.SFXVolume / 100);
                             gameManager.ChangeEquipButtonText();
                         }
+                        else
+                        {
+                            audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
+                        }
                     }
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.decline, GameManager.SFXVolume / 100);
                 }
             }
         }

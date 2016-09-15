@@ -5,6 +5,7 @@ public class BackWarner : MonoBehaviour {
 
     public Light warningLight;
     public float lightTimer;
+    public GameObject warningImage;
 
 	// Use this for initialization
 	void Start ()
@@ -19,10 +20,18 @@ public class BackWarner : MonoBehaviour {
         {
             lightTimer -= Time.deltaTime;
             warningLight.intensity = 6;
+            if(warningImage.activeSelf == false)
+            {
+                warningImage.SetActive(true);
+            }
         }
         else
         {
             warningLight.intensity = 0;
+            if (warningImage.activeSelf == true)
+            {
+                warningImage.SetActive(false);
+            }
         }
 	}
 

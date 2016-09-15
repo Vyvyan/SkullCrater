@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
     public GameState stateForViewInEditor;
     bool hasKilledAllEnemiesAfterPlayerDeath;
     public Player playerScript;
+    AudioSource playerAudio;
 
     public GameObject editorLight;
 
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour {
         disableBoneBallSpawning = disableFlyingSkullSpawning = disableSkeletonSpawning = false;
 
         playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        playerAudio = playerScript.gameObject.GetComponent<AudioSource>();
         // LOAD OUR SAVED STUFF
         LoadPlayerPrefs();
 
@@ -638,6 +640,7 @@ public class GameManager : MonoBehaviour {
     {
         if (storedGold >= 125)
         {
+            playerAudio.PlayOneShot(AudioManager.accept, SFXVolume / 100);
             if (weaponToUpgrade == "Pistol_Ammo")
             {
                 if (Pistol_Upgrades_AmmoLevelCurrent < Pistol_Upgrades_AmmoLevelMax)
@@ -794,6 +797,10 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
+        }
+        else
+        {
+            playerAudio.PlayOneShot(AudioManager.decline, SFXVolume / 100);
         }
     }
 
@@ -952,6 +959,7 @@ public class GameManager : MonoBehaviour {
 
     public void ChangeMenus(string menuName)
     {
+        playerAudio.PlayOneShot(AudioManager.accept, SFXVolume / 100);
         if (menuName == "Main")
         {
             group_MainMenu.SetActive(true);
