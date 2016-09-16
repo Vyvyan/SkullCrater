@@ -9,6 +9,7 @@ public class FlyingSkull : MonoBehaviour {
     public bool isAlive;
     GameObject triggerObject;
     public bool isToxic, isRed;
+    AudioSource audioS;
 
 	// Use this for initialization
 	void Start ()
@@ -17,6 +18,7 @@ public class FlyingSkull : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player");
         rb = gameObject.GetComponent<Rigidbody>();
         triggerObject = gameObject.transform.GetChild(0).gameObject;
+        audioS = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -43,6 +45,7 @@ public class FlyingSkull : MonoBehaviour {
                 KillThisEnemy(true);
                 rb.AddExplosionForce(2000, other.contacts[0].point, 10);
                 rb.AddTorque(new Vector3(Random.Range(15, 45), Random.Range(15, 45), Random.Range(15, 45)));
+                audioS.Stop();
             }
         }
     }

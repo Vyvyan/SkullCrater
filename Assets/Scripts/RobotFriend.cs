@@ -17,7 +17,8 @@ public class RobotFriend : MonoBehaviour {
     public ParticleSystem dustParticles;
 
     Animator anim;
-
+    // the audio source is only for the digging sound, the rocket is on a different object, and it's always playing so ez pz
+    AudioSource audioS;
     GameManager gameManager;
 
 	// Use this for initialization
@@ -26,8 +27,12 @@ public class RobotFriend : MonoBehaviour {
         agent = gameObject.GetComponent<NavMeshAgent>();
         anim = gameObject.GetComponent<Animator>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        audioS = GetComponent<AudioSource>();
         robotState = RobotState.gettingNewTarget;
         dustParticles.loop = false;
+        audioS.volume = GameManager.SFXVolume / 600;
+        audioS.Play();
+        audioS.Pause();
     }
 	
 	// Update is called once per frame
@@ -54,6 +59,7 @@ public class RobotFriend : MonoBehaviour {
                         dustParticles.loop = true;
                         dustParticles.Play();
                         anim.SetBool("isDigging", true);
+                        audioS.UnPause();
                     }
                 }
                 else if (robotState == RobotState.mining)
@@ -66,6 +72,7 @@ public class RobotFriend : MonoBehaviour {
                     {
                         SpawnGold();
                         robotState = RobotState.gettingNewTarget;
+                        audioS.Pause();
                         dustParticles.loop = false;
                         anim.SetBool("isDigging", false);
                     }

@@ -22,6 +22,8 @@ public class Enemy : MonoBehaviour {
     public bool goldSkeleton;
     public bool redSkeleton;
 
+    AudioSource audio;
+
     // Use this for initialization
     void Start ()
     {
@@ -29,6 +31,7 @@ public class Enemy : MonoBehaviour {
         agent = gameObject.GetComponent<NavMeshAgent>();
         animator = gameObject.GetComponent<Animator>();
         triggerObject = transform.GetChild(10).gameObject;
+        audio = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -157,5 +160,15 @@ public class Enemy : MonoBehaviour {
     {
         yield return new WaitForSeconds(.5f);
         Instantiate(toxicGrenade, gameObject.transform.position, Quaternion.identity);
+    }
+
+    public void PlayFootStep()
+    {
+        audio.PlayOneShot(AudioManager.skel_Footstep, GameManager.SFXVolume / 600);
+    }
+
+    public void PlayFootStep2()
+    {
+        audio.PlayOneShot(AudioManager.skel_Footstep2, GameManager.SFXVolume / 600);
     }
 }

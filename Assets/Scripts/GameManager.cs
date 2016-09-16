@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour {
         if (slowMotion)
         {
             // if the unscaled time is greater than our timer + the time we want to be slow mo, stop slo mo
-            if (Time.unscaledTime > slowMoTimer + 2f)
+            if (Time.unscaledTime > slowMoTimer + 2.2f)
             {
                 Time.timeScale = 1;
                 Time.fixedDeltaTime = .02f;
@@ -233,7 +233,7 @@ public class GameManager : MonoBehaviour {
                     // announce it to the player
                     DisplayEventText("An Anomalous Skull has appeared?!");
                     // once we spawn the skull, make the next skull spawn require more kills
-                    killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 3;
+                    killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 50000;
                 }
 
                 // switching to boss mode after X amount of time
@@ -254,6 +254,7 @@ public class GameManager : MonoBehaviour {
                 disableFlyingSkullSpawning = true;
                 spawnTimer = .2f;
                 chanceToSpawnGoldSkeleton = 0;
+                chanceToSpawnSpecialSkeleton = 0;
                 enemyCountMax = 80;
             }
             else if (gameMode == GameMode.GoldSkeletonMode)

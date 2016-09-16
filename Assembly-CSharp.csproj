@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\BoneBall.cs" />
      <Compile Include="Assets\Scripts\BossSkullMeteor.cs" />
      <Compile Include="Assets\Scripts\BossWeakPoint.cs" />
+     <Compile Include="Assets\Scripts\BulletAudio.cs" />
      <Compile Include="Assets\Scripts\CoroutineUtil.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
@@ -67,6 +68,7 @@
      <Compile Include="Assets\Scripts\Grenade.cs" />
      <Compile Include="Assets\Scripts\GrenadeAudio.cs" />
      <Compile Include="Assets\Scripts\KeepLightAboveObject.cs" />
+     <Compile Include="Assets\Scripts\KeepObjectAboveAnother.cs" />
      <Compile Include="Assets\Scripts\KillPlane.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />

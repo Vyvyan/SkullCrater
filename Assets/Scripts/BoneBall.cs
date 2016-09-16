@@ -11,11 +11,14 @@ public class BoneBall : MonoBehaviour {
     GameObject player;
     public float attackPower;
     public GameObject triggerObject;
+    AudioSource audioS;
 
     // we limit the ball so they cant attack for a few seconds on spawn, since they are in the air
     bool canAttack;
 
     public float attackTimer, attackTimerCurrent;
+
+    bool isTouchingGround;
 
 	// Use this for initialization
 	void Start ()
@@ -26,6 +29,8 @@ public class BoneBall : MonoBehaviour {
         attackTimerCurrent = 0;
         canAttack = false;
         StartCoroutine(DelayFirstAttack());
+        audioS = GetComponent<AudioSource>();
+        isTouchingGround = false;
 	}
 	
 	// Update is called once per frame
@@ -49,6 +54,11 @@ public class BoneBall : MonoBehaviour {
         {
             gameObject.tag = "Untagged";
         }
+
+        if (isTouchingGround)
+        {
+            
+        }
 	}
 
     void LateUpdate()
@@ -65,8 +75,26 @@ public class BoneBall : MonoBehaviour {
                 if (!isDead)
                 {
                     KillThisEnemy(true);
+                    audioS.pitch = 1;
+                    audioS.PlayOneShot(AudioManager.boneball_Death, GameManager.SFXVolume / 120);
                 }
             }
+        }
+        else
+        {
+            if (other.relativeVelocity.magnitude > 5)
+            {
+                audioS.PlayOneShot(AudioManager.boneball_Hit, GameManager.SFXVolume / 400);
+            }
+            isTouchingGround = true;
+        }
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.tag != "Bullet")
+        {
+            isTouchingGround = false;
         }
     }
 

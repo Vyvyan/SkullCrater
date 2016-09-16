@@ -191,7 +191,7 @@ public class Player : MonoBehaviour {
             GameManager.heldGold += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
             gameManager.goldBonusLevel++;
             Destroy(other.gameObject);
-            audioSourcePlayer.PlayOneShot(AudioManager.gold_Pickup, GameManager.SFXVolume / 100);
+            audioSourcePlayer.PlayOneShot(AudioManager.gold_Pickup, GameManager.SFXVolume / 200);
         }
 
         // switch game modes when we hit the planet
@@ -221,7 +221,7 @@ public class Player : MonoBehaviour {
                 }
                 GameManager.heldGold = 0;
                 gameManager.goldBonusLevel = 0;
-                audioSourcePlayer.PlayOneShot(AudioManager.gold_DropOff, GameManager.SFXVolume / 100);
+                audioSourcePlayer.PlayOneShot(AudioManager.gold_DropOff, GameManager.SFXVolume / 125);
             }
 
             if (GameManager.gameState == GameManager.GameState.EndGame)
@@ -256,6 +256,7 @@ public class Player : MonoBehaviour {
                 int blahblahrandom = Random.Range(1, 26);
                 Debug.Log(blahblahrandom.ToString());
                 gameManager.StartSpecialGameMode(blahblahrandom);
+                audioSourcePlayer.PlayOneShot(AudioManager.anomalousSkull, GameManager.SFXVolume / 100);
                 // destroy the skull
                 Destroy(other.transform.parent.gameObject);
             }
@@ -268,7 +269,10 @@ public class Player : MonoBehaviour {
         {
             isReloading = true;
             pistolAnim.SetBool("ReloadGun", true);
+            audioSourcePlayer.pitch = AudioManager.reload_Pistol.length / reloadSpeed_Pistol;
+            audioSourcePlayer.PlayOneShot(AudioManager.reload_Pistol, GameManager.SFXVolume / 400);
             yield return new WaitForSeconds(reloadSpeed_Pistol);
+            audioSourcePlayer.pitch = 1;
             pistolAnim.SetBool("ReloadGun", false);
             pistolAmmo = pistolAmmoMax;
             isReloading = false;
@@ -277,7 +281,10 @@ public class Player : MonoBehaviour {
         {
             isReloading = true;
             shotgunAnim.SetBool("ReloadGun", true);
+            audioSourcePlayer.pitch = AudioManager.reload_Shotgun.length / reloadSpeed_Shotgun;
+            audioSourcePlayer.PlayOneShot(AudioManager.reload_Shotgun, GameManager.SFXVolume / 400);
             yield return new WaitForSeconds(reloadSpeed_Shotgun);
+            audioSourcePlayer.pitch = 1;
             shotgunAnim.SetBool("ReloadGun", false);
             shotgunAmmo = shotgunAmmoMax;
             isReloading = false;
@@ -286,7 +293,10 @@ public class Player : MonoBehaviour {
         {
             isReloading = true;
             machinegunAnim.SetBool("ReloadGun", true);
+            audioSourcePlayer.pitch = AudioManager.reload_MG.length / reloadSpeed_Machinegun;
+            audioSourcePlayer.PlayOneShot(AudioManager.reload_MG, GameManager.SFXVolume / 400);
             yield return new WaitForSeconds(reloadSpeed_Machinegun);
+            audioSourcePlayer.pitch = 1;
             machinegunAnim.SetBool("ReloadGun", false);
             machinegunAmmo = machinegunAmmoMax;
             isReloading = false;
@@ -295,7 +305,10 @@ public class Player : MonoBehaviour {
         {
             isReloading = true;
             rocketAnim.SetBool("ReloadGun", true);
+            audioSourcePlayer.pitch = AudioManager.reload_Rocket.length / reloadSpeed_Rocket;
+            audioSourcePlayer.PlayOneShot(AudioManager.reload_Rocket, GameManager.SFXVolume / 400);
             yield return new WaitForSeconds(reloadSpeed_Rocket);
+            audioSourcePlayer.pitch = 1;
             rocketAnim.SetBool("ReloadGun", false);
             rocketAmmo = rocketAmmoMax;
             isReloading = false;
