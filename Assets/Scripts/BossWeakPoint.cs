@@ -5,11 +5,12 @@ public class BossWeakPoint : MonoBehaviour {
 
     public GameObject hitParticles;
     public BlackSkull blackSkull;
+    AudioSource audioS;
 
 	// Use this for initialization
 	void Start ()
     {
-	    
+        audioS = GetComponentInParent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -26,21 +27,25 @@ public class BossWeakPoint : MonoBehaviour {
             {
                 BlackSkull.health -= 5f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.name == "Pellet")
             {
                 BlackSkull.health -= .2f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.name == "Grenade(Clone)")
             {
                 BlackSkull.health -= 5f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.tag == "Bullet")
             {
                 BlackSkull.health -= 1f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
         }
 

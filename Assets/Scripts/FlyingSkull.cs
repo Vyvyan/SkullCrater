@@ -45,7 +45,6 @@ public class FlyingSkull : MonoBehaviour {
                 KillThisEnemy(true);
                 rb.AddExplosionForce(2000, other.contacts[0].point, 10);
                 rb.AddTorque(new Vector3(Random.Range(15, 45), Random.Range(15, 45), Random.Range(15, 45)));
-                audioS.Stop();
             }
         }
     }
@@ -85,5 +84,6 @@ public class FlyingSkull : MonoBehaviour {
         {
             GameManager.stat_SkellsKilled++;
         }
+        audioS.Stop();
     }
 }

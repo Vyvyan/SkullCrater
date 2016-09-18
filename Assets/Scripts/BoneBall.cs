@@ -84,7 +84,7 @@ public class BoneBall : MonoBehaviour {
         {
             if (other.relativeVelocity.magnitude > 5)
             {
-                audioS.PlayOneShot(AudioManager.boneball_Hit, GameManager.SFXVolume / 400);
+                audioS.PlayOneShot(AudioManager.boneball_Hit, GameManager.SFXVolume / 600);
             }
             isTouchingGround = true;
         }

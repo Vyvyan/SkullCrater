@@ -38,6 +38,7 @@ public class RobotFriend : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        audioS.volume = GameManager.SFXVolume / 600;
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
             if (gameManager.gameMode != GameManager.GameMode.Boss)
@@ -48,6 +49,7 @@ public class RobotFriend : MonoBehaviour {
                     target = goldTargets[rnd];
                     agent.SetDestination(target.position);
                     robotState = RobotState.moving;
+                    anim.SetBool("isDigging", false);
                 }
                 else if (robotState == RobotState.moving)
                 {
@@ -83,6 +85,7 @@ public class RobotFriend : MonoBehaviour {
                 agent.Stop();
                 anim.SetBool("isDigging", false);
                 dustParticles.Stop();
+                audioS.Stop();
             }
         }
     }

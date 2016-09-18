@@ -95,6 +95,9 @@ public class GameManager : MonoBehaviour {
     public static bool isBossDead;
     public Animator bossAnimator;
 
+    // terrain
+    public GameObject terrain;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -244,7 +247,8 @@ public class GameManager : MonoBehaviour {
                     disableBoneBallSpawning = true;
                     disableFlyingSkullSpawning = true;
                     disableSkeletonSpawning = true;
-                    bossAnimator.SetTrigger("Spawn");               
+                    bossAnimator.SetTrigger("Spawn");
+                    DisplayEventText("!!WARNING: Unknown Super Entity Has Appeared!!");              
                 }
             }
             // SPECIAL MODE DIFFICULTY

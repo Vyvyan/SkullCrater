@@ -5,6 +5,7 @@ public class BossSkullMeteor : MonoBehaviour {
 
     public GameObject skeltin, flyingSkeltin, redSkeltin, toxicSkeltin, flyingRedSkeltin, flyingToxicSkeltin;
     public GameObject spawnParticles;
+    public GameObject noise;
 
     // Use this for initialization
     void Start ()
@@ -95,6 +96,7 @@ public class BossSkullMeteor : MonoBehaviour {
                     }
                 }
             }
+            Instantiate(noise, gameObject.transform.position, Quaternion.identity);
 
             Destroy(gameObject);
         }

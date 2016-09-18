@@ -221,7 +221,11 @@ public class Player : MonoBehaviour {
                 }
                 GameManager.heldGold = 0;
                 gameManager.goldBonusLevel = 0;
-                audioSourcePlayer.PlayOneShot(AudioManager.gold_DropOff, GameManager.SFXVolume / 125);
+                // if you enter the beam when the game is ended, it starts the noise, then gets cut off. it's annoying
+                if (GameManager.gameState != GameManager.GameState.EndGame)
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.gold_DropOff, GameManager.SFXVolume / 125);
+                }
             }
 
             if (GameManager.gameState == GameManager.GameState.EndGame)

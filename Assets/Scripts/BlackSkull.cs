@@ -30,6 +30,9 @@ public class BlackSkull : MonoBehaviour {
 
     bool isShaking;
 
+    AudioSource audioS;
+    AudioManager audioManager;
+
     //Animator anim;
 
     public GameObject deadBoss;
@@ -39,6 +42,8 @@ public class BlackSkull : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        audioS = GetComponent<AudioSource>();
+        audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         player = GameObject.FindGameObjectWithTag("Player");
         firingRateTimer = firingRate;
         ballFiringRateTimer = ballFiringRate;
@@ -76,6 +81,8 @@ public class BlackSkull : MonoBehaviour {
                 // shoot out two balls
                 GameObject tempBall1 = Instantiate(ball, ballSpawn1.position, Quaternion.identity) as GameObject;
                 GameObject tempBall2 = Instantiate(ball, ballSpawn2.position, Quaternion.identity) as GameObject;
+                audioS.PlayOneShot(AudioManager.rocketFire, GameManager.SFXVolume / 100);
+                audioS.PlayOneShot(AudioManager.rocketFire, GameManager.SFXVolume / 100);
                 tempBall1.GetComponent<Rigidbody>().AddForce(ballSpawn1.transform.forward * 20, ForceMode.VelocityChange);
                 tempBall2.GetComponent<Rigidbody>().AddForce(ballSpawn2.transform.forward * 20, ForceMode.VelocityChange);
             }
@@ -177,7 +184,7 @@ public class BlackSkull : MonoBehaviour {
     IEnumerator MakeSureAllEnemiesDie()
     {
         gameManager.KillAll();
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         gameManager.KillAll();
     }
 
@@ -193,7 +200,9 @@ public class BlackSkull : MonoBehaviour {
         }
         GameManager.isBossDead = true;
         GameManager.stat_SkellLordsKilled++;
+        audioManager.Play2DSound(AudioManager.boss_Explode);
         deadBoss.SetActive(true);
         gameObject.SetActive(false);
+        deadBoss.transform.SetParent(null);
     }
 }
