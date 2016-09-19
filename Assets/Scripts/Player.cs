@@ -267,6 +267,17 @@ public class Player : MonoBehaviour {
         }
     }
 
+    void OnCollisionEnter(Collision other)
+    {
+        // if we touch something with a rigid body, push it away so we don't get stuck
+        if (other.gameObject.GetComponent<Rigidbody>())
+        {
+            Rigidbody rigbidje = other.gameObject.GetComponent<Rigidbody>();
+            Vector3 forceDirection = (rigbidje.transform.position - gameObject.transform.position).normalized * 50;
+            rigbidje.AddForce(new Vector3(forceDirection.x, 0, forceDirection.z), ForceMode.Impulse);
+        }
+    }
+
     IEnumerator Reload()
     {
         if (weapon1 == WeaponType.pistol)
