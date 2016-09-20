@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour {
         enemyCount = 0;
 
         // randomizes our kills to spawn an anomolous skull
-        killsToSpawnCrystalSkull = UnityEngine.Random.Range(75, 130);
+        killsToSpawnCrystalSkull = UnityEngine.Random.Range(75, 200);
     }
 	
 	// Update is called once per frame
@@ -209,15 +209,23 @@ public class GameManager : MonoBehaviour {
             if (gameMode == GameMode.normal)
             {
                 // increase difficulty
-                if (comparisonTimer == 60)
+                if (comparisonTimer > 300)
                 {
-                    chanceToSpawnSpecialFlying = 3;
-                    chanceToSpawnSpecialSkeleton = 3;
-                    spawnTimer = 1f;
-                    flyingSpawnTimer = 10f;
-                    ballSpawnTimer = 30;
+                    chanceToSpawnSpecialFlying = 25;
+                    chanceToSpawnSpecialSkeleton = 25;
+                    spawnTimer = .5f;
+                    flyingSpawnTimer = 1.5f;
+                    ballSpawnTimer = 12;
                 }
-                else if (comparisonTimer == 140)
+                else if (comparisonTimer > 200)
+                {
+                    chanceToSpawnSpecialFlying = 20;
+                    chanceToSpawnSpecialSkeleton = 20;
+                    spawnTimer = .7f;
+                    flyingSpawnTimer = 2f;
+                    ballSpawnTimer = 15;
+                }
+                else if (comparisonTimer > 140)
                 {
                     chanceToSpawnSpecialFlying = 10;
                     chanceToSpawnSpecialSkeleton = 10;
@@ -225,14 +233,15 @@ public class GameManager : MonoBehaviour {
                     flyingSpawnTimer = 4f;
                     ballSpawnTimer = 20;
                 }
-                else if (comparisonTimer == 200)
+                else if (comparisonTimer > 60)
                 {
-                    chanceToSpawnSpecialFlying = 25;
-                    chanceToSpawnSpecialSkeleton = 25;
-                    spawnTimer = .7f;
-                    flyingSpawnTimer = 2f;
-                    ballSpawnTimer = 15;
+                    chanceToSpawnSpecialFlying = 3;
+                    chanceToSpawnSpecialSkeleton = 3;
+                    spawnTimer = 1f;
+                    flyingSpawnTimer = 10f;
+                    ballSpawnTimer = 30;
                 }
+                          
 
                 // spawning crystal skulls
                 // if we've killed more than the number to spawn the crystal skull
@@ -1089,20 +1098,20 @@ public class GameManager : MonoBehaviour {
         else if (modeIndex >= 8 && modeIndex <= 13)
         {
             gameMode = GameMode.FlyingSkeletonMode;
-            timeLimitOnMode = 120;
+            timeLimitOnMode = 90;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Death From Above");
         }
         else if (modeIndex >= 14 && modeIndex <= 19)
         {
             gameMode = GameMode.HordeSkeletonMode;
-            timeLimitOnMode = 120;
+            timeLimitOnMode = 90;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Overwhelming Darkness");
 
         }
         else if (modeIndex >= 20 && modeIndex <= 25)
         {
             gameMode = GameMode.SpeedySkeletonMode;
-            timeLimitOnMode = 120;
+            timeLimitOnMode = 90;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Zoom, Boom, Doom and Gloom");
         }
         // show timer
