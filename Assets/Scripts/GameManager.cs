@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -462,7 +463,8 @@ public class GameManager : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                Application.LoadLevel(Application.loadedLevel);
+                // load our loading scene
+                SceneManager.LoadScene(1);
             }
             if (!hasKilledAllEnemiesAfterPlayerDeath)
             {
@@ -530,8 +532,8 @@ public class GameManager : MonoBehaviour {
         text_MouseSens.text = "Look Sensitivity: " + playerController.mouseLook.XSensitivity.ToString("F1");
 
         // volume settings
-        MusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 100);
-        SFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume", 100);
+        MusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 75);
+        SFXVolume = PlayerPrefs.GetFloat("SavedSFXVolume", 75);
         slider_MusicVolume.value = MusicVolume;
         slider_SFXVolume.value = SFXVolume;
 
@@ -1049,7 +1051,7 @@ public class GameManager : MonoBehaviour {
     public void ResetSavedData()
     {
         PlayerPrefs.DeleteAll();
-        Application.LoadLevel(Application.loadedLevel);
+        SceneManager.LoadScene(1);
     }
 
     public void SlowMo()

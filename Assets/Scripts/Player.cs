@@ -446,14 +446,18 @@ public class Player : MonoBehaviour {
         // ROCKET
         if (weapon1 == WeaponType.rocket)
         {
-            if (rocketAmmo > 0)
+            // if we aren't current in the shooting animation
+            if (!rocketAnim.GetCurrentAnimatorStateInfo(0).IsName("Rocket_Fire"))
             {
-                rocketAnim.SetTrigger("FireGun");
-                audioSourcePlayer.PlayOneShot(AudioManager.rocketFire, GameManager.SFXVolume / 180);
-                GameObject temp = Instantiate(rocketProjectile, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
-                // no need to add force to the rocket, since we'll have a script that moves it on the rocket itself
-                //temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
-                rocketAmmo--;
+                if (rocketAmmo > 0)
+                {
+                    rocketAnim.SetTrigger("FireGun");
+                    audioSourcePlayer.PlayOneShot(AudioManager.rocketFire, GameManager.SFXVolume / 180);
+                    GameObject temp = Instantiate(rocketProjectile, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
+                    // no need to add force to the rocket, since we'll have a script that moves it on the rocket itself
+                    //temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                    rocketAmmo--;
+                }
             }
         }
     }

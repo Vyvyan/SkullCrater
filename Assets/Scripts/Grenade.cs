@@ -41,51 +41,54 @@ public class Grenade : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        if (!hasExploded)
+        if (other.gameObject.tag != "Bullet")
         {
-            Vector3 explosionPos = transform.position;
-            Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
-            // if we hit a bunch of things, then slow mo us. each skeleton has 11 colliders
-            if (colliders.Length > 60)
+            if (!hasExploded)
             {
-                Instantiate(audioSourceSLOWMO, transform.position, Quaternion.identity);
-                gameManager.SlowMo();
-            }
-            else
-            {
-                Instantiate(audioSourceObjectToSpawn, transform.position, Quaternion.identity);
-            }
-            foreach (Collider hit in colliders)
-            {
-                Rigidbody rb = hit.GetComponent<Rigidbody>();
-
-                // destroy enemies if they are hit
-                if (hit.gameObject.GetComponent<Enemy>())
+                Vector3 explosionPos = transform.position;
+                Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);
+                // if we hit a bunch of things, then slow mo us. each skeleton has 11 colliders
+                if (colliders.Length > 60)
                 {
-                    if (!disableExplosion)
+                    Instantiate(audioSourceSLOWMO, transform.position, Quaternion.identity);
+                    gameManager.SlowMo();
+                }
+                else
+                {
+                    Instantiate(audioSourceObjectToSpawn, transform.position, Quaternion.identity);
+                }
+                foreach (Collider hit in colliders)
+                {
+                    Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+                    // destroy enemies if they are hit
+                    if (hit.gameObject.GetComponent<Enemy>())
                     {
-                        hit.gameObject.SendMessage("RandomExplosionDismember");
+                        if (!disableExplosion)
+                        {
+                            hit.gameObject.SendMessage("RandomExplosionDismember");
+                        }
+                        hit.gameObject.SendMessage("KillThisEnemy", false);
                     }
-                    hit.gameObject.SendMessage("KillThisEnemy", false);
-                }
-                // destroy enemies if they are hit and a skull
-                if (hit.gameObject.GetComponent<FlyingSkull>())
-                {
-                    hit.gameObject.SendMessage("KillThisEnemy", false);
+                    // destroy enemies if they are hit and a skull
+                    if (hit.gameObject.GetComponent<FlyingSkull>())
+                    {
+                        hit.gameObject.SendMessage("KillThisEnemy", false);
+                    }
+
+                    if (rb != null)
+                    {
+                        rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
+                    }
                 }
 
-                if (rb != null)
+                if (!disableExplosion)
                 {
-                    rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
+                    Instantiate(explosionEffect, gameObject.transform.position, Quaternion.EulerAngles(Vector3.zero));
                 }
+                hasExploded = true;
+                Destroy(gameObject);
             }
-
-            if (!disableExplosion)
-            {
-                Instantiate(explosionEffect, gameObject.transform.position, Quaternion.EulerAngles(Vector3.zero));
-            }
-            hasExploded = true;
-            Destroy(gameObject);
         }
     }
 }

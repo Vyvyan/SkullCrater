@@ -77,7 +77,14 @@ public class RobotFriend : MonoBehaviour {
                     }
                     else
                     {
-                        StartCoroutine(waitThenFindNewTarget());
+                        audioS.Pause();
+                        audioS.Pause();
+                        dustParticles.loop = false;
+                        anim.SetBool("isDigging", false);
+                        if (!isInIenum)
+                        {
+                            StartCoroutine(waitThenFindNewTarget());
+                        }
                     }
                 }
             }
@@ -107,8 +114,9 @@ public class RobotFriend : MonoBehaviour {
             anim.SetBool("isDigging", false);
             isInIenum = true;
         }
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.4f);
         isInIenum = false;
+        miningTimerCurrent = 0;
         robotState = RobotState.gettingNewTarget;
     }
 
