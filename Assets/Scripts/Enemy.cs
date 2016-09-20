@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour {
 
     AudioSource audio;
 
+    public Light enemyLight;
+
     // Use this for initialization
     void Start ()
     {
@@ -37,7 +39,13 @@ public class Enemy : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-	    
+	    if (enemyLight)
+        {
+            if(enemyLight.intensity < 2)
+            {
+                enemyLight.intensity += Time.deltaTime;
+            }
+        }
 	}
 
     void OnCollisionEnter(Collision other)
@@ -60,6 +68,10 @@ public class Enemy : MonoBehaviour {
                 Destroy(aiScript);
                 Destroy(agent);
                 Destroy(animator);
+                if (enemyLight)
+                {
+                    Destroy(enemyLight);
+                }
 
                 // gets all the parts and deparents them
                 int children = transform.childCount;

@@ -15,6 +15,7 @@ public class RobotFriend : MonoBehaviour {
     public GameObject gold;
     public Transform goldSpawnLocation;
     public ParticleSystem dustParticles;
+    bool isInIenum;
 
     Animator anim;
     // the audio source is only for the digging sound, the rocket is on a different object, and it's always playing so ez pz
@@ -33,6 +34,7 @@ public class RobotFriend : MonoBehaviour {
         audioS.volume = GameManager.SFXVolume / 600;
         audioS.Play();
         audioS.Pause();
+        isInIenum = false;
     }
 	
 	// Update is called once per frame
@@ -48,20 +50,23 @@ public class RobotFriend : MonoBehaviour {
                     int rnd = Random.Range(0, goldTargets.Length - 1);
                     target = goldTargets[rnd];
                     agent.SetDestination(target.position);
-                    robotState = RobotState.moving;
                     anim.SetBool("isDigging", false);
+                    robotState = RobotState.moving;
                 }
                 else if (robotState == RobotState.moving)
                 {
                     float dist = agent.remainingDistance;
-                    if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+                    if (!isInIenum)
                     {
-                        miningTimerCurrent = 0;
-                        robotState = RobotState.mining;
-                        dustParticles.loop = true;
-                        dustParticles.Play();
-                        anim.SetBool("isDigging", true);
-                        audioS.UnPause();
+                        if (dist != Mathf.Infinity && agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance == 0)
+                        {
+                            miningTimerCurrent = 0;
+                            dustParticles.loop = true;
+                            dustParticles.Play();
+                            anim.SetBool("isDigging", true);
+                            audioS.UnPause();
+                            robotState = RobotState.mining;
+                        }
                     }
                 }
                 else if (robotState == RobotState.mining)
@@ -72,11 +77,7 @@ public class RobotFriend : MonoBehaviour {
                     }
                     else
                     {
-                        SpawnGold();
-                        robotState = RobotState.gettingNewTarget;
-                        audioS.Pause();
-                        dustParticles.loop = false;
-                        anim.SetBool("isDigging", false);
+                        StartCoroutine(waitThenFindNewTarget());
                     }
                 }
             }
@@ -94,6 +95,21 @@ public class RobotFriend : MonoBehaviour {
     {
         GameObject temp = Instantiate(gold, goldSpawnLocation.position, Quaternion.identity) as GameObject;
         temp.GetComponent<Rigidbody>().AddForce(Vector3.up * 6, ForceMode.Impulse);
+    }
+
+    IEnumerator waitThenFindNewTarget()
+    {
+        if (!isInIenum)
+        {
+            SpawnGold();
+            audioS.Pause();
+            dustParticles.loop = false;
+            anim.SetBool("isDigging", false);
+            isInIenum = true;
+        }
+        yield return new WaitForSeconds(.2f);
+        isInIenum = false;
+        robotState = RobotState.gettingNewTarget;
     }
 
 }

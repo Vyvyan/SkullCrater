@@ -144,12 +144,19 @@ public class GameManager : MonoBehaviour {
         enemyCount = 0;
 
         // randomizes our kills to spawn an anomolous skull
-        killsToSpawnCrystalSkull = UnityEngine.Random.Range(100, 201);
+        killsToSpawnCrystalSkull = UnityEngine.Random.Range(75, 130);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        // DEBUG PLEASE REMOVE
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            goldValue = 500;
+            DisplayEventText("Gold value increased to 500, ya' cheater.");
+        }
+
         // seeing gamestate in editor
         stateForViewInEditor = gameState;
         // if we are slow motion
