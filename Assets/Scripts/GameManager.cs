@@ -1135,7 +1135,10 @@ public class GameManager : MonoBehaviour {
         {
             foreach(GameObject trans in ballenemySpawns)
             {
-                Instantiate(goldPrefab, trans.transform.position, Quaternion.identity);
+                GameObject winGold = Instantiate(goldPrefab, trans.transform.position, Quaternion.identity) as GameObject;
+                // throw the gold towards the player
+                winGold.GetComponent<Rigidbody>().AddForce((playerScript.gameObject.transform.position - winGold.transform.position).normalized
+                    * (Vector3.Distance(winGold.transform.position, playerScript.gameObject.transform.position) / 2f), ForceMode.VelocityChange);
             }
         }
         DisplayEventText("Anomaly Survived!");
