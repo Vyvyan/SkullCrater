@@ -210,7 +210,7 @@ public class GameManager : MonoBehaviour {
             if (gameMode == GameMode.normal)
             {
                 // increase difficulty
-                if (comparisonTimer > 300)
+                if (comparisonTimer > 325)
                 {
                     chanceToSpawnSpecialFlying = 25;
                     chanceToSpawnSpecialSkeleton = 25;
