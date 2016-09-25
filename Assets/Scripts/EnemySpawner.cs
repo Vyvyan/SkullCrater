@@ -20,7 +20,7 @@ public class EnemySpawner : MonoBehaviour {
     public bool CanWeSpawnHere()
     {
         // checks to see the distance from this spawn to the player, if it's too short, we can't spawn here
-        if (Vector3.Distance(transform.position, player.position) < 60)
+        if (Vector3.Distance(transform.position, player.position) < 65)
         {
             return false;
         }

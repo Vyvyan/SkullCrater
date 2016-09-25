@@ -157,6 +157,11 @@ public class GameManager : MonoBehaviour {
             goldValue = 500;
             DisplayEventText("Gold value increased to 500, ya' cheater.");
         }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            timeToSpawnBoss = 10;
+            DisplayEventText("Skell Lord will spawn at 10 seconds.");
+        }
 
         // seeing gamestate in editor
         stateForViewInEditor = gameState;
@@ -212,24 +217,24 @@ public class GameManager : MonoBehaviour {
                 // increase difficulty
                 if (comparisonTimer > 325)
                 {
-                    chanceToSpawnSpecialFlying = 25;
-                    chanceToSpawnSpecialSkeleton = 25;
-                    spawnTimer = .5f;
-                    flyingSpawnTimer = 1.5f;
+                    chanceToSpawnSpecialFlying = 18;
+                    chanceToSpawnSpecialSkeleton = 18;
+                    spawnTimer = .55f;
+                    flyingSpawnTimer = 1.8f;
                     ballSpawnTimer = 12;
                 }
                 else if (comparisonTimer > 200)
                 {
-                    chanceToSpawnSpecialFlying = 20;
-                    chanceToSpawnSpecialSkeleton = 20;
+                    chanceToSpawnSpecialFlying = 12;
+                    chanceToSpawnSpecialSkeleton = 12;
                     spawnTimer = .7f;
                     flyingSpawnTimer = 2f;
                     ballSpawnTimer = 15;
                 }
                 else if (comparisonTimer > 140)
                 {
-                    chanceToSpawnSpecialFlying = 10;
-                    chanceToSpawnSpecialSkeleton = 10;
+                    chanceToSpawnSpecialFlying = 6;
+                    chanceToSpawnSpecialSkeleton = 6;
                     spawnTimer = .9f;
                     flyingSpawnTimer = 4f;
                     ballSpawnTimer = 20;

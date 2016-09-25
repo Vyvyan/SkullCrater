@@ -25,7 +25,7 @@ public class BossWeakPoint : MonoBehaviour {
         {
             if (other.gameObject.name == "RocketProjectile(Clone)")
             {
-                BlackSkull.health -= 5f;
+                BlackSkull.health -= 8f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
                 audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
@@ -37,15 +37,24 @@ public class BossWeakPoint : MonoBehaviour {
             }
             else if (other.gameObject.name == "Grenade(Clone)")
             {
-                BlackSkull.health -= 5f;
+                BlackSkull.health -= 10f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
                 audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.tag == "Bullet")
             {
-                BlackSkull.health -= 1f;
-                Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
-                audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
+                if (other.gameObject.name == "mgBullet")
+                {
+                    BlackSkull.health -= .6f;
+                    Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                    audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
+                }
+                else if (other.gameObject.name == "pistolBullet")
+                {
+                    BlackSkull.health -= 1.2f;
+                    Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
+                    audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
+                }
             }
         }
 

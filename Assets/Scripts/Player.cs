@@ -389,6 +389,7 @@ public class Player : MonoBehaviour {
                 StartCoroutine(MuzzleFlash(pistolMuzzleLight));
                 GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                 temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                temp.name = "pistolBullet";
                 pistolAmmo--;
             }
         }
@@ -434,6 +435,7 @@ public class Player : MonoBehaviour {
                     StartCoroutine(MuzzleFlash(machinegunMuzzleLight));
                     GameObject temp = Instantiate(bullet, bulletSpawnPoint.position, mainCamera.transform.rotation) as GameObject;
                     temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
+                    temp.name = "mgBullet";
 
                     machinegunAmmo--;
                     mgCanShoot = false;
