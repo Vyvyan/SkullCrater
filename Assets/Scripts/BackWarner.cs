@@ -39,7 +39,7 @@ public class BackWarner : MonoBehaviour {
     {
         if (other.tag == "Enemy")
         {
-            lightTimer = 1;
+            lightTimer = 1f;
         }
     }
 }

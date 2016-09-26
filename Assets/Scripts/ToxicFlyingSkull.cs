@@ -45,8 +45,15 @@ public class ToxicFlyingSkull : MonoBehaviour
                     // if we hit a bunch of things, then slow mo us. each skeleton has 11 colliders
                     if (colliders.Length > 60)
                     {
-                        Instantiate(audioSourceSLOWMO, transform.position, Quaternion.identity);
-                        gameManager.SlowMo();
+                        if (GameManager.canGoSlowMo)
+                        {
+                            Instantiate(audioSourceSLOWMO, transform.position, Quaternion.identity);
+                            gameManager.SlowMo();
+                        }
+                        else
+                        {
+                            Instantiate(audioSourceObjectToSpawn, transform.position, Quaternion.identity);
+                        }
                     }
                     else
                     {

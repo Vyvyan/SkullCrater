@@ -79,6 +79,9 @@ public class GameManager : MonoBehaviour {
     public bool slowMotion;
     float slowMoTimer;
     float specialModeTimer;
+    float slowMotionCoolDown;
+    public float slowMoCD;
+    public static bool canGoSlowMo;
 
     public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
         stat_MostGoldDropped, stat_MostGoldInARun, stat_SkellLordsKilled;
@@ -109,6 +112,9 @@ public class GameManager : MonoBehaviour {
 
         isBossDead = false;
 
+        slowMotionCoolDown = slowMoCD;
+        canGoSlowMo = true;
+        
         // make sure our slow mo is off
         Time.timeScale = 1;
         Time.fixedDeltaTime = .02f;
@@ -175,6 +181,18 @@ public class GameManager : MonoBehaviour {
                 Time.fixedDeltaTime = .02f;
                 slowMotion = false;
             }
+        }
+
+        // slo mo cool down
+        if (slowMotionCoolDown > 0)
+        {
+            canGoSlowMo = false;
+            // count it down
+            slowMotionCoolDown -= Time.deltaTime;
+        }
+        else
+        {
+            canGoSlowMo = true;
         }
 
         // updates gold on weapon screen
@@ -1061,10 +1079,14 @@ public class GameManager : MonoBehaviour {
 
     public void SlowMo()
     {
-        slowMoTimer = Time.unscaledTime;
-        Time.timeScale = .25f;
-        Time.fixedDeltaTime = .005f;
-        slowMotion = true;
+        if (canGoSlowMo)
+        {
+            slowMoTimer = Time.unscaledTime;
+            Time.timeScale = .25f;
+            Time.fixedDeltaTime = .005f;
+            slowMotion = true;
+            slowMotionCoolDown = slowMoCD;
+        }
     }
 
     public void DisplayEventText(String eventText)
