@@ -43,7 +43,7 @@ public class RobotFriend : MonoBehaviour {
         audioS.volume = GameManager.SFXVolume / 600;
         if (GameManager.gameState == GameManager.GameState.Playing)
         {
-            if (gameManager.gameMode != GameManager.GameMode.Boss)
+            if (gameManager.gameMode == GameManager.GameMode.normal)
             {
                 if (robotState == RobotState.gettingNewTarget)
                 {
@@ -52,6 +52,7 @@ public class RobotFriend : MonoBehaviour {
                     agent.SetDestination(target.position);
                     anim.SetBool("isDigging", false);
                     robotState = RobotState.moving;
+                    miningTimerCurrent = miningTimer;
                 }
                 else if (robotState == RobotState.moving)
                 {
@@ -77,6 +78,8 @@ public class RobotFriend : MonoBehaviour {
                     }
                     else
                     {
+                        // we set this here, since frand likes to dig while moving
+                        miningTimerCurrent = miningTimer;
                         audioS.Pause();
                         audioS.Pause();
                         dustParticles.loop = false;
@@ -116,7 +119,7 @@ public class RobotFriend : MonoBehaviour {
         }
         yield return new WaitForSeconds(.4f);
         isInIenum = false;
-        miningTimerCurrent = 0;
+        //miningTimerCurrent = 0;
         robotState = RobotState.gettingNewTarget;
     }
 
