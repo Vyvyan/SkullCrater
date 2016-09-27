@@ -233,27 +233,35 @@ public class GameManager : MonoBehaviour {
             if (gameMode == GameMode.normal)
             {
                 // increase difficulty
-                if (comparisonTimer > 325)
+                if (comparisonTimer > 310)
                 {
                     chanceToSpawnSpecialFlying = 18;
                     chanceToSpawnSpecialSkeleton = 18;
-                    spawnTimer = .55f;
-                    flyingSpawnTimer = 1.8f;
+                    spawnTimer = .5f;
+                    flyingSpawnTimer = 1.5f;
                     ballSpawnTimer = 12;
                 }
-                else if (comparisonTimer > 200)
+                else if (comparisonTimer > 230)
                 {
                     chanceToSpawnSpecialFlying = 12;
                     chanceToSpawnSpecialSkeleton = 12;
+                    spawnTimer = .6f;
+                    flyingSpawnTimer = 1.8f;
+                    ballSpawnTimer = 14;
+                }
+                else if (comparisonTimer > 160)
+                {
+                    chanceToSpawnSpecialFlying = 10;
+                    chanceToSpawnSpecialSkeleton = 10;
                     spawnTimer = .7f;
                     flyingSpawnTimer = 2f;
                     ballSpawnTimer = 15;
                 }
-                else if (comparisonTimer > 140)
+                else if (comparisonTimer > 100)
                 {
                     chanceToSpawnSpecialFlying = 6;
                     chanceToSpawnSpecialSkeleton = 6;
-                    spawnTimer = .9f;
+                    spawnTimer = .8f;
                     flyingSpawnTimer = 4f;
                     ballSpawnTimer = 20;
                 }
