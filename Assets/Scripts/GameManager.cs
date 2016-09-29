@@ -232,6 +232,7 @@ public class GameManager : MonoBehaviour {
             // NORMAL GAME MODE DIFFICULTY INCREASE
             if (gameMode == GameMode.normal)
             {
+                /*
                 // increase difficulty
                 if (comparisonTimer > 310)
                 {
@@ -273,7 +274,81 @@ public class GameManager : MonoBehaviour {
                     flyingSpawnTimer = 10f;
                     ballSpawnTimer = 30;
                 }
-                          
+                */
+
+                // increase difficulty
+                if (comparisonTimer > 310)
+                {
+                    chanceToSpawnSpecialFlying = 15;
+                    chanceToSpawnSpecialSkeleton = 15;
+                    spawnTimer = .5f;
+                    flyingSpawnTimer = 1.7f;
+                    ballSpawnTimer = 12;
+                }
+                // relax a bit
+                else if (comparisonTimer > 285)
+                {
+                    chanceToSpawnSpecialFlying = 10;
+                    chanceToSpawnSpecialSkeleton = 10;
+                    spawnTimer = .7f;
+                    flyingSpawnTimer = 2.6f;
+                    ballSpawnTimer = 17;
+                }
+                // INCREASE AFTER 30
+                else if (comparisonTimer > 240)
+                {
+                    chanceToSpawnSpecialFlying = 13;
+                    chanceToSpawnSpecialSkeleton = 13;
+                    spawnTimer = .6f;
+                    flyingSpawnTimer = 2f;
+                    ballSpawnTimer = 14;
+                }
+                // relax a bit
+                else if (comparisonTimer > 210)
+                {
+                    chanceToSpawnSpecialFlying = 8;
+                    chanceToSpawnSpecialSkeleton = 8;
+                    spawnTimer = .8f;
+                    flyingSpawnTimer = 3.2f;
+                    ballSpawnTimer = 18;
+                }
+                // INCREASE AFTER 30
+                else if (comparisonTimer > 165)
+                {
+                    chanceToSpawnSpecialFlying = 10;
+                    chanceToSpawnSpecialSkeleton = 10;
+                    spawnTimer = .7f;
+                    flyingSpawnTimer = 2.5f;
+                    ballSpawnTimer = 15;
+                }
+                // relax a bit
+                else if (comparisonTimer > 135)
+                {
+                    chanceToSpawnSpecialFlying = 4;
+                    chanceToSpawnSpecialSkeleton = 4;
+                    spawnTimer = .9f;
+                    flyingSpawnTimer = 6f;
+                    ballSpawnTimer = 25;
+                }
+                // INCREASE AFTER 30
+                else if (comparisonTimer > 90)
+                {
+                    chanceToSpawnSpecialFlying = 6;
+                    chanceToSpawnSpecialSkeleton = 6;
+                    spawnTimer = .8f;
+                    flyingSpawnTimer = 4f;
+                    ballSpawnTimer = 20;
+                }
+                // BASE AFTER 60
+                else if (comparisonTimer > 60)
+                {
+                    chanceToSpawnSpecialFlying = 3;
+                    chanceToSpawnSpecialSkeleton = 3;
+                    spawnTimer = 1f;
+                    flyingSpawnTimer = 10f;
+                    ballSpawnTimer = 30;
+                }
+
 
                 // spawning crystal skulls
                 // if we've killed more than the number to spawn the crystal skull
