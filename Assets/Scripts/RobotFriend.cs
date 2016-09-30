@@ -22,6 +22,9 @@ public class RobotFriend : MonoBehaviour {
     AudioSource audioS;
     GameManager gameManager;
 
+    // bool for turning frand back on after anamalous skulls
+    bool wereWeInANonNormalModeLastFrame;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -45,6 +48,14 @@ public class RobotFriend : MonoBehaviour {
         {
             if (gameManager.gameMode == GameManager.GameMode.normal)
             {
+                // reset robot frand so he moves
+                if (wereWeInANonNormalModeLastFrame)
+                {
+                    agent.Resume();
+                    wereWeInANonNormalModeLastFrame = false;
+                }
+
+
                 if (robotState == RobotState.gettingNewTarget)
                 {
                     int rnd = Random.Range(0, goldTargets.Length - 1);
@@ -96,7 +107,8 @@ public class RobotFriend : MonoBehaviour {
                 agent.Stop();
                 anim.SetBool("isDigging", false);
                 dustParticles.Stop();
-                audioS.Stop();
+                audioS.Pause();
+                wereWeInANonNormalModeLastFrame = true;
             }
         }
     }

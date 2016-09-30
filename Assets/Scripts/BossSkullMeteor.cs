@@ -23,8 +23,8 @@ public class BossSkullMeteor : MonoBehaviour {
     {
         if (other.gameObject.tag == "Ground")
         {
-            int rnd = Random.Range(1, 7);
-            if (rnd == 1)
+            int rnd = Random.Range(1, 101);
+            if (rnd <= 20)
             {
                 if (GameManager.enemyCount < 40)
                 {
@@ -36,7 +36,7 @@ public class BossSkullMeteor : MonoBehaviour {
                     }
                 }        
             }
-            else if (rnd == 2)
+            else if (rnd <= 40)
             {
                 if (GameManager.enemyCount < 40)
                 {
@@ -48,7 +48,7 @@ public class BossSkullMeteor : MonoBehaviour {
                     }
                 }
             }
-            else if (rnd == 3)
+            else if (rnd <= 60)
             {
                 if (GameManager.enemyCount < 40)
                 {
@@ -60,19 +60,7 @@ public class BossSkullMeteor : MonoBehaviour {
                     }
                 }
             }
-            else if (rnd == 4)
-            {
-                if (GameManager.enemyCount < 40)
-                {
-                    if (GameManager.gameState == GameManager.GameState.Playing)
-                    {
-                        Instantiate(toxicSkeltin, gameObject.transform.position, Quaternion.identity);
-                        Instantiate(spawnParticles, gameObject.transform.position, Quaternion.identity);
-                        GameManager.enemyCount++;
-                    }
-                }
-            }
-            else if (rnd == 5)
+            else if (rnd <= 80)
             {
                 if (GameManager.enemyCount < 40)
                 {
@@ -84,7 +72,19 @@ public class BossSkullMeteor : MonoBehaviour {
                     }
                 }
             }
-            else if (rnd == 6)
+            else if (rnd <= 90)
+            {
+                if (GameManager.enemyCount < 40)
+                {
+                    if (GameManager.gameState == GameManager.GameState.Playing)
+                    {
+                        Instantiate(toxicSkeltin, gameObject.transform.position, Quaternion.identity);
+                        Instantiate(spawnParticles, gameObject.transform.position, Quaternion.identity);
+                        GameManager.enemyCount++;
+                    }
+                }
+            }
+            else if (rnd <= 100)
             {
                 if (GameManager.enemyCount < 40)
                 {

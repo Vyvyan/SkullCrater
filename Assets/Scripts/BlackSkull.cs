@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class BlackSkull : MonoBehaviour {
 
@@ -39,6 +40,8 @@ public class BlackSkull : MonoBehaviour {
     public Light bossLight;
     public bool lightOn;
 
+    public Image leftEye, rightEye;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -53,7 +56,7 @@ public class BlackSkull : MonoBehaviour {
         //anim = GetComponent<Animator>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         // put the health here, so it resets each round
-        health = 30;
+        health = 28;
         // start our light off
         bossLight.intensity = 0;
 	}
@@ -61,6 +64,8 @@ public class BlackSkull : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        leftEye.fillAmount = rightEye.fillAmount = (health / 28);
+        
         if (bossState == BossState.idle)
         {
             // slow look at

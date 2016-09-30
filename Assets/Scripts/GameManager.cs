@@ -1204,26 +1204,26 @@ public class GameManager : MonoBehaviour {
         else if (modeIndex >= 2 && modeIndex <= 7)
         {
             gameMode = GameMode.BoneBallMode;
-            timeLimitOnMode = 90;
+            timeLimitOnMode = 5;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Roll The Bones");
         }
         else if (modeIndex >= 8 && modeIndex <= 13)
         {
             gameMode = GameMode.FlyingSkeletonMode;
-            timeLimitOnMode = 90;
+            timeLimitOnMode = 5;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Death From Above");
         }
         else if (modeIndex >= 14 && modeIndex <= 19)
         {
             gameMode = GameMode.HordeSkeletonMode;
-            timeLimitOnMode = 90;
+            timeLimitOnMode = 5;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Overwhelming Darkness");
 
         }
         else if (modeIndex >= 20 && modeIndex <= 25)
         {
             gameMode = GameMode.SpeedySkeletonMode;
-            timeLimitOnMode = 90;
+            timeLimitOnMode = 5;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Zoom, Boom, Doom and Gloom");
         }
         // show timer

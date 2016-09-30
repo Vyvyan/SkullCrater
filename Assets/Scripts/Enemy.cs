@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour {
     NavMeshAgent agent;
     Animator animator;
 
-    GameObject triggerObject;
+    public GameObject triggerObject;
 
     public GameObject toxicGrenade, gold;
     bool hasSpawnedToxGrenade;
@@ -32,7 +32,7 @@ public class Enemy : MonoBehaviour {
         aiScript = gameObject.GetComponent<s_WanderingAI>();
         agent = gameObject.GetComponent<NavMeshAgent>();
         animator = gameObject.GetComponent<Animator>();
-        triggerObject = transform.GetChild(10).gameObject;
+        //triggerObject = transform.GetChild(10).gameObject;
         audio = GetComponent<AudioSource>();
     }
 	
@@ -176,7 +176,10 @@ public class Enemy : MonoBehaviour {
 
     public void PlayFootStep()
     {
-        audio.PlayOneShot(AudioManager.skel_Footstep, GameManager.SFXVolume / 600);
+        if (audio)
+        {
+            audio.PlayOneShot(AudioManager.skel_Footstep, GameManager.SFXVolume / 600);
+        }
     }
 
     public void PlayFootStep2()

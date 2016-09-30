@@ -84,6 +84,9 @@ public class FlyingSkull : MonoBehaviour {
         {
             GameManager.stat_SkellsKilled++;
         }
-        audioS.Stop();
+        if (audioS)
+        {
+            audioS.Stop();
+        }
     }
 }

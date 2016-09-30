@@ -25,19 +25,19 @@ public class BossWeakPoint : MonoBehaviour {
         {
             if (other.gameObject.name == "RocketProjectile(Clone)")
             {
-                BlackSkull.health -= 8f;
+                BlackSkull.health -= 10f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
                 audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.name == "Pellet")
             {
-                BlackSkull.health -= .2f;
+                BlackSkull.health -= .5f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
                 audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
             else if (other.gameObject.name == "Grenade(Clone)")
             {
-                BlackSkull.health -= 10f;
+                BlackSkull.health -= 12f;
                 Instantiate(hitParticles, other.contacts[0].point, Quaternion.identity);
                 audioS.PlayOneShot(AudioManager.boss_WeakPointImpact, GameManager.SFXVolume / 200);
             }
@@ -58,6 +58,6 @@ public class BossWeakPoint : MonoBehaviour {
             }
         }
 
-        Debug.Log(BlackSkull.health.ToString());
+        //Debug.Log(BlackSkull.health.ToString());
     }
 }
