@@ -73,6 +73,9 @@ public class GameManager : MonoBehaviour {
     public Text Pistol_Upgrades_AmmoText, Pistol_Upgrades_ReloadSpeedText, Shotgun_Upgrades_AmmoText, Shotgun_Upgrades_ReloadSpeedText, MachineGun_Upgrades_AmmoText, MachineGun_Upgrades_ReloadSpeedText,
         MachineGun_Upgrades_ROFText, Rocket_Upgrades_AmmoText, Rocket_Upgrades_ReloadSpeedText, Rocket_Upgrades_RadiusText, Grenade_Upgrades_RadiusText, Grenade_Upgrades_RechargeRateText;
 
+    // text for displaying how much each upgrade costs
+    public Text Pistol_Upgrades_CostText, Shotgun_Upgrades_CostText, MachineGun_Upgrades_CostText, Rocket_Upgrades_CostText, Grenade_Upgrades_CostText;
+
     public Toggle[] Pistol_Upgrades_Ammo_Toggles, Pistol_Upgrades_ReloadSpeed_Toggles, Shotgun_Upgrades_Ammo_Toggles, Shotgun_Upgrades_ReloadSpeed_Toggles, MachineGun_Upgrades_Ammo_Toggles, MachineGun_Upgrades_ReloadSpeed_Toggles,
         MachineGun_Upgrades_ROF_Toggles, Rocket_Upgrades_Ammo_Toggles, Rocket_Upgrades_ReloadSpeed_Toggles, Rocket_Upgrades_Radius_Toggles, Grenade_Upgrades_Radius_Toggles, Grenade_Upgrades_RechargeRate_Toggles;
 
@@ -613,7 +616,7 @@ public class GameManager : MonoBehaviour {
     public void LoadPlayerPrefs()
     {
         // load our gold
-        storedGold = PlayerPrefs.GetInt("storedGold", 100);
+        storedGold = PlayerPrefs.GetInt("storedGold", 0);
 
         // unlocked shotgun
         if (PlayerPrefs.GetInt("shotgunUnlocked", 0) == 1)
@@ -767,28 +770,29 @@ public class GameManager : MonoBehaviour {
 
     public void UpgradeWeapon(string weaponToUpgrade)
     {
-        if (storedGold >= 100)
-        {
-            playerAudio.PlayOneShot(AudioManager.accept, SFXVolume / 100);
+        
+        playerAudio.PlayOneShot(AudioManager.accept, SFXVolume / 100);
+        if (storedGold >= 25 + ((Pistol_Upgrades_AmmoLevelCurrent + Pistol_Upgrades_ReloadSpeedLevelCurrent) * 10))
+        { 
             if (weaponToUpgrade == "Pistol_Ammo")
             {
                 if (Pistol_Upgrades_AmmoLevelCurrent < Pistol_Upgrades_AmmoLevelMax)
                 {
                     Pistol_Upgrades_AmmoLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Pistol_Upgrades_AmmoLevelCurrent + Pistol_Upgrades_ReloadSpeedLevelCurrent) * 10);
                     PlayerPrefs.SetInt("Pistol_Ammo_Level", Pistol_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
                     DisplayEventText("Pistol Ammo Capacity Upgraded!");
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
-            }
-            else if (weaponToUpgrade == "Pistol_ReloadSpeed")
+            }  
+            if (weaponToUpgrade == "Pistol_ReloadSpeed")
             {
                 if (Pistol_Upgrades_ReloadSpeedLevelCurrent < Pistol_Upgrades_ReloadSpeedLevelMax)
                 {
                     Pistol_Upgrades_ReloadSpeedLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Pistol_Upgrades_AmmoLevelCurrent + Pistol_Upgrades_ReloadSpeedLevelCurrent) * 10);
                     PlayerPrefs.SetInt("Pistol_ReloadSpeed_Level", Pistol_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -796,12 +800,16 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Shotgun_Ammo")
+        }
+
+        if (storedGold >= 25 + ((Shotgun_Upgrades_AmmoLevelCurrent + Shotgun_Upgrades_ReloadSpeedLevelCurrent) * 10))
+        {
+            if (weaponToUpgrade == "Shotgun_Ammo")
             {
                 if (Shotgun_Upgrades_AmmoLevelCurrent < Shotgun_Upgrades_AmmoLevelMax)
                 {
                     Shotgun_Upgrades_AmmoLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Shotgun_Upgrades_AmmoLevelCurrent + Shotgun_Upgrades_ReloadSpeedLevelCurrent) * 10);
                     PlayerPrefs.SetInt("Shotgun_Ammo_Level", Shotgun_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -809,12 +817,13 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
+
+            if (weaponToUpgrade == "Shotgun_ReloadSpeed")
             {
                 if (Shotgun_Upgrades_ReloadSpeedLevelCurrent < Shotgun_Upgrades_ReloadSpeedLevelMax)
                 {
                     Shotgun_Upgrades_ReloadSpeedLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Shotgun_Upgrades_AmmoLevelCurrent + Shotgun_Upgrades_ReloadSpeedLevelCurrent) * 10);
                     PlayerPrefs.SetInt("Shotgun_ReloadSpeed_Level", Shotgun_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -822,12 +831,16 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "MachineGun_Ammo")
+        }
+
+        if (storedGold >= 25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10))
+        {
+            if (weaponToUpgrade == "MachineGun_Ammo")
             {
                 if (MachineGun_Upgrades_AmmoLevelCurrent < MachineGun_Upgrades_AmmoLevelMax)
                 {
                     MachineGun_Upgrades_AmmoLevelCurrent++;
-                    storedGold -= 125;
+                    storedGold -= 25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10);
                     PlayerPrefs.SetInt("MachineGun_Ammo_Level", MachineGun_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -835,12 +848,12 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
+            if (weaponToUpgrade == "MachineGun_ReloadSpeed")
             {
                 if (MachineGun_Upgrades_ReloadSpeedLevelCurrent < MachineGun_Upgrades_ReloadSpeedLevelMax)
                 {
                     MachineGun_Upgrades_ReloadSpeedLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10);
                     PlayerPrefs.SetInt("MachineGun_ReloadSpeed_Level", MachineGun_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -848,12 +861,12 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "MachineGun_ROF")
+            if (weaponToUpgrade == "MachineGun_ROF")
             {
                 if (MachineGun_Upgrades_ROFLevelCurrent < MachineGun_Upgrades_ROFLevelMax)
                 {
                     MachineGun_Upgrades_ROFLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10);
                     PlayerPrefs.SetInt("MachineGun_ROF_Level", MachineGun_Upgrades_ROFLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -861,12 +874,16 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Rocket_Ammo")
+        }
+
+        if (storedGold >= 25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10))
+        {
+            if (weaponToUpgrade == "Rocket_Ammo")
             {
                 if (Rocket_Upgrades_AmmoLevelCurrent < Rocket_Upgrades_AmmoLevelMax)
                 {
                     Rocket_Upgrades_AmmoLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10);
                     PlayerPrefs.SetInt("Rocket_Ammo_Level", Rocket_Upgrades_AmmoLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -874,12 +891,12 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Rocket_ReloadSpeed")
+            if (weaponToUpgrade == "Rocket_ReloadSpeed")
             {
                 if (Rocket_Upgrades_ReloadSpeedLevelCurrent < Rocket_Upgrades_ReloadSpeedLevelMax)
                 {
                     Rocket_Upgrades_ReloadSpeedLevelCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10);
                     PlayerPrefs.SetInt("Rocket_ReloadSpeed_Level", Rocket_Upgrades_ReloadSpeedLevelCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -887,12 +904,12 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Rocket_Radius")
+            if (weaponToUpgrade == "Rocket_Radius")
             {
                 if (Rocket_Upgrades_RadiusCurrent < Rocket_Upgrades_RadiusMax)
                 {
                     Rocket_Upgrades_RadiusCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10);
                     PlayerPrefs.SetInt("Rocket_Radius_Level", Rocket_Upgrades_RadiusCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -900,12 +917,16 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Grenade_Radius")
+        }
+
+        if (storedGold >= 25 + ((Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10))
+        {
+            if (weaponToUpgrade == "Grenade_Radius")
             {
                 if (Grenade_Upgrades_RadiusCurrent < Grenade_Upgrades_RadiusMax)
                 {
                     Grenade_Upgrades_RadiusCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10);
                     PlayerPrefs.SetInt("Grenade_Radius_Level", Grenade_Upgrades_RadiusCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -913,12 +934,12 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-            else if (weaponToUpgrade == "Grenade_RechargeRate")
+            if (weaponToUpgrade == "Grenade_RechargeRate")
             {
                 if (Grenade_Upgrades_RechargeRateCurrent < Grenade_Upgrades_RechargeRateMax)
                 {
                     Grenade_Upgrades_RechargeRateCurrent++;
-                    storedGold -= 100;
+                    storedGold -= 25 + ((Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10);
                     PlayerPrefs.SetInt("Grenade_RechargeRate_Level", Grenade_Upgrades_RechargeRateCurrent);
                     UpdateWeaponValues();
                     UpdateUIWeaponUpgradeToggles(weaponToUpgrade);
@@ -926,10 +947,6 @@ public class GameManager : MonoBehaviour {
                     PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
                 }
             }
-        }
-        else
-        {
-            playerAudio.PlayOneShot(AudioManager.decline, SFXVolume / 100);
         }
     }
 
@@ -968,6 +985,8 @@ public class GameManager : MonoBehaviour {
                 Pistol_Upgrades_Ammo_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Pistol_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Pistol_Upgrades_AmmoLevelCurrent + Pistol_Upgrades_ReloadSpeedLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Pistol_ReloadSpeed")
         {
@@ -977,6 +996,8 @@ public class GameManager : MonoBehaviour {
                 Pistol_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Pistol_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Pistol_Upgrades_AmmoLevelCurrent + Pistol_Upgrades_ReloadSpeedLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Shotgun_Ammo")
         {
@@ -986,6 +1007,8 @@ public class GameManager : MonoBehaviour {
                 Shotgun_Upgrades_Ammo_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Shotgun_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Shotgun_Upgrades_AmmoLevelCurrent + Shotgun_Upgrades_ReloadSpeedLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Shotgun_ReloadSpeed")
         {
@@ -995,6 +1018,8 @@ public class GameManager : MonoBehaviour {
                 Shotgun_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Shotgun_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Shotgun_Upgrades_AmmoLevelCurrent + Shotgun_Upgrades_ReloadSpeedLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "MachineGun_Ammo")
         {
@@ -1004,6 +1029,8 @@ public class GameManager : MonoBehaviour {
                 MachineGun_Upgrades_Ammo_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            MachineGun_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "MachineGun_ReloadSpeed")
         {
@@ -1013,6 +1040,7 @@ public class GameManager : MonoBehaviour {
                 MachineGun_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
                 i--;
             }
+            MachineGun_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "MachineGun_ROF")
         {
@@ -1022,6 +1050,7 @@ public class GameManager : MonoBehaviour {
                 MachineGun_Upgrades_ROF_Toggles[i - 1].isOn = true;
                 i--;
             }
+            MachineGun_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Rocket_Ammo")
         {
@@ -1031,6 +1060,8 @@ public class GameManager : MonoBehaviour {
                 Rocket_Upgrades_Ammo_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Rocket_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Rocket_ReloadSpeed")
         {
@@ -1040,6 +1071,8 @@ public class GameManager : MonoBehaviour {
                 Rocket_Upgrades_ReloadSpeed_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Rocket_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Rocket_Radius")
         {
@@ -1049,6 +1082,8 @@ public class GameManager : MonoBehaviour {
                 Rocket_Upgrades_Radius_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Rocket_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent + Rocket_Upgrades_RadiusCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Grenade_Radius")
         {
@@ -1058,6 +1093,8 @@ public class GameManager : MonoBehaviour {
                 Grenade_Upgrades_Radius_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Grenade_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10)).ToString();
         }
         else if (weaponToUpgrade == "Grenade_RechargeRate")
         {
@@ -1067,6 +1104,8 @@ public class GameManager : MonoBehaviour {
                 Grenade_Upgrades_RechargeRate_Toggles[i - 1].isOn = true;
                 i--;
             }
+
+            Grenade_Upgrades_CostText.text = "Upgrade Cost: " + (25 + ((Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10)).ToString();
         }
 
         if (weaponToUpgrade == "all")
