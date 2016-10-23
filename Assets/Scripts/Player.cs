@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour {
     public float machinegunFireRate, mgFireRateCurrent;
     // bool for machine gun shooting
     bool mgCanShoot;
+    bool canPlaymgOOASound;
 
 	// Use this for initialization
 	void Start ()
@@ -77,6 +79,8 @@ public class Player : MonoBehaviour {
 
         // swap our weapon model out for whatever we are holding
         ChangeWeaponModel();
+
+        canPlaymgOOASound = true;
 	}
 	
 	// Update is called once per frame
@@ -202,6 +206,7 @@ public class Player : MonoBehaviour {
                 GameManager.gameState = GameManager.GameState.Playing;
                 // turn on player light
                 playerLightAnim.SetTrigger("LightFadeUp");
+                gameManager.TurnOffShipLights();
             }
         }
 
@@ -244,7 +249,7 @@ public class Player : MonoBehaviour {
                 }
                 // we add a slight random rotation to the camera to give a good effect
                 gameManager.SaveStatistics();
-                Application.LoadLevel(Application.loadedLevel);
+                SceneManager.LoadScene(1);
             }
         }
 
@@ -392,6 +397,10 @@ public class Player : MonoBehaviour {
                 temp.name = "pistolBullet";
                 pistolAmmo--;
             }
+            else
+            {
+                audioSourcePlayer.PlayOneShot(AudioManager.outOfAmmo, GameManager.SFXVolume / 180);
+            }
         }
         // shotgun
         if (weapon1 == WeaponType.shotgun)
@@ -419,6 +428,10 @@ public class Player : MonoBehaviour {
                     shotgunAmmo--;
                 }
             }
+            else
+            {
+                audioSourcePlayer.PlayOneShot(AudioManager.outOfAmmo, GameManager.SFXVolume / 180);
+            }
         }
         // MACHINE GUN
         if (weapon1 == WeaponType.machinegun)
@@ -444,6 +457,17 @@ public class Player : MonoBehaviour {
                 }
                 
             }
+            else
+            {
+                if (mgCanShoot)
+                {
+                    if (canPlaymgOOASound)
+                    {
+                        audioSourcePlayer.PlayOneShot(AudioManager.outOfAmmo, GameManager.SFXVolume / 180);
+                        StartCoroutine(resetMGLowAmmoNoise());
+                    }
+                }
+            }
         }
         // ROCKET
         if (weapon1 == WeaponType.rocket)
@@ -459,6 +483,10 @@ public class Player : MonoBehaviour {
                     // no need to add force to the rocket, since we'll have a script that moves it on the rocket itself
                     //temp.GetComponent<Rigidbody>().AddForce(mainCamera.transform.forward * gunPower, ForceMode.Impulse);
                     rocketAmmo--;
+                }
+                else
+                {
+                    audioSourcePlayer.PlayOneShot(AudioManager.outOfAmmo, GameManager.SFXVolume / 180);
                 }
             }
         }
@@ -912,6 +940,13 @@ public class Player : MonoBehaviour {
         {
             weapon2 = WeaponType.none;
         }
+    }
+
+    IEnumerator resetMGLowAmmoNoise()
+    {
+        canPlaymgOOASound = false;
+        yield return new WaitForSeconds(.25f);
+        canPlaymgOOASound = true;
     }
 }
 

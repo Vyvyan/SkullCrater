@@ -85,6 +85,7 @@ public class RobotFriend : MonoBehaviour {
                 {
                     if (miningTimerCurrent <= miningTimer)
                     {
+                        agent.Stop();
                         miningTimerCurrent += Time.deltaTime;
                     }
                     else
@@ -133,6 +134,7 @@ public class RobotFriend : MonoBehaviour {
         isInIenum = false;
         //miningTimerCurrent = 0;
         robotState = RobotState.gettingNewTarget;
+        agent.Resume();
     }
 
 }
