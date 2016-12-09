@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Steamworks;
 
 public class ToxicFlyingSkull : MonoBehaviour
 {
@@ -59,6 +60,9 @@ public class ToxicFlyingSkull : MonoBehaviour
                     {
                         Instantiate(audioSourceObjectToSpawn, transform.position, Quaternion.identity);
                     }
+
+                    int numberOfEnemiesHit = 0;
+
                     foreach (Collider hit in colliders)
                     {
                         Rigidbody rb = hit.GetComponent<Rigidbody>();
@@ -71,15 +75,24 @@ public class ToxicFlyingSkull : MonoBehaviour
                                 hit.gameObject.SendMessage("RandomExplosionDismember");
                             }
                             hit.gameObject.SendMessage("KillThisEnemy", false);
+
+                            numberOfEnemiesHit++;
                         }
                         // destroy enemies if they are hit and a skull
                         if (hit.gameObject.GetComponent<FlyingSkull>())
                         {
                             hit.gameObject.SendMessage("KillThisEnemy", false);
+                            numberOfEnemiesHit++;
                         }
 
                         if (rb != null)
                             rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
+                    }
+
+                    if (numberOfEnemiesHit >= 15)
+                    {
+                        SteamUserStats.SetAchievement("ToxicBigBoom");
+                        SteamUserStats.StoreStats();
                     }
 
                     if (!disableExplosion)

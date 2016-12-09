@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class Player : MonoBehaviour {
 
@@ -215,6 +216,12 @@ public class Player : MonoBehaviour {
         {
             if (GameManager.heldGold > 0)
             {
+                // achievement
+                if (GameManager.heldGold >= 200)
+                {
+                    SteamUserStats.SetAchievement("Deposit200");
+                    SteamUserStats.StoreStats();
+                }
                 GameManager.thisSessionGoldGained += GameManager.heldGold;
                 GameManager.storedGold += GameManager.heldGold;
                 PlayerPrefs.SetInt("storedGold", GameManager.storedGold);
@@ -237,6 +244,8 @@ public class Player : MonoBehaviour {
             {
                 // if we won the game, and touch the beam
                 // update stats
+                // total gold gained
+                GameManager.stat_TotalGoldGained += GameManager.thisSessionGoldGained;
                 // session gold best
                 if (GameManager.thisSessionGoldGained > GameManager.stat_MostGoldInARun)
                 {
@@ -249,6 +258,8 @@ public class Player : MonoBehaviour {
                 }
                 // we add a slight random rotation to the camera to give a good effect
                 gameManager.SaveStatistics();
+                SteamUserStats.SetAchievement("SurviveARound");
+                SteamUserStats.StoreStats();
                 SceneManager.LoadScene(1);
             }
         }
@@ -266,6 +277,9 @@ public class Player : MonoBehaviour {
                 Debug.Log(blahblahrandom.ToString());
                 gameManager.StartSpecialGameMode(blahblahrandom);
                 audioSourcePlayer.PlayOneShot(AudioManager.anomalousSkull, GameManager.SFXVolume / 100);
+                // achievement
+                SteamUserStats.SetAchievement("FindAnAnomSkull");
+                SteamUserStats.StoreStats();
                 // destroy the skull
                 Destroy(other.transform.parent.gameObject);
             }
@@ -347,7 +361,15 @@ public class Player : MonoBehaviour {
     public void KillPlayer()
     {
         audioManager.Play2DSound(AudioManager.playerDeath);
+        // achievements
+        if (GameManager.heldGold >= 200)
+        {
+            SteamUserStats.SetAchievement("Drop200");
+            SteamUserStats.StoreStats();
+        }
         // update stats
+        // total gold gained
+        GameManager.stat_TotalGoldGained += GameManager.thisSessionGoldGained;
         // dropping gold
         if (GameManager.heldGold > GameManager.stat_MostGoldDropped)
         {
@@ -370,6 +392,7 @@ public class Player : MonoBehaviour {
         gameObject.SetActive(false);
         GameManager.stat_Deaths++;
         gameManager.SaveStatistics();
+        gameManager.CheckSteamAchievements();
         GameManager.gameState = GameManager.GameState.Dead;
     }
 

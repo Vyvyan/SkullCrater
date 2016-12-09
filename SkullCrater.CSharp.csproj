@@ -108,6 +108,8 @@
     <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />
     <Compile Include="Assets\Scripts\SkullBossParent.cs" />
     <Compile Include="Assets\Scripts\SpecialCrate.cs" />
+    <Compile Include="Assets\Scripts\SteamScript.cs" />
+    <Compile Include="Assets\Scripts\Steamwork.NET\SteamManager.cs" />
     <Compile Include="Assets\Scripts\TextureMovingOffset.cs" />
     <Compile Include="Assets\Scripts\ToxicFlyingSkull.cs" />
     <Compile Include="Assets\Scripts\Walker.cs" />
@@ -205,6 +207,7 @@
     <None Include="Assets\UnityVC\StandardSpecularVC.shader" />
     <None Include="Assets\UnityVC\StandardVC.shader" />
     <None Include="Assets\UnityVC\UnityVC.cginc" />
+    <None Include="Assets\steam_appid.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

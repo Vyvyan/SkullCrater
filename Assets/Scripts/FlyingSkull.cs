@@ -70,20 +70,25 @@ public class FlyingSkull : MonoBehaviour {
             }
         }
         GameManager.enemyCount--;
-        GameManager.enemiesKilledThisSession++;
 
-        if (isToxic)
+        if (GameManager.gameState == GameManager.GameState.Playing)
         {
-            GameManager.stat_ToxicSkellsKilled++;
+            GameManager.enemiesKilledThisSession++;
+
+            if (isToxic)
+            {
+                GameManager.stat_ToxicSkellsKilled++;
+            }
+            else if (isRed)
+            {
+                GameManager.stat_RedSkellsKilled++;
+            }
+            else
+            {
+                GameManager.stat_SkellsKilled++;
+            }
         }
-        else if (isRed)
-        {
-            GameManager.stat_RedSkellsKilled++;
-        }
-        else
-        {
-            GameManager.stat_SkellsKilled++;
-        }
+
         if (audioS)
         {
             audioS.Stop();

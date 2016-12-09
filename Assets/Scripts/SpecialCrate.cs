@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Steamworks;
 
 public class SpecialCrate : MonoBehaviour {
 
@@ -35,6 +36,8 @@ public class SpecialCrate : MonoBehaviour {
             bloopRB.useGravity = true;
             gameManager.DisplayEventText("A Big Blue Bully has appeared?");
             bloopLight.intensity = 2;
+            SteamUserStats.SetAchievement("Bloop");
+            SteamUserStats.StoreStats();
             hasSpawnedBloop = true;
         }
         

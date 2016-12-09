@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Steamworks;
 
 public class RobotFriend : MonoBehaviour {
 
@@ -25,6 +26,9 @@ public class RobotFriend : MonoBehaviour {
     // bool for turning frand back on after anamalous skulls
     bool wereWeInANonNormalModeLastFrame;
 
+    public int numberOfTimesShot;
+    bool hasAwardedAchievement;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -38,6 +42,8 @@ public class RobotFriend : MonoBehaviour {
         audioS.Play();
         audioS.Pause();
         isInIenum = false;
+        numberOfTimesShot = 0;
+        hasAwardedAchievement = false;
     }
 	
 	// Update is called once per frame
@@ -112,6 +118,16 @@ public class RobotFriend : MonoBehaviour {
                 wereWeInANonNormalModeLastFrame = true;
             }
         }
+
+        if (!hasAwardedAchievement)
+        {
+            if (numberOfTimesShot >= 250)
+            {
+                SteamUserStats.SetAchievement("ShootFrand");
+                SteamUserStats.StoreStats();
+                hasAwardedAchievement = true;
+            }
+        }
     }
 
     void SpawnGold()
@@ -137,4 +153,11 @@ public class RobotFriend : MonoBehaviour {
         agent.Resume();
     }
 
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Bullet")
+        {
+            numberOfTimesShot++;
+        }
+    }
 }

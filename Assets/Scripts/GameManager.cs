@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
+using Steamworks;
 
 public class GameManager : MonoBehaviour {
 
@@ -87,9 +88,9 @@ public class GameManager : MonoBehaviour {
     public static bool canGoSlowMo;
 
     public static int stat_Deaths, stat_SkeltinsKilled, stat_GoldSkeltinsKilled, stat_RedSkeltinsKilled, stat_ToxicSkeltinsKilled, stat_SkellsKilled, stat_RedSkellsKilled, stat_ToxicSkellsKilled, stat_BoneBallsKilled, stat_LargestSingleDeposit,
-        stat_MostGoldDropped, stat_MostGoldInARun, stat_SkellLordsKilled;
+        stat_MostGoldDropped, stat_MostGoldInARun, stat_SkellLordsKilled, stat_TotalGoldGained;
     public static float stat_LongestTimeSurvived;
-    public Text statsText, eventTextObject, specialTimerText;
+    public Text statsText, eventTextObject, specialTimerText, careerStatsHeaderText;
 
     // special events
     public GameObject crystalSkull;
@@ -162,10 +163,17 @@ public class GameManager : MonoBehaviour {
 
         // randomizes our kills to spawn an anomolous skull
         killsToSpawnCrystalSkull = UnityEngine.Random.Range(75, 200);
+
+        // change header to steam name on stats panel
+        if (SteamManager.Initialized)
+        {
+            string name = SteamFriends.GetPersonaName();
+            careerStatsHeaderText.text = name + "'s Career Statistics";
+        }
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update ()
     {
         // DEBUG PLEASE REMOVE
         if (Input.GetKeyDown(KeyCode.P))
@@ -177,6 +185,10 @@ public class GameManager : MonoBehaviour {
         {
             timeToSpawnBoss = 10;
             DisplayEventText("Skell Lord will spawn at 10 seconds.");
+        }
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            SteamUserStats.ResetAllStats(true);
         }
 
         // seeing gamestate in editor
@@ -693,13 +705,15 @@ public class GameManager : MonoBehaviour {
         stat_ToxicSkellsKilled = PlayerPrefs.GetInt("stats_ToxicSkellsKilled", 0);
         stat_ToxicSkeltinsKilled = PlayerPrefs.GetInt("stats_ToxicSkeltinsKilled", 0);
         stat_SkellLordsKilled = PlayerPrefs.GetInt("stats_SkellLordsKilled", 0);
+        stat_TotalGoldGained = PlayerPrefs.GetInt("stats_TotalGoldGained", 0);
 
         // updates the Statistics text that displays the stats
-        statsText.text = Environment.NewLine + Environment.NewLine +
+        statsText.text = Environment.NewLine + Environment.NewLine + Environment.NewLine +
             "Expeditions: " + stat_Deaths.ToString() + Environment.NewLine +
             //"Longest Time Survived: " + stat_LongestTimeSurvived.ToString("F1") + Environment.NewLine +
             "Longest Time Survived: " + FormatSeconds(stat_LongestTimeSurvived) + Environment.NewLine +
             "Most Gold in a Run: " + stat_MostGoldInARun.ToString() + Environment.NewLine +
+            "Total Gold Gained: " + stat_TotalGoldGained.ToString() + Environment.NewLine +
             "Largest Single Gold Deposit: " + stat_LargestSingleDeposit.ToString() + Environment.NewLine +
             "Most Gold Dropped: " + stat_MostGoldDropped.ToString() + Environment.NewLine + Environment.NewLine +
             "Skeltins Killed: " + stat_SkeltinsKilled.ToString() + Environment.NewLine +
@@ -730,6 +744,25 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetInt("stats_ToxicSkellsKilled", stat_ToxicSkellsKilled);
         PlayerPrefs.SetInt("stats_ToxicSkeltinsKilled", stat_ToxicSkeltinsKilled);
         PlayerPrefs.SetInt("stats_SkellLordsKilled", stat_SkellLordsKilled);
+        PlayerPrefs.SetInt("stats_TotalGoldGained", stat_TotalGoldGained);
+
+        // save stats to steam
+        SteamUserStats.SetStat("number_of_runs", stat_Deaths);
+        SteamUserStats.SetStat("longest_time_survived", stat_LongestTimeSurvived);
+        SteamUserStats.SetStat("most_gold_in_a_run", stat_MostGoldInARun);
+        SteamUserStats.SetStat("largest_gold_deposit", stat_LargestSingleDeposit);
+        SteamUserStats.SetStat("most_gold_dropped", stat_MostGoldDropped);
+        SteamUserStats.SetStat("skeltins_killed", stat_SkeltinsKilled);
+        SteamUserStats.SetStat("gold_skeltins_killed", stat_GoldSkeltinsKilled);
+        SteamUserStats.SetStat("red_skeltins_killed", stat_RedSkeltinsKilled);
+        SteamUserStats.SetStat("toxic_skeltins_killed", stat_ToxicSkeltinsKilled);
+        SteamUserStats.SetStat("skells_killed", stat_SkellsKilled);
+        SteamUserStats.SetStat("red_skells_killed", stat_RedSkellsKilled);
+        SteamUserStats.SetStat("toxic_skells_killed", stat_ToxicSkellsKilled);
+        SteamUserStats.SetStat("bone_balls_killed", stat_BoneBallsKilled);
+        SteamUserStats.SetStat("skell_lords_killed", stat_SkellLordsKilled);
+        SteamUserStats.SetStat("total_gold", stat_TotalGoldGained);
+
     }
 
     IEnumerator KillAllEnemies()
@@ -1266,6 +1299,8 @@ public class GameManager : MonoBehaviour {
             gameMode = GameMode.GoldSkeletonMode;
             timeLimitOnMode = 40;
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Lady Luck shines upon you");
+            // achievement
+            SteamUserStats.SetAchievement("Anom_Gold");
         }
         else if (modeIndex >= 2 && modeIndex <= 7)
         {
@@ -1319,6 +1354,30 @@ public class GameManager : MonoBehaviour {
         }
         DisplayEventText("Anomaly Survived!");
         KillAll();
+
+        // achievements
+        if (gameState == GameState.Playing)
+        {
+            if (gameMode == GameMode.BoneBallMode)
+            {
+                SteamUserStats.SetAchievement("Anom_Ball");
+            }
+            else if (gameMode == GameMode.SpeedySkeletonMode)
+            {
+                SteamUserStats.SetAchievement("Anom_Special");
+            }
+            else if (gameMode == GameMode.FlyingSkeletonMode)
+            {
+                SteamUserStats.SetAchievement("Anom_Flying");
+            }
+            else if (gameMode == GameMode.HordeSkeletonMode)
+            {
+                SteamUserStats.SetAchievement("Anom_Horde");
+            }
+
+            SteamUserStats.StoreStats();
+        }
+
         // turns off our timer
         specialTimerText.gameObject.SetActive(false);
         gameMode = GameMode.normal;
@@ -1374,5 +1433,138 @@ public class GameManager : MonoBehaviour {
         {
             thing.SetActive(false);
         }
+    }
+
+    public void CheckSteamAchievements()
+    {
+        // Grave Digger
+        if (stat_SkeltinsKilled >= 1000)
+        {
+            SteamUserStats.SetAchievement("1000Skeltins");
+        }
+        // UnderTaker
+        if (stat_SkeltinsKilled >= 10000)
+        {
+            SteamUserStats.SetAchievement("10kSkeltins");
+        }
+        // Pickpocket
+        if (stat_GoldSkeltinsKilled >= 100)
+        {
+            SteamUserStats.SetAchievement("100GoldSkeltins");
+        }
+        // Red Dead Redeadtion
+        if (stat_RedSkeltinsKilled >= 500)
+        {
+            SteamUserStats.SetAchievement("500RedSkeltins");
+        }
+        // Hazmat
+        if (stat_ToxicSkeltinsKilled >= 300)
+        {
+            SteamUserStats.SetAchievement("300ToxicSkeltins");
+        }
+        // Skeet Shooting
+        if (stat_SkellsKilled >= 1000)
+        {
+            SteamUserStats.SetAchievement("1000Skells");
+        }
+        // Blood rain
+        if (stat_RedSkellsKilled >= 250)
+        {
+            SteamUserStats.SetAchievement("250RedSkells");
+        }
+        // acid rain
+        if (stat_ToxicSkellsKilled >= 200)
+        {
+            SteamUserStats.SetAchievement("200ToxicSkells");
+        }
+        // ballbuster
+        if (stat_BoneBallsKilled >= 500)
+        {
+            SteamUserStats.SetAchievement("500BoneBalls");
+        }
+        // Skullcracker
+        if (stat_SkellLordsKilled >= 1)
+        {
+            SteamUserStats.SetAchievement("1SkellLord");
+        }
+        // Lord it Over
+        if (stat_SkellLordsKilled >= 5)
+        {
+            SteamUserStats.SetAchievement("5SkellLords");
+        }
+        // Survive 1 min
+        if (gameTimer >= 60)
+        {
+            SteamUserStats.SetAchievement("Survive1Min");
+        }
+        // Survive 2 min
+        if (gameTimer >= 120)
+        {
+            SteamUserStats.SetAchievement("Survive2Min");
+        }
+        // Survive 3 min
+        if (gameTimer >= 180)
+        {
+            SteamUserStats.SetAchievement("Survive3Min");
+        }
+        // Survive 4 min
+        if (gameTimer >= 240)
+        {
+            SteamUserStats.SetAchievement("Survive4Min");
+        }
+        // Survive 5 min
+        if (gameTimer >= 300)
+        {
+            SteamUserStats.SetAchievement("Survive5Min");
+        }
+        // Survive 6 min
+        if (gameTimer >= 360)
+        {
+            SteamUserStats.SetAchievement("Survive6Min");
+        }
+        // Maxing out one weapon
+        if (NumberOfFullyUpgradedWeapons() >= 1)
+        {
+            SteamUserStats.SetAchievement("Max1Weapon");
+        }
+        // Maxing out all weapons
+        if (NumberOfFullyUpgradedWeapons() >= 5)
+        {
+            SteamUserStats.SetAchievement("MaxAllWeapons");
+        }
+        // 10k total gold
+        if (stat_TotalGoldGained >= 10000)
+        {
+            SteamUserStats.SetAchievement("10kGold");
+        }
+
+        SteamUserStats.StoreStats();
+    }
+
+    int NumberOfFullyUpgradedWeapons()
+    {
+        int fullyUppedWeapons = 0;
+        if (pistolTotalUpgradeLevel == Pistol_Upgrades_AmmoLevelMax + Pistol_Upgrades_ReloadSpeedLevelMax)
+        {
+            fullyUppedWeapons++;
+        }
+        if (machineGunTotalUpgradeLevel == MachineGun_Upgrades_AmmoLevelMax + MachineGun_Upgrades_ReloadSpeedLevelMax + MachineGun_Upgrades_ROFLevelMax)
+        {
+            fullyUppedWeapons++;
+        }
+        if (shotgunTotalUpgradeLevel == Shotgun_Upgrades_AmmoLevelMax + Shotgun_Upgrades_ReloadSpeedLevelMax)
+        {
+            fullyUppedWeapons++;
+        }
+        if (rocketTotalUpgradeLevel == Rocket_Upgrades_AmmoLevelMax + Rocket_Upgrades_ReloadSpeedLevelMax + Rocket_Upgrades_RadiusMax)
+        {
+            fullyUppedWeapons++;
+        }
+        if (grenadeTotalUpgradeLevel == Grenade_Upgrades_RadiusMax + Grenade_Upgrades_RechargeRateMax)
+        {
+            fullyUppedWeapons++;
+        }
+
+        return fullyUppedWeapons;
     }
 }

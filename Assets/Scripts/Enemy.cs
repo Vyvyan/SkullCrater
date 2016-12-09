@@ -84,18 +84,22 @@ public class Enemy : MonoBehaviour {
                     }
                 }
 
-                if (goldSkeleton)
+                // only update states if the player is alive, so the end game mass killing doesn't increase stats
+                if (GameManager.gameState == GameManager.GameState.Playing)
                 {
-                    Instantiate(gold, gameObject.transform.position, Quaternion.identity);
-                    GameManager.stat_GoldSkeltinsKilled++;
-                }
-                else if (redSkeleton)
-                {
-                    GameManager.stat_RedSkeltinsKilled++;
-                }
-                else
-                {
-                    GameManager.stat_SkeltinsKilled++;
+                    if (goldSkeleton)
+                    {
+                        Instantiate(gold, gameObject.transform.position, Quaternion.identity);
+                        GameManager.stat_GoldSkeltinsKilled++;
+                    }
+                    else if (redSkeleton)
+                    {
+                        GameManager.stat_RedSkeltinsKilled++;
+                    }
+                    else
+                    {
+                        GameManager.stat_SkeltinsKilled++;
+                    }
                 }
             }
             else if (enemyType == EnemyType.ToxicSkeleton)
@@ -123,7 +127,10 @@ public class Enemy : MonoBehaviour {
                     StartCoroutine(delayedToxicExplosion());
                     hasSpawnedToxGrenade = true;
                 }
-                GameManager.stat_ToxicSkeltinsKilled++;
+                if (GameManager.gameState == GameManager.GameState.Playing)
+                {
+                    GameManager.stat_ToxicSkeltinsKilled++;
+                }
             }
 
             // now we destroy ourselves after a bit
@@ -141,7 +148,10 @@ public class Enemy : MonoBehaviour {
                 }
             }
             GameManager.enemyCount--;
-            GameManager.enemiesKilledThisSession++;
+            if (GameManager.gameState == GameManager.GameState.Playing)
+            {
+                GameManager.enemiesKilledThisSession++;
+            }
             isDead = true;
         }
     }

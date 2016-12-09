@@ -129,9 +129,14 @@ public class BoneBall : MonoBehaviour {
             tempAD.timeUntilDestroy = 10;
 
             Destroy(triggerObject);
-            GameManager.enemiesKilledThisSession++;
+            
             GameManager.enemyCount--;
-            GameManager.stat_BoneBallsKilled++;
+
+            if (GameManager.gameState == GameManager.GameState.Playing)
+            {
+                GameManager.enemiesKilledThisSession++;
+                GameManager.stat_BoneBallsKilled++;
+            }
             isDead = true;
         }    
     }
