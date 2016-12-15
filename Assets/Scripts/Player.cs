@@ -260,7 +260,7 @@ public class Player : MonoBehaviour {
                 gameManager.SaveStatistics();
                 SteamUserStats.SetAchievement("SurviveARound");
                 SteamUserStats.StoreStats();
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
             }
         }
 

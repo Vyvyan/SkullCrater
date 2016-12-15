@@ -78,6 +78,7 @@
     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusMeshes.cs" />
     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusObject.cs" />
     <Compile Include="Assets\PrimitivePlus\Scripts\PrimitivePlusType.cs" />
+    <Compile Include="Assets\Scripts\AethernautSplash.cs" />
     <Compile Include="Assets\Scripts\AudioManager.cs" />
     <Compile Include="Assets\Scripts\AutoDestroy.cs" />
     <Compile Include="Assets\Scripts\AutoDestroyOnImpact.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Assets\Scripts\Skeleton_Body_Part.cs" />
     <Compile Include="Assets\Scripts\SkullBossParent.cs" />
     <Compile Include="Assets\Scripts\SpecialCrate.cs" />
+    <Compile Include="Assets\Scripts\Splash.cs" />
     <Compile Include="Assets\Scripts\SteamScript.cs" />
     <Compile Include="Assets\Scripts\Steamwork.NET\SteamManager.cs" />
     <Compile Include="Assets\Scripts\TextureMovingOffset.cs" />

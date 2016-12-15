@@ -9,10 +9,12 @@ public class SpecialCrate : MonoBehaviour {
     GameManager gameManager;
     Light bloopLight;
     bool hasSpawnedBloop;
+    AudioManager audioManager;
 
 	// Use this for initialization
 	void Start ()
     {
+        audioManager = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         rb = gameObject.GetComponent<Rigidbody>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         bloopLight = bloopRB.gameObject.GetComponentInChildren<Light>();
@@ -30,6 +32,7 @@ public class SpecialCrate : MonoBehaviour {
     {
         if (!hasSpawnedBloop)
         {
+            audioManager.Play2DSoundLoud(AudioManager.bloop);
             rb.isKinematic = false;
             rb.useGravity = true;
             bloopRB.isKinematic = false;

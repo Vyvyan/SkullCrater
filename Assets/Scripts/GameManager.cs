@@ -113,6 +113,11 @@ public class GameManager : MonoBehaviour {
     public Light[] shipLights;
     public GameObject[] shipAesthetics;
 
+    // reset saved data protector
+    public bool resetProtector;
+    public Text resetProtectorText;
+    float resetTABHoldTimer;
+
     // Use this for initialization
     void Start ()
     {
@@ -170,6 +175,9 @@ public class GameManager : MonoBehaviour {
             string name = SteamFriends.GetPersonaName();
             careerStatsHeaderText.text = name + "'s Career Statistics";
         }
+
+        resetProtector = false;
+        resetTABHoldTimer = 0;
     }
 
     // Update is called once per frame
@@ -189,6 +197,25 @@ public class GameManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Equals))
         {
             SteamUserStats.ResetAllStats(true);
+        }
+
+
+        // RESETTING DATA
+        if (resetProtector)
+        {
+            if (Input.GetKey(KeyCode.Tab))
+            {
+                resetTABHoldTimer += Time.deltaTime;
+            }
+
+            if (resetTABHoldTimer > 5)
+            {
+                ResetSavedData();
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            resetTABHoldTimer = 0;
         }
 
         // seeing gamestate in editor
@@ -434,8 +461,8 @@ public class GameManager : MonoBehaviour {
                 chanceToSpawnSpecialFlying = 100;
                 chanceToSpawnSpecialSkeleton = 100;
                 flyingSpawnTimer = 4f;
-                spawnTimer = 1.2f;
-                enemyCountMax = 25;
+                spawnTimer = 1f;
+                enemyCountMax = 35;
             }
             else if (gameMode == GameMode.BoneBallMode)
             {
@@ -599,7 +626,7 @@ public class GameManager : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Z))
             {
                 // load our loading scene
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
             }
             if (!hasKilledAllEnemiesAfterPlayerDeath)
             {
@@ -1256,7 +1283,20 @@ public class GameManager : MonoBehaviour {
     public void ResetSavedData()
     {
         PlayerPrefs.DeleteAll();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
+    }
+
+    public void ToggleResetSavedDataProtector()
+    {
+        resetProtector = !resetProtector;
+        if (resetProtector)
+        {
+            resetProtectorText.gameObject.SetActive(true);
+        }
+        else
+        {
+            resetProtectorText.gameObject.SetActive(false);
+        }
     }
 
     public void SlowMo()

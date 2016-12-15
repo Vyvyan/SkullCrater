@@ -25,7 +25,7 @@ public class BlackSkull : MonoBehaviour {
 
     public float rotationSpeed;
 
-    public static float health;
+    public static float health = 27;
 
     GameManager gameManager;
 
@@ -56,7 +56,7 @@ public class BlackSkull : MonoBehaviour {
         //anim = GetComponent<Animator>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         // put the health here, so it resets each round
-        health = 28;
+        health = 27;
         // start our light off
         bossLight.intensity = 0;
 	}
@@ -176,7 +176,7 @@ public class BlackSkull : MonoBehaviour {
         // killing the boss
         if (bossState != BossState.dead)
         {
-            if (health <= 0)
+            if (health < 0)
             {
                 StartCoroutine(MakeSureAllEnemiesDie());
                 StartCoroutine(ShakeSkullAfterDeath());

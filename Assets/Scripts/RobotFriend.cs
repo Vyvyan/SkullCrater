@@ -121,7 +121,7 @@ public class RobotFriend : MonoBehaviour {
 
         if (!hasAwardedAchievement)
         {
-            if (numberOfTimesShot >= 250)
+            if (numberOfTimesShot >= 50)
             {
                 SteamUserStats.SetAchievement("ShootFrand");
                 SteamUserStats.StoreStats();
