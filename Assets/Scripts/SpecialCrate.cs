@@ -10,6 +10,8 @@ public class SpecialCrate : MonoBehaviour {
     Light bloopLight;
     bool hasSpawnedBloop;
     AudioManager audioManager;
+    public AudioClip blipbloopTheme;
+    public AudioSource musicPlayer;
 
 	// Use this for initialization
 	void Start ()
@@ -32,7 +34,7 @@ public class SpecialCrate : MonoBehaviour {
     {
         if (!hasSpawnedBloop)
         {
-            audioManager.Play2DSoundLoud(AudioManager.bloop);
+            //audioManager.Play2DSoundLoud(AudioManager.bloop);
             rb.isKinematic = false;
             rb.useGravity = true;
             bloopRB.isKinematic = false;
@@ -42,6 +44,11 @@ public class SpecialCrate : MonoBehaviour {
             SteamUserStats.SetAchievement("Bloop");
             SteamUserStats.StoreStats();
             hasSpawnedBloop = true;
+            musicPlayer.Stop();
+            musicPlayer.clip = blipbloopTheme;
+            musicPlayer.volume = GameManager.MusicVolume / 190;
+            musicPlayer.Play();
+            gameObject.SetActive(false);
         }
         
     }

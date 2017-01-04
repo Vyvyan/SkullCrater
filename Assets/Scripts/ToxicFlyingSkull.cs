@@ -89,7 +89,7 @@ public class ToxicFlyingSkull : MonoBehaviour
                             rb.AddExplosionForce(power, explosionPos, radius, 3.0F);
                     }
 
-                    if (numberOfEnemiesHit >= 15)
+                    if (numberOfEnemiesHit >= 10)
                     {
                         SteamUserStats.SetAchievement("ToxicBigBoom");
                         SteamUserStats.StoreStats();
