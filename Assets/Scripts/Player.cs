@@ -42,6 +42,9 @@ public class Player : MonoBehaviour {
     bool mgCanShoot;
     bool canPlaymgOOASound;
 
+    // music starting
+    bool hasStartedMusic;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -82,6 +85,7 @@ public class Player : MonoBehaviour {
         ChangeWeaponModel();
 
         canPlaymgOOASound = true;
+        hasStartedMusic = false;
 	}
 	
 	// Update is called once per frame
@@ -202,6 +206,13 @@ public class Player : MonoBehaviour {
         // switch game modes when we hit the planet
         if (GameManager.gameState == GameManager.GameState.PreGame)
         {
+            // cue music intro
+            if (other.gameObject.tag == "MusicCue")
+            {
+                audioManager.Play2DSoundMusicClip(AudioManager.fallingMusicIntro);
+            }
+
+            // start game trigger
             if (other.gameObject.tag == "StartGameTrigger")
             {
                 GameManager.gameState = GameManager.GameState.Playing;
@@ -294,6 +305,18 @@ public class Player : MonoBehaviour {
             Rigidbody rigbidje = other.gameObject.GetComponent<Rigidbody>();
             Vector3 forceDirection = (rigbidje.transform.position - gameObject.transform.position).normalized * 50;
             rigbidje.AddForce(new Vector3(forceDirection.x, 0, forceDirection.z), ForceMode.Impulse);
+        }
+
+        // start playing music when we hit the crater
+        if (other.gameObject.tag == "Ground")
+        {
+            // if we haven't started playing music
+            if (!hasStartedMusic)
+            {
+                // play music
+                gameManager.StartGameMusic();
+                hasStartedMusic = true;
+            }
         }
     }
 

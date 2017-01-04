@@ -116,6 +116,7 @@
     <Compile Include="Assets\Scripts\ToxicFlyingSkull.cs" />
     <Compile Include="Assets\Scripts\Walker.cs" />
     <Compile Include="Assets\Scripts\WeaponEffects.cs" />
+    <Compile Include="Assets\Scripts\radio.cs" />
     <Compile Include="Assets\Scripts\s_HUD.cs" />
     <Compile Include="Assets\Scripts\s_WanderingAI.cs" />
   </ItemGroup>

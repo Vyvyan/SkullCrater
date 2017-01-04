@@ -6,12 +6,14 @@ public class AethernautSplash : MonoBehaviour {
 
     public Rigidbody boneballRB;
     public Transform skeltin;
+    AudioSource audioS;
     
 	// Use this for initialization
 	void Start ()
     {
         StartCoroutine(timer());
         StartCoroutine(waitThenPushBall());
+        audioS = gameObject.GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -25,8 +27,9 @@ public class AethernautSplash : MonoBehaviour {
 
     IEnumerator waitThenPushBall()
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2f);
         boneballRB.AddForce((skeltin.transform.position - boneballRB.gameObject.transform.position) * (200 * Time.deltaTime), ForceMode.VelocityChange);
+        audioS.Play();
     }
 
     void LoadNextScene()
@@ -36,7 +39,7 @@ public class AethernautSplash : MonoBehaviour {
 
     IEnumerator timer()
     {
-        yield return new WaitForSeconds(6);
+        yield return new WaitForSeconds(7);
         LoadNextScene();
     }
 }

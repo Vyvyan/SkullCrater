@@ -118,6 +118,14 @@ public class GameManager : MonoBehaviour {
     public Text resetProtectorText;
     float resetTABHoldTimer;
 
+    // radio
+    public Animator radioAnim;
+    public AudioSource radioAudioSource;
+    public ParticleSystem particle_MusicNotes1, particle_MusicNotes2, particle_MusicNotes3;
+
+    // music
+    AudioSource musicSource;
+
     // Use this for initialization
     void Start ()
     {
@@ -167,7 +175,7 @@ public class GameManager : MonoBehaviour {
         enemyCount = 0;
 
         // randomizes our kills to spawn an anomolous skull
-        killsToSpawnCrystalSkull = UnityEngine.Random.Range(75, 200);
+        killsToSpawnCrystalSkull = UnityEngine.Random.Range(100, 250);
 
         // change header to steam name on stats panel
         if (SteamManager.Initialized)
@@ -178,11 +186,15 @@ public class GameManager : MonoBehaviour {
 
         resetProtector = false;
         resetTABHoldTimer = 0;
+
+        // music
+        musicSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update ()
     {
+        /*
         // DEBUG PLEASE REMOVE
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -198,6 +210,8 @@ public class GameManager : MonoBehaviour {
         {
             SteamUserStats.ResetAllStats(true);
         }
+        */
+        
 
 
         // RESETTING DATA
@@ -268,6 +282,9 @@ public class GameManager : MonoBehaviour {
             machineGunTotalUpgradeLevel = (MachineGun_Upgrades_AmmoLevelCurrent + MachineGun_Upgrades_ReloadSpeedLevelCurrent + MachineGun_Upgrades_ROFLevelCurrent) * 10;
             rocketTotalUpgradeLevel = (Rocket_Upgrades_AmmoLevelCurrent + Rocket_Upgrades_RadiusCurrent + Rocket_Upgrades_ReloadSpeedLevelCurrent) * 10;
             grenadeTotalUpgradeLevel = (Grenade_Upgrades_RadiusCurrent + Grenade_Upgrades_RechargeRateCurrent) * 10;
+
+            // updates volume
+            musicSource.volume = MusicVolume / 105;
         }
 
         if (gameState == GameState.Playing)
@@ -400,7 +417,8 @@ public class GameManager : MonoBehaviour {
                 {
                     chanceToSpawnSpecialFlying = 3;
                     chanceToSpawnSpecialSkeleton = 3;
-                    spawnTimer = 1f;
+                    // We heavily decrease the skeltin spawn rate for 30 seconds, since there should be a ton already there from the initial high spawn rate
+                    spawnTimer = 2.5f;
                     flyingSpawnTimer = 10f;
                     ballSpawnTimer = 30;
                 }
@@ -633,6 +651,13 @@ public class GameManager : MonoBehaviour {
                 StartCoroutine(KillAllEnemies());
                 hasKilledAllEnemiesAfterPlayerDeath = true;
             }
+
+            // stop music on death
+            if (musicSource.isPlaying)
+            {
+                //musicSource.Stop();
+                musicSource.volume -= (.2f * Time.deltaTime);
+            }
         }
 	}
 
@@ -752,6 +777,25 @@ public class GameManager : MonoBehaviour {
             "Toxic Skells Killed: " + stat_ToxicSkellsKilled.ToString() + Environment.NewLine +
             "Bone Balls Killed: " + stat_BoneBallsKilled.ToString() + Environment.NewLine +
             "Skell Lords Killed: " + stat_SkellLordsKilled.ToString() + Environment.NewLine;
+
+        // load radio state
+        // if our radio is saved as off, turn it off
+        if (PlayerPrefs.GetInt("RadioState", 1) == 0)
+        {
+            radioAudioSource.enabled = false;
+            radioAnim.SetBool("RadioIsOn", false);
+            particle_MusicNotes1.Stop();
+            particle_MusicNotes2.Stop();
+            particle_MusicNotes3.Stop();
+        }
+        else
+        {
+            radioAudioSource.enabled = true;
+            radioAnim.SetBool("RadioIsOn", true);
+            particle_MusicNotes1.Play();
+            particle_MusicNotes2.Play();
+            particle_MusicNotes3.Play();
+        }
     }
 
     public void SaveStatistics()
@@ -1606,5 +1650,33 @@ public class GameManager : MonoBehaviour {
         }
 
         return fullyUppedWeapons;
+    }
+
+    public void RadioToggle()
+    {
+        // if our animation bool says the radio is on, then shut that thing off
+        if (radioAnim.GetBool("RadioIsOn") == true)
+        {
+            radioAudioSource.enabled = false;
+            radioAnim.SetBool("RadioIsOn", false);
+            PlayerPrefs.SetInt("RadioState", 0);
+            particle_MusicNotes1.Stop();
+            particle_MusicNotes2.Stop();
+            particle_MusicNotes3.Stop();
+        }
+        else
+        {
+            radioAudioSource.enabled = true;
+            radioAnim.SetBool("RadioIsOn", true);
+            PlayerPrefs.SetInt("RadioState", 1);
+            particle_MusicNotes1.Play();
+            particle_MusicNotes2.Play();
+            particle_MusicNotes3.Play();
+        }
+    }
+
+    public void StartGameMusic()
+    {
+        musicSource.Play();
     }
 }
