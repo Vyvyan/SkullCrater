@@ -26,6 +26,10 @@ public class Enemy : MonoBehaviour {
 
     public Light enemyLight;
 
+    public bool isNormalSkeltin;
+    public GameObject redSkeltinEvolution;
+    public float lifeTimer;
+
     // Use this for initialization
     void Start ()
     {
@@ -34,6 +38,7 @@ public class Enemy : MonoBehaviour {
         animator = gameObject.GetComponent<Animator>();
         //triggerObject = transform.GetChild(10).gameObject;
         audio = GetComponent<AudioSource>();
+        lifeTimer = 0;
     }
 	
 	// Update is called once per frame
@@ -44,6 +49,17 @@ public class Enemy : MonoBehaviour {
             if(enemyLight.intensity < 2)
             {
                 enemyLight.intensity += Time.deltaTime;
+            }
+        }
+
+        // evolve into red skeltins after a set time
+        if (isNormalSkeltin)
+        {
+            lifeTimer += Time.deltaTime;
+            if (lifeTimer >= 140)
+            {
+                Instantiate(redSkeltinEvolution, gameObject.transform.position, gameObject.transform.rotation);
+                Destroy(gameObject);
             }
         }
 	}

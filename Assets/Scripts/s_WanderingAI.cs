@@ -43,7 +43,10 @@ public class s_WanderingAI : MonoBehaviour
         }
         else
         {
-            agent.SetDestination(player.transform.position);
+            if (player)
+            {
+                agent.SetDestination(player.transform.position);
+            }
         }
     }
 

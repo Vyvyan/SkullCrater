@@ -228,6 +228,10 @@ public class GameManager : MonoBehaviour {
                 DisplayEventText("Reset Bloop state");
             }
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Application.OpenURL("http://www.google.com/");
+        }
 
 
 
