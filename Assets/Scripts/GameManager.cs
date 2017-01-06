@@ -126,6 +126,9 @@ public class GameManager : MonoBehaviour {
     // music
     AudioSource musicSource;
 
+    // bloop saving stuff
+    public GameObject specialCrate, craterBloop, shipBloop;
+
     // Use this for initialization
     void Start ()
     {
@@ -216,9 +219,17 @@ public class GameManager : MonoBehaviour {
                 DisplayEventText("Resetting Steam Achievements");
             }
         }
-        
-        
-        
+        if (Input.GetKeyDown(KeyCode.Period))
+        {
+            if (Application.isEditor)
+            {
+                PlayerPrefs.SetInt("BloopInShip", 0);
+                DisplayEventText("Reset Bloop state");
+            }
+        }
+
+
+
 
 
         // RESETTING DATA
@@ -803,6 +814,20 @@ public class GameManager : MonoBehaviour {
             particle_MusicNotes2.Play();
             particle_MusicNotes3.Play();
         }
+
+        // bloop is NOT in the ship, else he is
+        if (PlayerPrefs.GetInt("BloopInShip", 0) == 0)
+        {
+            shipBloop.SetActive(false);
+            specialCrate.SetActive(true);
+            craterBloop.SetActive(true);
+        }
+        else
+        {
+            shipBloop.SetActive(true);
+            specialCrate.SetActive(false);
+            craterBloop.SetActive(false);
+        } 
     }
 
     public void SaveStatistics()
@@ -1392,6 +1417,7 @@ public class GameManager : MonoBehaviour {
             DisplayEventText("The Skull is Engraved. It reads:" + Environment.NewLine + "Lady Luck shines upon you");
             // achievement
             SteamUserStats.SetAchievement("Anom_Gold");
+            SteamUserStats.StoreStats();
         }
         else if (modeIndex >= 2 && modeIndex <= 7)
         {
