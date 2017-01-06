@@ -27,7 +27,7 @@ public class AethernautSplash : MonoBehaviour {
 
     IEnumerator waitThenPushBall()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.2f);
         boneballRB.AddForce((skeltin.transform.position - boneballRB.gameObject.transform.position) * (200 * Time.deltaTime), ForceMode.VelocityChange);
         audioS.Play();
     }
@@ -39,7 +39,7 @@ public class AethernautSplash : MonoBehaviour {
 
     IEnumerator timer()
     {
-        yield return new WaitForSeconds(7);
+        yield return new WaitForSeconds(6.5f);
         LoadNextScene();
     }
 }
