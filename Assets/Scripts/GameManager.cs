@@ -206,11 +206,17 @@ public class GameManager : MonoBehaviour {
             timeToSpawnBoss = 10;
             DisplayEventText("Skell Lord will spawn at 10 seconds.");
         }
+        */
+        
         if (Input.GetKeyDown(KeyCode.Equals))
         {
-            SteamUserStats.ResetAllStats(true);
+            if (Application.isEditor)
+            {
+                SteamUserStats.ResetAllStats(true);
+                DisplayEventText("Resetting Steam Achievements");
+            }
         }
-        */
+        
         
         
 
@@ -1578,32 +1584,32 @@ public class GameManager : MonoBehaviour {
             SteamUserStats.SetAchievement("5SkellLords");
         }
         // Survive 1 min
-        if (gameTimer >= 60)
+        if (gameTimer >= 60 || stat_LongestTimeSurvived >= 60)
         {
             SteamUserStats.SetAchievement("Survive1Min");
         }
         // Survive 2 min
-        if (gameTimer >= 120)
+        if (gameTimer >= 120 || stat_LongestTimeSurvived >= 120)
         {
             SteamUserStats.SetAchievement("Survive2Min");
         }
         // Survive 3 min
-        if (gameTimer >= 180)
+        if (gameTimer >= 180 || stat_LongestTimeSurvived >= 180)
         {
             SteamUserStats.SetAchievement("Survive3Min");
         }
         // Survive 4 min
-        if (gameTimer >= 240)
+        if (gameTimer >= 240 || stat_LongestTimeSurvived >= 240)
         {
             SteamUserStats.SetAchievement("Survive4Min");
         }
         // Survive 5 min
-        if (gameTimer >= 300)
+        if (gameTimer >= 300 || stat_LongestTimeSurvived >= 300)
         {
             SteamUserStats.SetAchievement("Survive5Min");
         }
         // Survive 6 min
-        if (gameTimer >= 360)
+        if (gameTimer >= 360 || stat_LongestTimeSurvived >= 360)
         {
             SteamUserStats.SetAchievement("Survive6Min");
         }

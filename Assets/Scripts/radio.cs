@@ -16,7 +16,7 @@ public class radio : MonoBehaviour {
     {
 	    if (GameManager.gameState == GameManager.GameState.PreGame)
         {
-            audioS.volume = GameManager.MusicVolume / 150;
+            audioS.volume = GameManager.MusicVolume / 225;
         }
 	}
 }
