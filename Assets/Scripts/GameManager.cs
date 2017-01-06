@@ -127,7 +127,8 @@ public class GameManager : MonoBehaviour {
     AudioSource musicSource;
 
     // bloop saving stuff
-    public GameObject specialCrate, craterBloop, shipBloop;
+    public GameObject specialCrate, craterBloop, shipBloop, musicSwapButton;
+    public AudioClip blipBloopTheme;
 
     // Use this for initialization
     void Start ()
@@ -819,12 +820,14 @@ public class GameManager : MonoBehaviour {
         if (PlayerPrefs.GetInt("BloopInShip", 0) == 0)
         {
             shipBloop.SetActive(false);
+            musicSwapButton.SetActive(false);
             specialCrate.SetActive(true);
             craterBloop.SetActive(true);
         }
         else
         {
             shipBloop.SetActive(true);
+            musicSwapButton.SetActive(true);
             specialCrate.SetActive(false);
             craterBloop.SetActive(false);
         } 
@@ -1711,5 +1714,10 @@ public class GameManager : MonoBehaviour {
     public void StartGameMusic()
     {
         musicSource.Play();
+    }
+
+    public void SwapGameplayMusic()
+    {
+        musicSource.clip = blipBloopTheme;
     }
 }
