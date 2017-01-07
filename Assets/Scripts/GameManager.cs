@@ -130,6 +130,11 @@ public class GameManager : MonoBehaviour {
     public GameObject specialCrate, craterBloop, shipBloop, musicSwapButton;
     public AudioClip blipBloopTheme;
 
+    // wraith skeltins
+    public GameObject wraithSkeltin;
+    public float wraithSkeltinTimer_Max;
+    float wraithSkeltinTimer_Current;
+
     // Use this for initialization
     void Start ()
     {
@@ -179,7 +184,7 @@ public class GameManager : MonoBehaviour {
         enemyCount = 0;
 
         // randomizes our kills to spawn an anomolous skull
-        killsToSpawnCrystalSkull = UnityEngine.Random.Range(100, 250);
+        killsToSpawnCrystalSkull = UnityEngine.Random.Range(100, 280);
 
         // change header to steam name on stats panel
         if (SteamManager.Initialized)
@@ -228,11 +233,6 @@ public class GameManager : MonoBehaviour {
                 DisplayEventText("Reset Bloop state");
             }
         }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Application.OpenURL("http://www.google.com/");
-        }
-
 
 
 
@@ -380,6 +380,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .5f;
                     flyingSpawnTimer = 1.7f;
                     ballSpawnTimer = 12;
+                    wraithSkeltinTimer_Max = 5;
                 }
                 // relax a bit
                 else if (comparisonTimer > 285)
@@ -389,6 +390,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .7f;
                     flyingSpawnTimer = 2.6f;
                     ballSpawnTimer = 17;
+                    wraithSkeltinTimer_Max = 5;
                 }
                 // INCREASE AFTER 30
                 else if (comparisonTimer > 240)
@@ -398,6 +400,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .6f;
                     flyingSpawnTimer = 2f;
                     ballSpawnTimer = 14;
+                    wraithSkeltinTimer_Max = 5;
                 }
                 // relax a bit
                 else if (comparisonTimer > 210)
@@ -407,6 +410,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .8f;
                     flyingSpawnTimer = 3.2f;
                     ballSpawnTimer = 18;
+                    wraithSkeltinTimer_Max = 5;
                 }
                 // INCREASE AFTER 30
                 else if (comparisonTimer > 165)
@@ -416,6 +420,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .7f;
                     flyingSpawnTimer = 2.5f;
                     ballSpawnTimer = 15;
+                    wraithSkeltinTimer_Max = 1;
                 }
                 // relax a bit
                 else if (comparisonTimer > 135)
@@ -425,6 +430,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .9f;
                     flyingSpawnTimer = 6f;
                     ballSpawnTimer = 25;
+                    wraithSkeltinTimer_Max = 1;
                 }
                 // INCREASE AFTER 30
                 else if (comparisonTimer > 90)
@@ -434,6 +440,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = .8f;
                     flyingSpawnTimer = 4f;
                     ballSpawnTimer = 20;
+                    wraithSkeltinTimer_Max = 1;
                 }
                 // BASE AFTER 60
                 else if (comparisonTimer > 60)
@@ -444,6 +451,7 @@ public class GameManager : MonoBehaviour {
                     spawnTimer = 2.5f;
                     flyingSpawnTimer = 10f;
                     ballSpawnTimer = 30;
+                    wraithSkeltinTimer_Max = 1;
                 }
 
 
@@ -479,7 +487,8 @@ public class GameManager : MonoBehaviour {
                 spawnTimer = .2f;
                 chanceToSpawnGoldSkeleton = 0;
                 chanceToSpawnSpecialSkeleton = 0;
-                enemyCountMax = 80;
+                enemyCountMax = 100;
+                wraithSkeltinTimer_Max = 10;
             }
             else if (gameMode == GameMode.GoldSkeletonMode)
             {
@@ -657,6 +666,43 @@ public class GameManager : MonoBehaviour {
                         enemyCount++;
 
                         ballSpawnCurrent = 0;
+                    }
+                }
+            }
+            // IF WE ARE GREATER OR EQUAL TO OUR MAX ENEMY COUNT SPAWN SOME SPOOKY WRAITH SKELTINS
+            /// WRAITH SKELTINS
+            else
+            {
+                // only if we are in the normal mode
+                if (gameMode == GameMode.normal || gameMode == GameMode.HordeSkeletonMode)
+                {
+                    if (wraithSkeltinTimer_Current < wraithSkeltinTimer_Max)
+                    {
+                        wraithSkeltinTimer_Current += Time.deltaTime;
+                    }
+                    else
+                    {
+                        // SPAWN A WRAITH SKELETON
+                        foreach (GameObject spawner in enemySpawns)
+                        {
+                            if (spawner.GetComponent<EnemySpawner>().CanWeSpawnHere())
+                            {
+                                spawner.tag = "Skeleton_Spawn";
+                            }
+                            else
+                            {
+                                spawner.tag = "Untagged";
+                            }
+                        }
+
+                        GameObject[] activeSkeletonSpawns = GameObject.FindGameObjectsWithTag("Skeleton_Spawn");
+                        int rndLocation = UnityEngine.Random.Range(0, activeSkeletonSpawns.Length - 1);
+
+                        Instantiate(wraithSkeltin, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
+
+                        DisplayEventText("Invaded by Wraith Skeltin");
+
+                        wraithSkeltinTimer_Current = 0;
                     }
                 }
             }

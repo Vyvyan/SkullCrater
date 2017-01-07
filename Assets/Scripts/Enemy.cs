@@ -53,6 +53,7 @@ public class Enemy : MonoBehaviour {
         }
 
         // evolve into red skeltins after a set time
+        // IGNORE THIS AND DONT SET ANY ENEMY PREFABS TO THIS BOOL. IT WILL MAKE THEM CHANGE INTO WRAITH SKELTINS AFTER A SET AMOUNT OF TIME. IGNORE IT!
         if (isNormalSkeltin)
         {
             lifeTimer += Time.deltaTime;
