@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour {
     // special events
     public GameObject crystalSkull;
     public int killsToSpawnCrystalSkull;
+    bool hasSpawnedCrystalSkull;
     public enum GameMode {normal, GoldSkeletonMode, BoneBallMode, SpeedySkeletonMode, FlyingSkeletonMode, HordeSkeletonMode, Boss};
     public GameMode gameMode;
 
@@ -198,6 +199,8 @@ public class GameManager : MonoBehaviour {
 
         // music
         musicSource = gameObject.GetComponent<AudioSource>();
+
+        hasSpawnedCrystalSkull = false;
     }
 
     // Update is called once per frame
@@ -457,14 +460,18 @@ public class GameManager : MonoBehaviour {
 
                 // spawning crystal skulls
                 // if we've killed more than the number to spawn the crystal skull
-                if (enemiesKilledThisSession >= killsToSpawnCrystalSkull)
+                if (!hasSpawnedCrystalSkull)
                 {
-                    int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
-                    Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
-                    // announce it to the player
-                    DisplayEventText("An Anomalous Skull has appeared?!");
-                    // once we spawn the skull, make the next skull spawn require more kills
-                    killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 50000;
+                    if (enemiesKilledThisSession >= killsToSpawnCrystalSkull)
+                    {
+                        int rndLocation = UnityEngine.Random.Range(0, ballenemySpawns.Length - 1);
+                        Instantiate(crystalSkull, ballenemySpawns[rndLocation].transform.position, Quaternion.identity);
+                        // announce it to the player
+                        DisplayEventText("An Anomalous Skull has appeared?!");
+                        // once we spawn the skull, make the next skull spawn require more kills
+                        killsToSpawnCrystalSkull += killsToSpawnCrystalSkull * 50000;
+                        hasSpawnedCrystalSkull = true;
+                    }
                 }
 
                 // switching to boss mode after X amount of time
@@ -487,7 +494,7 @@ public class GameManager : MonoBehaviour {
                 spawnTimer = .2f;
                 chanceToSpawnGoldSkeleton = 0;
                 chanceToSpawnSpecialSkeleton = 0;
-                enemyCountMax = 100;
+                enemyCountMax = 80;
                 wraithSkeltinTimer_Max = 10;
             }
             else if (gameMode == GameMode.GoldSkeletonMode)
@@ -927,7 +934,10 @@ public class GameManager : MonoBehaviour {
         GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject skelton in allEnemies)
         {
-            skelton.transform.parent.SendMessage("KillThisEnemy", true);
+            if (skelton.transform.parent.GetComponent<Enemy>() || skelton.transform.parent.GetComponent<BoneBall>() || skelton.transform.parent.GetComponent<FlyingSkull>())
+            {
+                skelton.transform.parent.SendMessage("KillThisEnemy", true);
+            }
         }
     }
 
@@ -1558,7 +1568,10 @@ public class GameManager : MonoBehaviour {
         GameObject[] allEnemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject skelton in allEnemies)
         {
-            skelton.transform.parent.SendMessage("KillThisEnemy", true);
+            if (skelton.transform.parent.GetComponent<Enemy>() || skelton.transform.parent.GetComponent<BoneBall>() || skelton.transform.parent.GetComponent<FlyingSkull>())
+            {
+                skelton.transform.parent.SendMessage("KillThisEnemy", true);
+            }
         }
     }
 
