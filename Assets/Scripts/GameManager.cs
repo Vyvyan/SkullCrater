@@ -1705,18 +1705,22 @@ public class GameManager : MonoBehaviour {
         {
             SteamUserStats.SetAchievement("Survive6Min");
         }
+
+        int fullyUpped = NumberOfFullyUpgradedWeapons();
+        Debug.Log(fullyUpped.ToString() + " fully upped weapons");
         // Maxing out one weapon
-        if (NumberOfFullyUpgradedWeapons() >= 1)
+        if (fullyUpped > 0)
         {
             SteamUserStats.SetAchievement("Max1Weapon");
+            Debug.Log("maxed 1 weapon fully");
         }
         // Maxing out all weapons
-        if (NumberOfFullyUpgradedWeapons() >= 5)
+        if (fullyUpped >= 5)
         {
             SteamUserStats.SetAchievement("MaxAllWeapons");
         }
-        // 10k total gold
-        if (stat_TotalGoldGained >= 10000)
+        // 5k total gold, THIS USED TO BE 10K BUT YOU'D MAX ALL YOUR WEAPONS AT THAT POINT AND ITS DUMB
+        if (stat_TotalGoldGained >= 5000)
         {
             SteamUserStats.SetAchievement("10kGold");
         }
@@ -1727,23 +1731,23 @@ public class GameManager : MonoBehaviour {
     int NumberOfFullyUpgradedWeapons()
     {
         int fullyUppedWeapons = 0;
-        if (pistolTotalUpgradeLevel == Pistol_Upgrades_AmmoLevelMax + Pistol_Upgrades_ReloadSpeedLevelMax)
+        if (pistolTotalUpgradeLevel == (Pistol_Upgrades_AmmoLevelMax + Pistol_Upgrades_ReloadSpeedLevelMax) * 10)
         {
             fullyUppedWeapons++;
         }
-        if (machineGunTotalUpgradeLevel == MachineGun_Upgrades_AmmoLevelMax + MachineGun_Upgrades_ReloadSpeedLevelMax + MachineGun_Upgrades_ROFLevelMax)
+        if (machineGunTotalUpgradeLevel == (MachineGun_Upgrades_AmmoLevelMax + MachineGun_Upgrades_ReloadSpeedLevelMax + MachineGun_Upgrades_ROFLevelMax) * 10)
         {
             fullyUppedWeapons++;
         }
-        if (shotgunTotalUpgradeLevel == Shotgun_Upgrades_AmmoLevelMax + Shotgun_Upgrades_ReloadSpeedLevelMax)
+        if (shotgunTotalUpgradeLevel == (Shotgun_Upgrades_AmmoLevelMax + Shotgun_Upgrades_ReloadSpeedLevelMax) * 10)
         {
             fullyUppedWeapons++;
         }
-        if (rocketTotalUpgradeLevel == Rocket_Upgrades_AmmoLevelMax + Rocket_Upgrades_ReloadSpeedLevelMax + Rocket_Upgrades_RadiusMax)
+        if (rocketTotalUpgradeLevel == (Rocket_Upgrades_AmmoLevelMax + Rocket_Upgrades_ReloadSpeedLevelMax + Rocket_Upgrades_RadiusMax) * 10)
         {
             fullyUppedWeapons++;
         }
-        if (grenadeTotalUpgradeLevel == Grenade_Upgrades_RadiusMax + Grenade_Upgrades_RechargeRateMax)
+        if (grenadeTotalUpgradeLevel == (Grenade_Upgrades_RadiusMax + Grenade_Upgrades_RechargeRateMax) * 10)
         {
             fullyUppedWeapons++;
         }
