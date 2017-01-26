@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour {
     public Text text_MouseSens;
     public Slider slider_MusicVolume;
     public Slider slider_SFXVolume;
+    public bool invertYbool;
+    public Toggle toggle_YInvert;
 
     public static float MusicVolume, SFXVolume;
 
@@ -136,6 +138,10 @@ public class GameManager : MonoBehaviour {
     public float wraithSkeltinTimer_Max;
     float wraithSkeltinTimer_Current;
 
+    // Posters
+    public GameObject wraithPoster, boneBallPoster;
+    public bool hasBeenInvaded;
+
     // Use this for initialization
     void Start ()
     {
@@ -181,6 +187,7 @@ public class GameManager : MonoBehaviour {
         slider_MouseSens.onValueChanged.AddListener(delegate { ValueChangeCheckOnMouseSensitivity(); });
         slider_MusicVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnMusicVolume(); });
         slider_SFXVolume.onValueChanged.AddListener(delegate { ValueChangeCheckOnSFXVolume(); });
+        toggle_YInvert.onValueChanged.AddListener(delegate { ValueChangeCheckOnYInvertBool(invertYbool); });
 
         enemyCount = 0;
 
@@ -201,6 +208,7 @@ public class GameManager : MonoBehaviour {
         musicSource = gameObject.GetComponent<AudioSource>();
 
         hasSpawnedCrystalSkull = false;
+        hasBeenInvaded = false;
     }
 
     // Update is called once per frame
@@ -219,6 +227,16 @@ public class GameManager : MonoBehaviour {
             DisplayEventText("Skell Lord will spawn at 10 seconds.");
         }
         */
+
+        // Y INVERTED CONTROLS, CHANGE IT EVERY FRAME CAUSE SCREW IT THIS IS THE EASIEST WAY
+        if (invertYbool)
+        {
+            playerController.mouseLook.YSensitivity = slider_MouseSens.value * -1;
+        }
+        else
+        {
+            playerController.mouseLook.YSensitivity = slider_MouseSens.value;
+        }
         
         if (Input.GetKeyDown(KeyCode.Equals))
         {
@@ -708,6 +726,8 @@ public class GameManager : MonoBehaviour {
                         Instantiate(wraithSkeltin, activeSkeletonSpawns[rndLocation].transform.position, Quaternion.identity);
 
                         DisplayEventText("Invaded by Wraith Skeltin");
+                        // this is just here to check if we should display the wraith skeltin poster
+                        hasBeenInvaded = true;
 
                         wraithSkeltinTimer_Current = 0;
                     }
@@ -729,6 +749,16 @@ public class GameManager : MonoBehaviour {
             }
 
             // stop music on death
+            if (musicSource.isPlaying)
+            {
+                //musicSource.Stop();
+                musicSource.volume -= (.2f * Time.deltaTime);
+            }
+        }
+
+        if (gameState == GameState.EndGame)
+        {
+            // stop music on endgame
             if (musicSource.isPlaying)
             {
                 //musicSource.Stop();
@@ -793,6 +823,17 @@ public class GameManager : MonoBehaviour {
         playerController.mouseLook.XSensitivity = slider_MouseSens.value;
         playerController.mouseLook.YSensitivity = slider_MouseSens.value;
         text_MouseSens.text = "Look Sensitivity: " + playerController.mouseLook.XSensitivity.ToString("F1");
+        int invertY_temp = PlayerPrefs.GetInt("InvertY", 0);
+        if(invertY_temp == 0)
+        {
+            invertYbool = false;
+            toggle_YInvert.isOn = invertYbool;
+        }
+        else
+        {
+            invertYbool = true;
+            toggle_YInvert.isOn = invertYbool;
+        }
 
         // volume settings
         MusicVolume = PlayerPrefs.GetFloat("SavedMusicVolume", 75);
@@ -888,6 +929,18 @@ public class GameManager : MonoBehaviour {
             specialCrate.SetActive(false);
             craterBloop.SetActive(false);
         } 
+
+        // POSTERS
+        if (stat_BoneBallsKilled > 0)
+        {
+            boneBallPoster.SetActive(true);
+        }
+
+        int wraithPosterInt = PlayerPrefs.GetInt("WraithPoster", 0);
+        if (wraithPosterInt > 0)
+        {
+            wraithPoster.SetActive(true);
+        }
     }
 
     public void SaveStatistics()
@@ -960,6 +1013,36 @@ public class GameManager : MonoBehaviour {
         PlayerPrefs.SetFloat("SavedSFXVolume", slider_SFXVolume.value);
         SFXVolume = slider_SFXVolume.value;
     }
+
+    public void ValueChangeCheckOnYInvertBool(bool isYInverted)
+    {
+        invertYbool = toggle_YInvert.isOn;
+        if (invertYbool == true)
+        {
+            PlayerPrefs.SetInt("InvertY", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("InvertY", 0);
+        }
+        Debug.Log(isYInverted.ToString());
+    }
+
+    // changes the bool value for Y invert, and saves it as well - WE NOW USE THE VALUE CHANGED FUNCTION, BECAUSE IT ACTUALLY WORKS. IT SHOULD BE ABOVE ^^^^
+    /*
+    public void YInvertToggleChanged()
+    {
+        invertYbool = !invertYbool;
+        if (invertYbool == true)
+        {
+            PlayerPrefs.SetInt("InvertY", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("InvertY", 0);
+        }
+    }
+    */
 
     public void IncreaseSensitivity()
     {

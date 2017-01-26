@@ -196,7 +196,7 @@ public class BlackSkull : MonoBehaviour {
     IEnumerator ShakeSkullAfterDeath()
     {
         isShaking = true;
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(6);
         isShaking = false;
         // only end the game if the player is alive
         if (GameManager.gameState == GameManager.GameState.Playing)

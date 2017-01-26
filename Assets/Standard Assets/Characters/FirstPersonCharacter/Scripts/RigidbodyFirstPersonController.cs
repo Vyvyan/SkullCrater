@@ -144,6 +144,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if ((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && (advancedSettings.airControl || m_IsGrounded))
             {
+                m_RigidBody.mass = 10;
+                m_RigidBody.drag = 5;
                 // always move along the camera forward as it is the direction that it being aimed at
                 Vector3 desiredMove = cam.transform.forward*input.y + cam.transform.right*input.x;
                 desiredMove = Vector3.ProjectOnPlane(desiredMove, m_GroundContactNormal).normalized;
@@ -157,10 +159,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     m_RigidBody.AddForce(desiredMove*SlopeMultiplier(), ForceMode.Impulse);
                 }
             }
+            // EDITED
+            else
+            {
+                //m_RigidBody.mass = 50;
+                m_RigidBody.drag = 25;
+            }
 
             if (m_IsGrounded)
             {
-                m_RigidBody.drag = 5f;
+                //m_RigidBody.drag = 5f;
 
                 if (m_Jump)
                 {

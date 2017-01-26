@@ -95,6 +95,7 @@
     <Compile Include="Assets\Scripts\FadeUpLightOnSpawn.cs" />
     <Compile Include="Assets\Scripts\FlyingSkull.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\GoldVacuum.cs" />
     <Compile Include="Assets\Scripts\Grenade.cs" />
     <Compile Include="Assets\Scripts\GrenadeAudio.cs" />
     <Compile Include="Assets\Scripts\KeepLightAboveObject.cs" />

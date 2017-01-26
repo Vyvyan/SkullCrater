@@ -19,6 +19,8 @@ public class s_HUD : MonoBehaviour {
     public Sprite hud_shotgun, hud_pistol, hud_machinegun, hud_rocket, hud_none;
     public Image secondaryWeaponImage;
 
+    public GameObject moneyPickupParticles;
+
 	// Use this for initialization
 	void Start () 
 	{

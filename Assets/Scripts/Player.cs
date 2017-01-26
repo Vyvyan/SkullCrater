@@ -45,6 +45,10 @@ public class Player : MonoBehaviour {
     // music starting
     bool hasStartedMusic;
 
+    // gold effect
+    public GameObject goldPickupParticles;
+    public Transform particleSpawnLocation;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -199,6 +203,8 @@ public class Player : MonoBehaviour {
         {
             GameManager.heldGold += gameManager.goldValue + (gameManager.goldBonusAmount * gameManager.goldBonusLevel);
             gameManager.goldBonusLevel++;
+            GameObject tempPart = Instantiate(goldPickupParticles, particleSpawnLocation.position, Quaternion.identity) as GameObject;
+            tempPart.transform.SetParent(particleSpawnLocation);
             Destroy(other.gameObject);
             audioSourcePlayer.PlayOneShot(AudioManager.gold_Pickup, GameManager.SFXVolume / 200);
         }
@@ -269,6 +275,7 @@ public class Player : MonoBehaviour {
                 }
                 // we add a slight random rotation to the camera to give a good effect
                 gameManager.SaveStatistics();
+                gameManager.CheckSteamAchievements();
                 SteamUserStats.SetAchievement("SurviveARound");
                 SteamUserStats.StoreStats();
                 SceneManager.LoadScene(2);
@@ -379,6 +386,11 @@ public class Player : MonoBehaviour {
         GameManager.enemyThatKilledPlayer = thingThatHitUs;
         Debug.Log(thingThatHitUs);
         saveOurWeaponLoadout();
+
+        if (gameManager.hasBeenInvaded == true)
+        {
+            PlayerPrefs.SetInt("WraithPoster", 1);
+        }
     }
 
     public void KillPlayer()
